@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ComponentType, ReactNode, SVGProps } from 'react'
 
 interface RangeFieldProps {
   readonly label: string
@@ -80,9 +80,18 @@ export function Group({ title, children }: GroupProps) {
   )
 }
 
+type IconComponent = ComponentType<SVGProps<SVGSVGElement>>
+
+interface SegmentedOption<T extends string> {
+  readonly id: T
+  readonly label: string
+  readonly disabled?: boolean
+  readonly icon?: IconComponent
+}
+
 interface SegmentedProps<T extends string> {
   readonly value: T
-  readonly options: readonly { readonly id: T; readonly label: string; readonly disabled?: boolean }[]
+  readonly options: readonly SegmentedOption<T>[]
   readonly onChange: (value: T) => void
 }
 
@@ -97,6 +106,7 @@ export function Segmented<T extends string>({ value, options, onChange }: Segmen
           aria-pressed={option.id === value}
           onClick={() => onChange(option.id)}
         >
+          {option.icon && <option.icon className="icon" aria-hidden="true" />}
           {option.label}
         </button>
       ))}

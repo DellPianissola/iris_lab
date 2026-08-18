@@ -1,5 +1,6 @@
 import type { MarkMode } from '@nomai/svg-kit'
 import { Segmented } from '../../components/Field'
+import { WarningIcon } from '../../components/icons'
 import { useI18n } from '../../i18n'
 import type { Mark } from '../../marks/types'
 
@@ -41,7 +42,8 @@ export function SymbolReport({ mark, onModeChange }: SymbolReportProps) {
 
       {mark.warnings.map((warning) => (
         <p key={warning.code} className="report-warning">
-          ⚠ {t.symbol.warnings[warning.code]}
+          <WarningIcon className="icon" aria-hidden="true" />
+          {t.symbol.warnings[warning.code]}
         </p>
       ))}
 

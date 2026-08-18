@@ -1,6 +1,7 @@
 import type { MarkMode } from '@nomai/svg-kit'
 import { useState, type DragEvent } from 'react'
 import { Group, RangeField } from '../../components/Field'
+import { CloseIcon, UploadIcon } from '../../components/icons'
 import { useI18n } from '../../i18n'
 import { readMarkFile } from '../../marks/load'
 import type { Mark } from '../../marks/types'
@@ -67,12 +68,15 @@ export function SymbolPanel({
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
       >
+        <UploadIcon className="icon icon-drop" aria-hidden="true" />
         {t.symbol.dropzone.line1}
         <br />
         {t.symbol.dropzone.line2}
+        {/* `hidden` tira o campo da ordem de tabulação e não havia outro caminho para
+            enviar arquivo sem mouse. Escondido visualmente, ele continua focável. */}
         <input
           type="file"
-          hidden
+          className="visually-hidden-input"
           multiple
           accept=".svg,.png,.jpg,.jpeg,.webp,image/*"
           onChange={(event) => {
@@ -108,7 +112,7 @@ export function SymbolPanel({
                 aria-label={t.symbol.remove(item.name)}
                 onClick={(event) => { event.stopPropagation(); onRemove(item.id) }}
               >
-                ×
+                <CloseIcon className="icon" aria-hidden="true" />
               </button>
             )}
           </div>

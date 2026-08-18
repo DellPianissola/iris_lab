@@ -1,5 +1,6 @@
 import { PALETTE_KEYS, type Palette, type PaletteKey } from '@nomai/theme'
 import { Group } from '../../components/Field'
+import { DeriveIcon, InvertIcon, RandomIcon } from '../../components/icons'
 import { useI18n } from '../../i18n'
 
 interface PalettePanelProps {
@@ -31,9 +32,18 @@ export function PalettePanel({
       ))}
 
       <div className="button-row">
-        <button type="button" onClick={onRandomize}>{t.palette.randomize}</button>
-        <button type="button" onClick={onHarmonize}>{t.palette.harmonize}</button>
-        <button type="button" onClick={onInvert}>{t.palette.invert}</button>
+        <button type="button" onClick={onRandomize}>
+          <RandomIcon className="icon" aria-hidden="true" />
+          {t.palette.randomize}
+        </button>
+        <button type="button" onClick={onHarmonize}>
+          <DeriveIcon className="icon" aria-hidden="true" />
+          {t.palette.harmonize}
+        </button>
+        <button type="button" onClick={onInvert}>
+          <InvertIcon className="icon" aria-hidden="true" />
+          {t.palette.invert}
+        </button>
       </div>
       <p className="note">{t.palette.note}</p>
     </Group>

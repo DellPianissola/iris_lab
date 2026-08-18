@@ -1,6 +1,7 @@
 import { fontStack, tokensToCssVars } from '@nomai/theme'
 import { useEffect, useMemo, type CSSProperties } from 'react'
 import { Segmented } from './components/Field'
+import { MoonIcon, SunIcon } from './components/icons'
 import { LocalePicker } from './components/LocalePicker'
 import { useI18n } from './i18n'
 import { ContrastPanel } from './features/contrast/ContrastPanel'
@@ -22,8 +23,8 @@ export function App() {
   const { t } = useI18n()
 
   const modeOptions = [
-    { id: 'light' as const, label: t.app.modes.light },
-    { id: 'dark' as const, label: t.app.modes.dark },
+    { id: 'light' as const, label: t.app.modes.light, icon: SunIcon },
+    { id: 'dark' as const, label: t.app.modes.dark, icon: MoonIcon },
   ]
 
   useKeyboardShortcut(RANDOMIZE_KEY, actions.randomize)
