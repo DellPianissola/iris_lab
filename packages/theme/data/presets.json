@@ -1,0 +1,74 @@
+[
+  {
+    "id": "iris-framboesa",
+    "name": "Íris framboesa",
+    "mode": "light",
+    "colors": { "brand": "#16db65", "accent": "#db2480", "bg": "#ffffff", "surface": "#f5f7f6", "text": "#0d1410", "muted": "#5b6b61", "line": "#e2e8e4" }
+  },
+  {
+    "id": "iris-indigo",
+    "name": "Íris índigo",
+    "mode": "light",
+    "colors": { "brand": "#16db65", "accent": "#25317e", "bg": "#fbfdfc", "surface": "#f0f4f1", "text": "#0d1410", "muted": "#5b6b61", "line": "#e0e7e2" }
+  },
+  {
+    "id": "iris-ambar",
+    "name": "Íris âmbar",
+    "mode": "light",
+    "colors": { "brand": "#16db65", "accent": "#f59b14", "bg": "#fffdf8", "surface": "#f6f2e9", "text": "#141109", "muted": "#6b6355", "line": "#ece5d6" }
+  },
+  {
+    "id": "iris-escuro",
+    "name": "Íris no escuro",
+    "mode": "dark",
+    "colors": { "brand": "#30e87a", "accent": "#db2480", "bg": "#0c120e", "surface": "#141c17", "text": "#e9f2ec", "muted": "#94a89b", "line": "#222d26" }
+  },
+  {
+    "id": "indigo-puro",
+    "name": "Índigo puro",
+    "mode": "light",
+    "colors": { "brand": "#3b5bdb", "accent": "#f76707", "bg": "#ffffff", "surface": "#f6f7f9", "text": "#12141a", "muted": "#61697a", "line": "#e3e6ec" }
+  },
+  {
+    "id": "floresta",
+    "name": "Floresta",
+    "mode": "light",
+    "colors": { "brand": "#1f7a5a", "accent": "#e8b83b", "bg": "#fbfaf6", "surface": "#f2f1ea", "text": "#14201b", "muted": "#5c6b63", "line": "#e0e0d5" }
+  },
+  {
+    "id": "carvao-neon",
+    "name": "Carvão néon",
+    "mode": "dark",
+    "colors": { "brand": "#7c5cff", "accent": "#2de2a6", "bg": "#0d0f14", "surface": "#161a22", "text": "#eef1f7", "muted": "#98a2b5", "line": "#242a35" }
+  },
+  {
+    "id": "terracota",
+    "name": "Terracota",
+    "mode": "light",
+    "colors": { "brand": "#c05621", "accent": "#2c7a7b", "bg": "#fffaf5", "surface": "#f8efe6", "text": "#241610", "muted": "#7a6055", "line": "#ecdccd" }
+  },
+  {
+    "id": "tinta-coral",
+    "name": "Tinta e coral",
+    "mode": "light",
+    "colors": { "brand": "#14213d", "accent": "#fa6b5c", "bg": "#ffffff", "surface": "#f4f5f8", "text": "#14213d", "muted": "#5d6b85", "line": "#e0e4ee" }
+  },
+  {
+    "id": "ciano-noturno",
+    "name": "Ciano noturno",
+    "mode": "dark",
+    "colors": { "brand": "#22b8cf", "accent": "#f06595", "bg": "#101820", "surface": "#18222c", "text": "#e6f1f5", "muted": "#8fa3ae", "line": "#22303c" }
+  },
+  {
+    "id": "malva-suave",
+    "name": "Malva suave",
+    "mode": "light",
+    "colors": { "brand": "#8e5fa8", "accent": "#f2a65a", "bg": "#fdfbff", "surface": "#f5f0f8", "text": "#241a2b", "muted": "#6f6178", "line": "#e9e0ef" }
+  },
+  {
+    "id": "vermelho-seco",
+    "name": "Vermelho seco",
+    "mode": "light",
+    "colors": { "brand": "#c1121f", "accent": "#003049", "bg": "#fdf6f4", "surface": "#f7eae7", "text": "#1d1010", "muted": "#6f5a58", "line": "#ecd8d4" }
+  }
+]

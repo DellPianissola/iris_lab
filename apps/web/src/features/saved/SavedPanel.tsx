@@ -1,0 +1,63 @@
+import { buildTokens, tokensToCssText, type Palette, type ThemeMode } from '@nomai/theme'
+import { Group } from '../../components/Field'
+import type { SavedCombo } from '../../state/useBrandLab'
+
+const EXPORT_FILENAME = 'paleta.css'
+
+interface SavedPanelProps {
+  readonly palette: Palette
+  readonly saved: readonly SavedCombo[]
+  readonly onSave: () => void
+  readonly onRemove: (id: string) => void
+  readonly onApply: (palette: Palette, mode: ThemeMode) => void
+}
+
+export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedPanelProps) {
+  function downloadCss(): void {
+    const blocks = [
+      tokensToCssText(buildTokens(palette), 'paleta atual'),
+      ...saved.map((combo, index) => tokensToCssText(buildTokens(combo.palette), `salva #${index + 1}`)),
+    ]
+
+    const blob = new Blob([blocks.join('\n')], { type: 'text/css' })
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = EXPORT_FILENAME
+    anchor.click()
+    URL.revokeObjectURL(url)
+  }
+
+  return (
+    <Group title="Combinações salvas">
+      <div className="button-row">
+        <button type="button" className="primary" onClick={onSave}>＋ Salvar atual</button>
+        <button type="button" onClick={downloadCss}>Baixar CSS</button>
+      </div>
+
+      {saved.length === 0 ? (
+        <p className="note">Nenhuma salva ainda.</p>
+      ) : (
+        <div className="chips">
+          {saved.map((combo, index) => (
+            <span key={combo.id} className="chip">
+              <button type="button" onClick={() => onApply(combo.palette, combo.mode)}>
+                <i style={{ background: combo.palette.brand }} />
+                <i style={{ background: combo.palette.accent }} />
+                <b>#{index + 1}</b>
+              </button>
+              <button type="button" className="chip-remove" onClick={() => onRemove(combo.id)}>
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      <p className="note">
+        As salvas ficam neste navegador. O CSS baixado traz os onze tokens — inclusive os
+        derivados, então ele reproduz exatamente o que você está vendo.
+      </p>
+    </Group>
+  )
+}

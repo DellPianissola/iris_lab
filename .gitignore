@@ -1,0 +1,20 @@
+# memória de trabalho da IA — local, nunca versionada
+CLAUDE.md
+.claude/
+
+# deps e build
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# env
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log

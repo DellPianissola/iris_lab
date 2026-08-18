@@ -1,0 +1,26 @@
+{
+  "name": "Íris",
+  "company": "Nomai Code",
+  "light": {
+    "brand": "#16db65",
+    "accent": "#db2480",
+    "bg": "#ffffff",
+    "surface": "#f5f7f6",
+    "text": "#0d1410",
+    "muted": "#5b6b61",
+    "line": "#e2e8e4"
+  },
+  "dark": {
+    "brand": "#30e87a",
+    "accent": "#db2480",
+    "bg": "#0c120e",
+    "surface": "#141c17",
+    "text": "#e9f2ec",
+    "muted": "#94a89b",
+    "line": "#222d26"
+  },
+  "notes": {
+    "brandAsText": "#0e813c",
+    "neverWhiteOnBrand": "branco sobre #16db65 dá 1.85:1; quase-preto dá 11.35:1"
+  }
+}

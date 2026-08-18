@@ -1,0 +1,21 @@
+{
+  "name": "@nomai/iris",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Iris — teste de paleta de cores contra o logo do cliente, num mockup de site real",
+  "packageManager": "pnpm@11.22.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=11"
+  },
+  "scripts": {
+    "test": "pnpm -r run test",
+    "typecheck": "pnpm -r run typecheck",
+    "dev": "pnpm --filter @nomai/web dev",
+    "dev:bench": "pnpm --filter @nomai/bench dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

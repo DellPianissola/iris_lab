@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bancada — pipeline de símbolo</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <header class="bar">
+    <h1>Bancada do pipeline</h1>
+    <span class="hint">ferramenta de desenvolvimento — não é o produto</span>
+  </header>
+
+  <main class="layout">
+    <aside class="side">
+      <section>
+        <h2>Corpus</h2>
+        <ul id="samples" class="samples"></ul>
+      </section>
+
+      <section>
+        <h2>Seu arquivo</h2>
+        <label class="drop" id="drop">
+          Arraste um SVG aqui ou clique
+          <input type="file" id="file" accept=".svg,image/svg+xml" hidden>
+        </label>
+      </section>
+
+      <section>
+        <h2>Tons</h2>
+        <label class="tone">
+          <input type="color" id="tone0">
+          <span>--tone-0 &middot; marca</span>
+        </label>
+        <label class="tone">
+          <input type="color" id="tone1">
+          <span>--tone-1 &middot; acento</span>
+        </label>
+        <div class="seg" id="backdrop"></div>
+      </section>
+    </aside>
+
+    <section class="stage">
+      <div id="report" class="report"></div>
+
+      <div class="panes">
+        <figure class="pane">
+          <figcaption>Original <small>como o arquivo veio</small></figcaption>
+          <div class="art" id="artOriginal"></div>
+        </figure>
+        <figure class="pane">
+          <figcaption>Recolorido <small id="capThemed">tons injetados</small></figcaption>
+          <div class="art" id="artThemed"></div>
+        </figure>
+      </div>
+
+      <details class="markup">
+        <summary>Markup recolorido</summary>
+        <pre id="markup"></pre>
+      </details>
+    </section>
+  </main>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

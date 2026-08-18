@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // Sem "DOM" de propósito: se alguém encostar em `document` aqui, o typecheck reprova.
+    "lib": ["ES2022"],
+    "types": ["node", "vitest/globals"],
+    "noEmit": true
+  },
+  "include": ["src", "test", "vitest.config.ts"]
+}

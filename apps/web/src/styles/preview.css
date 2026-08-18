@@ -1,0 +1,171 @@
+/* O mockup. Tudo aqui lê custom property e não sabe nada sobre estado — trocar cor é
+   reescrever uma variável num nó, não re-renderizar componente. */
+
+/* ---------- lockup ---------- */
+
+.lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: .55em;
+  font-family: var(--f-body);
+}
+.lockup .glyph {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--glyph-color, currentColor);
+  width: calc(var(--mark-size) * var(--mark-aspect, 1));
+  height: var(--mark-size);
+  border-radius: var(--mark-radius);
+  background: var(--mark-plate);
+  padding: var(--mark-pad);
+}
+.glyph-art { display: block; width: 100%; height: 100%; }
+.glyph-art svg, .glyph-art img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.glyph-masked {
+  background: currentColor;
+  mask-position: center; -webkit-mask-position: center;
+  mask-size: contain; -webkit-mask-size: contain;
+  mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+}
+.lockup .word {
+  font-family: var(--f-display);
+  font-weight: 700;
+  letter-spacing: var(--word-track);
+  font-size: var(--word-size);
+  line-height: 1;
+  white-space: nowrap;
+}
+.lockup .word em { font-style: normal; color: var(--c-brand); }
+
+/* ---------- grade de fundos ---------- */
+
+.lockups { display: grid; grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 760px) { .lockups { grid-template-columns: repeat(2, 1fr); } }
+.lockup-cell {
+  padding: 26px 14px;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  border-right: 1px solid var(--ui-line);
+  min-height: 118px;
+}
+.lockup-cell:last-child { border-right: 0; }
+.lockup-cell small { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; opacity: .55; }
+
+/* ---------- site ---------- */
+
+.site { background: var(--c-bg); color: var(--c-text); font-family: var(--f-body); }
+
+.site-nav {
+  display: flex; align-items: center; gap: 22px;
+  padding: 16px 26px;
+  border-bottom: 1px solid var(--c-line);
+}
+.site-links { display: flex; gap: 18px; font-size: 13px; color: var(--c-muted); margin: 0 0 0 14px; padding: 0; list-style: none; }
+.site-links .current { color: var(--c-text); font-weight: 600; }
+
+.btn-primary, .btn-secondary, .btn-accent {
+  border-radius: var(--btn-radius);
+  padding: 11px 20px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+  border: 0;
+}
+.btn-primary { background: var(--c-brand); color: var(--c-on-brand); }
+.btn-primary:hover { filter: brightness(1.07); background: var(--c-brand); }
+.btn-accent { background: var(--c-accent); color: var(--c-on-accent); }
+.btn-accent:hover { filter: brightness(1.07); background: var(--c-accent); }
+.btn-secondary { background: transparent; color: var(--c-text); border: 1px solid var(--c-line); font-weight: 400; }
+.btn-secondary:hover { background: transparent; border-color: var(--c-line); }
+.btn-compact { padding: 8px 15px; font-size: 13px; }
+
+.site-hero {
+  padding: 56px 26px 50px;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 32px;
+  align-items: center;
+}
+@media (max-width: 760px) { .site-hero { grid-template-columns: 1fr; } }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12px; font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--c-brand-soft);
+  color: var(--c-brand-ink);
+  margin-bottom: 16px;
+}
+.site-hero h2 {
+  font-family: var(--f-display);
+  font-size: clamp(26px, 3.4vw, 42px);
+  line-height: 1.1;
+  margin: 0 0 14px;
+  letter-spacing: -.02em;
+  font-weight: 800;
+}
+.site-hero h2 em { font-style: normal; color: var(--c-brand); }
+.lead { color: var(--c-muted); font-size: 15px; line-height: 1.6; margin: 0 0 22px; max-width: 46ch; }
+.cta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+.hero-art { border-radius: 16px; border: 1px solid var(--c-line); background: var(--c-surface); padding: 18px; }
+.bar { display: block; height: 9px; border-radius: 5px; background: var(--c-line); margin-bottom: 10px; }
+.bar-brand { background: var(--c-brand); width: 62%; }
+.bar-accent { background: var(--c-accent); width: 38%; }
+.bar-wide { width: 80%; }
+.bar-narrow { width: 46%; }
+
+.stats { display: flex; gap: 10px; margin-top: 16px; }
+.stat { flex: 1; background: var(--c-bg); border: 1px solid var(--c-line); border-radius: 10px; padding: 11px 12px; }
+.stat b { font-family: var(--f-display); font-size: 19px; color: var(--c-brand); display: block; }
+.stat span { font-size: 11px; color: var(--c-muted); }
+
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0 26px 44px; }
+@media (max-width: 760px) { .features { grid-template-columns: 1fr; } }
+.feature { background: var(--c-surface); border: 1px solid var(--c-line); border-radius: 14px; padding: 18px; }
+.feature-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--c-brand-soft);
+  display: grid; place-items: center;
+  margin-bottom: 12px;
+  padding: 8px;
+}
+.feature-icon .glyph-art { width: 100%; height: 100%; }
+.feature h3 { margin: 0 0 6px; font-size: 15px; font-family: var(--f-display); }
+.feature p { margin: 0; font-size: 13px; color: var(--c-muted); line-height: 1.55; }
+
+.site-foot {
+  border-top: 1px solid var(--c-line);
+  padding: 18px 26px;
+  display: flex; align-items: center; gap: 14px;
+  color: var(--c-muted);
+  font-size: 12px;
+  background: var(--c-surface);
+}
+
+/* ---------- favicon ---------- */
+
+.favicons { display: flex; align-items: flex-end; gap: 22px; padding: 22px 18px; flex-wrap: wrap; }
+.favicon { text-align: center; color: var(--ui-dim); font-size: 10px; margin: 0; }
+.favicon-box { display: grid; place-items: center; border-radius: 22%; padding: 12%; }
+.favicon figcaption { margin-top: 6px; }
+.favicon-box .glyph-art { width: 100%; height: 100%; }
+
+.tab-sim {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--ui-panel-2);
+  border: 1px solid var(--ui-line);
+  border-radius: 8px 8px 0 0;
+  padding: 7px 12px;
+  font-size: 12px;
+  color: var(--ui-dim);
+  max-width: 230px;
+  align-self: flex-end;
+}
+.tab-icon { width: 16px; height: 16px; border-radius: 4px; flex: 0 0 auto; padding: 1px; }
+.tab-sim span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

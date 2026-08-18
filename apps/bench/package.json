@@ -1,0 +1,21 @@
+{
+  "name": "@nomai/bench",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bancada de inspeção do pipeline — ferramenta de desenvolvimento, não é o produto",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nomai/color": "workspace:*",
+    "@nomai/svg-kit": "workspace:*",
+    "@nomai/theme": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^7.1.14"
+  }
+}

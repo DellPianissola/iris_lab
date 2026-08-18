@@ -1,0 +1,9 @@
+packages:
+  - 'packages/*'
+  - 'apps/*'
+
+# O pnpm bloqueia script de instalação por padrão. O do esbuild coloca o binário nativo da
+# plataforma — sem ele o vitest não roda. Toda entrada aqui é uma decisão consciente de
+# deixar um pacote executar código na instalação.
+allowBuilds:
+  esbuild: true
