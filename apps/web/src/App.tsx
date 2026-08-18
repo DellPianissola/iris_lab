@@ -19,7 +19,7 @@ const MODE_OPTIONS = [
 ]
 
 export function App() {
-  const { mode, palette, tokens, marks, mark, markIndex, controls, saved, actions } = useBrandLab()
+  const { mode, palette, tokens, marks, mark, selectedId, controls, saved, actions } = useBrandLab()
 
   useKeyboardShortcut('r', actions.randomize)
 
@@ -69,7 +69,7 @@ export function App() {
         <SymbolPanel
           marks={marks}
           mark={mark}
-          markIndex={markIndex}
+          selectedId={selectedId}
           controls={controls}
           onSelect={actions.selectMark}
           onAdd={actions.addMark}
@@ -98,25 +98,27 @@ export function App() {
           </span>
         </div>
 
-        <section className="card" style={previewStyle}>
-          <h2 className="card-cap">Logo em contexto</h2>
-          <LockupGrid tokens={tokens} mark={mark} controls={controls} glyphColor={glyphColor} />
-        </section>
+        <div className="preview-scope" style={previewStyle}>
+          <section className="card">
+            <h2 className="card-cap">Logo em contexto</h2>
+            <LockupGrid tokens={tokens} mark={mark} controls={controls} glyphColor={glyphColor} />
+          </section>
 
-        <section className="card" style={previewStyle}>
-          <h2 className="card-cap">Site</h2>
-          <SiteMockup tokens={tokens} mark={mark} controls={controls} />
-        </section>
+          <section className="card">
+            <h2 className="card-cap">Site</h2>
+            <SiteMockup tokens={tokens} mark={mark} controls={controls} />
+          </section>
 
-        <section className="card" style={previewStyle}>
-          <h2 className="card-cap">Favicon / ícone de app</h2>
-          <FaviconPreview
-            tokens={tokens}
-            mark={mark}
-            wordmark={controls.wordmark}
-            plate={controls.plate}
-          />
-        </section>
+          <section className="card">
+            <h2 className="card-cap">Favicon / ícone de app</h2>
+            <FaviconPreview
+              tokens={tokens}
+              mark={mark}
+              wordmark={controls.wordmark}
+              plate={controls.plate}
+            />
+          </section>
+        </div>
       </main>
     </div>
   )

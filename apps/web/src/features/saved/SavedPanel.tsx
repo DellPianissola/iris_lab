@@ -24,8 +24,13 @@ export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedP
     const anchor = document.createElement('a')
     anchor.href = url
     anchor.download = EXPORT_FILENAME
+
+    // O âncora precisa estar no documento em alguns navegadores, e revogar a URL na linha
+    // seguinte ao clique corre com o download, que começa de forma assíncrona.
+    document.body.append(anchor)
     anchor.click()
-    URL.revokeObjectURL(url)
+    anchor.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 0)
   }
 
   return (

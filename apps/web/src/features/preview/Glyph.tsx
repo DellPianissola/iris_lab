@@ -2,16 +2,18 @@ import type { Mark } from '../../marks/types'
 
 interface GlyphProps {
   readonly mark: Mark | undefined
+  /** Mostra o arquivo como ele veio, ignorando o modo — usado na grade de escolha. */
+  readonly forceOriginal?: boolean
 }
 
 /**
- * Desenha o símbolo no modo que o classificador escolheu. `theme` usa o markup com os tons
- * injetados; `original` usa o arquivo como veio. Bitmap com recorte vira máscara CSS.
+ * Bitmap não tem como receber tom injetado, então no modo `theme` ele vira silhueta por
+ * máscara CSS — o que só funciona porque o classificador já garantiu que há recorte.
  */
-export function Glyph({ mark }: GlyphProps) {
+export function Glyph({ mark, forceOriginal = false }: GlyphProps) {
   if (!mark) return null
 
-  const followsTheme = mark.mode === 'theme'
+  const followsTheme = !forceOriginal && mark.mode === 'theme'
 
   if (mark.type === 'svg') {
     return (

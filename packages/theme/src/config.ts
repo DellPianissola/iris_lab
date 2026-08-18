@@ -31,10 +31,10 @@ export const softMix = { light: 0.13, dark: 0.22 } as const
 /** Ajuste inicial da marca antes da busca por contraste, para não começar do zero. */
 export const inkMix = { light: 0.12, dark: 0.35 } as const
 
-/** Busca da versão legível de uma cor: passo de luminosidade e teto de iterações. */
+// Passo pequeno acha o tom mais próximo que ainda passa, em vez de escurecer demais; o
+// teto existe porque fundo de luminância intermediária pode não ter solução nenhuma.
 export const contrastSearch = { lightnessStep: 0.02, maxSteps: 60 } as const
 
-/** Geração do acento a partir da marca. */
 export const accentHarmony = {
   /** Giro no círculo cromático — perto do complementar, sem cair nele. */
   rotationDeg: 165,
@@ -45,12 +45,10 @@ export const accentHarmony = {
   lightness: { light: 0.52, dark: 0.62 },
 } as const
 
-/** Sorteio de paleta. */
 export const randomRanges = {
   saturation: { min: 0.45, spread: 0.45 },
   lightness: { light: { min: 0.36, spread: 0.2 }, dark: { min: 0.52, spread: 0.14 } },
   accentRotation: { analogous: { min: 30, spread: 25 }, complementary: { min: 150, spread: 60 } },
 } as const
 
-/** Abaixo desta luminância relativa o fundo conta como escuro. */
 export const darkBackgroundThreshold = 0.35

@@ -1,3 +1,4 @@
+import type { MarkMode } from '@nomai/svg-kit'
 import {
   brandPalette,
   buildTokens,
@@ -9,9 +10,10 @@ import {
   type ThemeMode,
 } from '@nomai/theme'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Mark, MarkModeChoice } from './types'
 import { builtinMarks } from '../marks/load'
+import type { Mark } from '../marks/types'
 import { controlDefaults, STORAGE_KEY } from './config'
+import { markById, selectionAfterRemoval } from './selection'
 
 export interface SavedCombo {
   readonly id: string
@@ -33,21 +35,29 @@ export interface Controls {
 /**
  * Todo o estado da ferramenta num lugar só. Os componentes recebem valores e ações —
  * nenhum deles guarda estado próprio nem calcula token.
+ *
+ * O símbolo selecionado é identificado por **id**, não por posição: índice e lista são dois
+ * estados que podem discordar, e mantê-los em acordo exigia acoplar os dois `setState`.
  */
 export function useBrandLab() {
   const [mode, setMode] = useState<ThemeMode>('light')
   const [palette, setPalette] = useState<Palette>(() => brandPalette('light'))
   const [marks, setMarks] = useState<readonly Mark[]>(builtinMarks)
-  const [markIndex, setMarkIndex] = useState(0)
+  const [selectedId, setSelectedId] = useState(() => builtinMarks[0]?.id ?? '')
   const [controls, setControls] = useState<Controls>({ ...controlDefaults })
   const [saved, setSaved] = useState<readonly SavedCombo[]>(loadSaved)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
+    } catch {
+      // Storage cheio ou desabilitado. Perder a persistência é aceitável; travar a
+      // ferramenta por causa dela não é.
+    }
   }, [saved])
 
   const tokens = useMemo(() => buildTokens(palette), [palette])
-  const mark = marks[markIndex] ?? marks[0]
+  const mark = useMemo(() => markById(marks, selectedId), [marks, selectedId])
 
   const setColor = useCallback((key: PaletteKey, value: string) => {
     setPalette((current) => ({ ...current, [key]: value }))
@@ -73,28 +83,24 @@ export function useBrandLab() {
 
   const randomize = useCallback(() => setPalette(randomPalette(mode)), [mode])
 
+  // Updater funcional porque o upload de vários arquivos chama isto em sequência, sem
+  // re-render entre as chamadas. Selecionar por id não depende da lista, então os dois
+  // `setState` ficam independentes.
   const addMark = useCallback((next: Mark) => {
-    setMarks((current) => {
-      setMarkIndex(current.length)
-      return [...current, next]
-    })
+    setMarks((current) => [...current, next])
+    setSelectedId(next.id)
   }, [])
 
-  const removeMark = useCallback((id: string) => {
-    setMarks((current) => {
-      const index = current.findIndex((item) => item.id === id)
-      if (index < 0) return current
+  const removeMark = useCallback(
+    (id: string) => {
+      setSelectedId(selectionAfterRemoval(marks, id, selectedId))
+      setMarks((current) => current.filter((item) => item.id !== id))
+    },
+    [marks, selectedId],
+  )
 
-      const next = current.filter((item) => item.id !== id)
-      setMarkIndex((selected) => (selected >= index && selected > 0 ? selected - 1 : selected))
-      return next
-    })
-  }, [])
-
-  const setMarkMode = useCallback((id: string, next: MarkModeChoice) => {
-    setMarks((current) =>
-      current.map((item) => (item.id === id ? { ...item, mode: next } : item)),
-    )
+  const setMarkMode = useCallback((id: string, next: MarkMode) => {
+    setMarks((current) => current.map((item) => (item.id === id ? { ...item, mode: next } : item)))
   }, [])
 
   const updateControl = useCallback(<K extends keyof Controls>(key: K, value: Controls[K]) => {
@@ -115,7 +121,7 @@ export function useBrandLab() {
     tokens,
     marks,
     mark,
-    markIndex,
+    selectedId,
     controls,
     saved,
     actions: {
@@ -124,7 +130,7 @@ export function useBrandLab() {
       switchMode,
       harmonize,
       randomize,
-      selectMark: setMarkIndex,
+      selectMark: setSelectedId,
       addMark,
       removeMark,
       setMarkMode,

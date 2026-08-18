@@ -6,7 +6,6 @@ export type Palette = Record<PaletteKey, string>
 
 export type ThemeMode = 'light' | 'dark'
 
-/** O que o mockup consome: os sete editáveis mais os quatro calculados. */
 export interface ThemeTokens extends Palette {
   /** Cor de texto legível em cima da marca — nunca branco no verde neon. */
   readonly onBrand: string

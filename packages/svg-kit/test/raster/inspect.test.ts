@@ -8,30 +8,30 @@ describe('inspectRasterPixels', () => {
   it('detecta PNG sem transparência', () => {
     const data = pixels([10, 10, 10, 255, TOTAL])
 
-    expect(inspectRasterPixels(data, TOTAL).opaque).toBe(true)
+    expect(inspectRasterPixels(data).opaque).toBe(true)
   })
 
   it('detecta recorte transparente', () => {
     const data = pixels([0, 0, 0, 0, 50], [10, 10, 10, 255, 50])
 
-    expect(inspectRasterPixels(data, TOTAL).opaque).toBe(false)
+    expect(inspectRasterPixels(data).opaque).toBe(false)
   })
 
   it('agrupa tons vizinhos numa cor só, para ruído de compressão não virar cor nova', () => {
     const data = pixels([0, 0, 0, 0, 50], [10, 10, 10, 255, 25], [12, 12, 12, 255, 25])
 
-    expect(inspectRasterPixels(data, TOTAL).colors).toHaveLength(1)
+    expect(inspectRasterPixels(data).colors).toHaveLength(1)
   })
 
   it('descarta cor que ocupa área insignificante', () => {
     const data = pixels([0, 0, 0, 0, 50], [10, 10, 10, 255, 49], [255, 0, 0, 255, 1])
 
-    expect(inspectRasterPixels(data, TOTAL).colors).toHaveLength(1)
+    expect(inspectRasterPixels(data).colors).toHaveLength(1)
   })
 
   it('ordena as cores por dominância', () => {
     const data = pixels([0, 0, 0, 0, 40], [255, 0, 0, 255, 40], [0, 0, 255, 255, 20])
-    const { colors } = inspectRasterPixels(data, TOTAL)
+    const { colors } = inspectRasterPixels(data)
 
     expect(colors).toHaveLength(2)
     expect(colors[0]).toMatch(/^#f/)

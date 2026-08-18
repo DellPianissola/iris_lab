@@ -1,13 +1,24 @@
-import { createDomFromGlobals, importSvg, inspectRasterPixels, classifyRaster } from '@nomai/svg-kit'
+import { classifyRaster, createDomFromGlobals, importSvg } from '@nomai/svg-kit'
 import { inspectRasterImage } from '@nomai/svg-kit/browser'
+import { uploadLimits } from '../state/config'
 import type { Mark, RasterMark, SvgMark } from './types'
 
 /**
  * Entrada de símbolos. Os embutidos passam pelo **mesmo pipeline** que os enviados — se a
  * classificação quebrar, quebra para todos, não só para o arquivo do cliente.
+ *
+ * Nada aqui lança: toda falha vira um `MarkImport` com motivo, para que a interface sempre
+ * tenha o que dizer. Promessa rejeitada aqui virava tela parada, porque o chamador não
+ * tinha como distinguir "não deu" de "ainda processando".
  */
 
 const dom = createDomFromGlobals()
+
+export type ImportFailure = 'too-large' | 'unreadable'
+
+export type MarkImport =
+  | { readonly ok: true; readonly mark: Mark }
+  | { readonly ok: false; readonly reason: ImportFailure }
 
 const builtinModules = import.meta.glob('../assets/marks/*.svg', {
   query: '?raw',
@@ -45,17 +56,26 @@ function toSvgMark(markup: string, name: string, builtin: boolean): SvgMark | nu
   }
 }
 
-export async function readMarkFile(file: File): Promise<Mark | null> {
+export async function readMarkFile(file: File): Promise<MarkImport> {
+  // Sem servidor, o único prejudicado por um arquivo gigante é quem enviou — mas a aba
+  // congela sem explicação enquanto o pipeline percorre dezenas de milhares de nós.
+  if (file.size > uploadLimits.maxBytes) return { ok: false, reason: 'too-large' }
+
   const isSvg = file.type.includes('svg') || /\.svg$/i.test(file.name)
-  return isSvg ? readSvgFile(file) : readRasterFile(file)
+  const mark = isSvg ? await readSvgFile(file) : await readRasterFile(file)
+
+  return mark ? { ok: true, mark } : { ok: false, reason: 'unreadable' }
 }
 
 async function readSvgFile(file: File): Promise<Mark | null> {
-  return toSvgMark(await file.text(), file.name, false)
+  const text = await readAsText(file)
+  return text === null ? null : toSvgMark(text, file.name, false)
 }
 
 async function readRasterFile(file: File): Promise<RasterMark | null> {
   const url = await readAsDataUrl(file)
+  if (url === null) return null
+
   const image = await loadImage(url)
   if (!image) return null
 
@@ -76,12 +96,21 @@ async function readRasterFile(file: File): Promise<RasterMark | null> {
   }
 }
 
-function readAsDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
+function readAsText(file: File): Promise<string | null> {
+  return readFile((reader) => reader.readAsText(file))
+}
+
+function readAsDataUrl(file: File): Promise<string | null> {
+  return readFile((reader) => reader.readAsDataURL(file))
+}
+
+function readFile(start: (reader: FileReader) => void): Promise<string | null> {
+  return new Promise((resolve) => {
     const reader = new FileReader()
     reader.addEventListener('load', () => resolve(String(reader.result)))
-    reader.addEventListener('error', () => reject(new Error('não consegui ler o arquivo')))
-    reader.readAsDataURL(file)
+    reader.addEventListener('error', () => resolve(null))
+    reader.addEventListener('abort', () => resolve(null))
+    start(reader)
   })
 }
 
@@ -93,6 +122,3 @@ function loadImage(url: string): Promise<HTMLImageElement | null> {
     image.src = url
   })
 }
-
-/** Reexportado para quem quiser inspecionar pixels sem passar por `<canvas>`. */
-export { inspectRasterPixels }

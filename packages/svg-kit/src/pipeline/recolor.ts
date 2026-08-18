@@ -5,9 +5,6 @@ import type { SvgAnalysis } from '../types'
 import { findImplicitFillShapes } from './analyze'
 
 /**
- * Etapa 4 — marca cada elemento com a classe do seu tom e injeta a regra dentro do próprio
- * SVG.
- *
  * O `!important` da folha injetada vence atributo de apresentação, classe interna e style
  * inline sem important — que é o motivo de a troca ser feita por injeção e não reescrevendo
  * o arquivo. Regex sobre o markup quebraria nos três casos.

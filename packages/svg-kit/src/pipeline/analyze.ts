@@ -3,8 +3,8 @@ import { COLOR_PROPS, IMPLICIT_FILL, SHAPE_SELECTOR } from '../svg-spec'
 import type { MarkKind, MarkWarning, SvgAnalysis } from '../types'
 
 /**
- * Etapa 3 — conta as cores que o desenho realmente pinta e diz o que impede recolorir.
- * Roda depois de `normalizeSvg`, quando toda cor já vive em atributo.
+ * Depende de `normalizeSvg` ter rodado antes: só então toda cor mora em atributo, e ler
+ * atributo basta para contar.
  */
 export function analyzeSvg(svg: SVGElement): SvgAnalysis {
   const counts = countDeclaredColors(svg)

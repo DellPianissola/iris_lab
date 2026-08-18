@@ -35,3 +35,11 @@ export const faviconSizes = [64, 32, 16] as const
 export const WORDMARK_SPLIT = '|'
 
 export const STORAGE_KEY = 'iris.saved-palettes.v1'
+
+/** Teto do upload. Acima disso o pipeline trava a aba antes de terminar. */
+export const uploadLimits = {
+  maxBytes: 4 * 1024 * 1024,
+  get label(): string {
+    return `${Math.round(uploadLimits.maxBytes / 1024 / 1024)} MB`
+  },
+} as const

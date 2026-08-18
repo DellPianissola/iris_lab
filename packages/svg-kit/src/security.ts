@@ -29,7 +29,6 @@ export const SAFE_HREF = /^(#|data:image\/(png|jpeg|gif|webp);)/i
 /** `@import` dentro do `<style>` interno buscaria CSS de fora do navegador do usuário. */
 export const IMPORT_RULE = /@import[^;]*;?/gi
 
-/** Handler de evento vive em atributo que começa com `on`. */
 export const EVENT_HANDLER_PREFIX = 'on'
 
 export const HREF_ATTRIBUTES: ReadonlySet<string> = new Set(['href', 'xlink:href'])

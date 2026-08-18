@@ -25,7 +25,8 @@ export const recolorConfig = {
 } as const
 
 export const cascadeConfig = {
-  /** Pesos da especificidade achatada em número: id > classe > tipo. */
+  // Achatar (id, classe, tipo) num número só permite comparar com `>`; as ordens de
+  // grandeza garantem que nenhuma soma de classes alcance um id.
   idWeight: 10_000,
   classWeight: 100,
 } as const

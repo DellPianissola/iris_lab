@@ -70,6 +70,7 @@ function renderBackdropSwitch(): void {
     button.setAttribute('aria-pressed', String(option.id === state.backdrop))
     button.addEventListener('click', () => {
       state.backdrop = option.id
+      renderStructure()
       render()
     })
     el.backdrop.append(button)
@@ -121,12 +122,16 @@ function renderArt(target: HTMLElement, markup: string, themed: boolean): void {
   target.innerHTML = markup
 }
 
+/** Só o que reflete a seleção — remontar isto a cada arraste de cor destruiria o foco. */
+function renderStructure(): void {
+  renderSampleList()
+  renderBackdropSwitch()
+}
+
 function render(): void {
   const result = importSvg(state.source, dom)
 
   renderReport(result)
-  renderSampleList()
-  renderBackdropSwitch()
 
   if (!result) {
     el.artOriginal.innerHTML = ''
@@ -147,6 +152,7 @@ function render(): void {
 function select(markup: string, label: string): void {
   state.source = markup
   state.label = label
+  renderStructure()
   render()
 }
 
@@ -200,4 +206,5 @@ function bindToneInputs(): void {
 
 bindFileInput()
 bindToneInputs()
+renderStructure()
 render()

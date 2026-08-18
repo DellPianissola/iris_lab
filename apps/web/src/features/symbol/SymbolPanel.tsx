@@ -1,19 +1,24 @@
 import type { MarkMode } from '@nomai/svg-kit'
 import { useState, type DragEvent } from 'react'
 import { Group, RangeField } from '../../components/Field'
+import { readMarkFile, type ImportFailure } from '../../marks/load'
 import type { Mark } from '../../marks/types'
-import { readMarkFile } from '../../marks/load'
-import { controlRanges } from '../../state/config'
+import { controlRanges, uploadLimits } from '../../state/config'
 import type { Controls } from '../../state/useBrandLab'
 import { Glyph } from '../preview/Glyph'
 import { SymbolReport } from './SymbolReport'
 
+const FAILURE_TEXT: Readonly<Record<ImportFailure, (name: string) => string>> = {
+  'too-large': (name) => `“${name}” passa de ${uploadLimits.label}. Exporte um arquivo menor.`,
+  unreadable: (name) => `Não consegui ler “${name}”. O arquivo parece corrompido.`,
+}
+
 interface SymbolPanelProps {
   readonly marks: readonly Mark[]
   readonly mark: Mark | undefined
-  readonly markIndex: number
+  readonly selectedId: string
   readonly controls: Controls
-  readonly onSelect: (index: number) => void
+  readonly onSelect: (id: string) => void
   readonly onAdd: (mark: Mark) => void
   readonly onRemove: (id: string) => void
   readonly onModeChange: (id: string, mode: MarkMode) => void
@@ -23,7 +28,7 @@ interface SymbolPanelProps {
 export function SymbolPanel({
   marks,
   mark,
-  markIndex,
+  selectedId,
   controls,
   onSelect,
   onAdd,
@@ -39,9 +44,9 @@ export function SymbolPanel({
     setError(null)
 
     for (const file of Array.from(files)) {
-      const next = await readMarkFile(file)
-      if (next) onAdd(next)
-      else setError(`Não consegui ler “${file.name}”. O arquivo parece corrompido.`)
+      const result = await readMarkFile(file)
+      if (result.ok) onAdd(result.mark)
+      else setError(FAILURE_TEXT[result.reason](file.name))
     }
   }
 
@@ -78,16 +83,16 @@ export function SymbolPanel({
       {error && <p className="error">{error}</p>}
 
       <div className="marks">
-        {marks.map((item, index) => (
+        {marks.map((item) => (
           <div
             key={item.id}
-            className={index === markIndex ? 'mark selected' : 'mark'}
-            onClick={() => onSelect(index)}
+            className={item.id === selectedId ? 'mark selected' : 'mark'}
+            onClick={() => onSelect(item.id)}
             role="button"
             tabIndex={0}
-            onKeyDown={(event) => { if (event.key === 'Enter') onSelect(index) }}
+            onKeyDown={(event) => { if (event.key === 'Enter') onSelect(item.id) }}
           >
-            <Glyph mark={{ ...item, mode: 'original' }} />
+            <Glyph mark={item} forceOriginal />
             {!item.builtin && (
               <button
                 type="button"

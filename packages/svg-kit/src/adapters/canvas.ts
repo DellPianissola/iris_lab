@@ -18,7 +18,7 @@ export function inspectRasterImage(image: CanvasImageSource): RasterInspection {
 
   try {
     const { data } = context.getImageData(0, 0, side, side)
-    return inspectRasterPixels(data, side * side)
+    return inspectRasterPixels(data)
   } catch {
     // Canvas contaminado por imagem de outra origem. Não deveria acontecer com `data:`
     // vindo de FileReader, mas falhar aberto é melhor do que quebrar o import.

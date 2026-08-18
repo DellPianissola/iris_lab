@@ -12,14 +12,15 @@ export interface RasterInspection {
   readonly colors: readonly string[]
 }
 
-export function inspectRasterPixels(
-  data: ArrayLike<number>,
-  pixelCount: number,
-): RasterInspection {
+const CHANNELS_PER_PIXEL = 4
+
+/** `data` é RGBA achatado; a contagem de pixels sai dele para não haver duas versões dela. */
+export function inspectRasterPixels(data: ArrayLike<number>): RasterInspection {
+  const pixelCount = Math.floor(data.length / CHANNELS_PER_PIXEL)
   const buckets = new Map<string, number>()
   let transparent = 0
 
-  for (let i = 0; i < data.length; i += 4) {
+  for (let i = 0; i < data.length; i += CHANNELS_PER_PIXEL) {
     const alpha = data[i + 3] ?? 0
     if (alpha < rasterConfig.alphaFloor) {
       transparent += 1

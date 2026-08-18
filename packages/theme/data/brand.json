@@ -18,9 +18,5 @@
     "text": "#e9f2ec",
     "muted": "#94a89b",
     "line": "#222d26"
-  },
-  "notes": {
-    "brandAsText": "#0e813c",
-    "neverWhiteOnBrand": "branco sobre #16db65 dá 1.85:1; quase-preto dá 11.35:1"
   }
 }

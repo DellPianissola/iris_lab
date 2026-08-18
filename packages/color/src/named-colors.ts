@@ -1,7 +1,6 @@
 /**
- * Tabela de cores nomeadas do CSS. É dado de especificação, não configuração: a lista é
- * fechada pela spec e ninguém a ajusta. Fica em arquivo próprio só para não afogar o
- * parser.
+ * Dado de especificação, não configuração: a lista é fechada pela spec e ninguém a ajusta.
+ * Fica em arquivo próprio só para não afogar o parser.
  */
 
 export const NAMED_COLORS: Readonly<Record<string, string>> = {

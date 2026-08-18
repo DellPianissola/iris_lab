@@ -1,5 +1,4 @@
 /**
- * Conversões entre representações de cor. Aritmética pura, sem opinião de produto.
  * Saturação e luminosidade circulam sempre em 0..1 — converter para 0..100 é problema de
  * quem exibe.
  */
@@ -72,7 +71,8 @@ function huePlane(hue: number, chroma: number, second: number): [number, number,
   return [chroma, 0, second]
 }
 
-/** Interpola linearmente em RGB. `amount` 0 devolve `from`; 1 devolve `to`. */
+/** Interpolação linear em RGB, não em espaço perceptual: barata e previsível o bastante
+ *  para mistura de fundo, onde o resultado é conferido no olho logo em seguida. */
 export function mix(from: string, to: string, amount: number): string {
   const a = hexToRgb(from)
   const b = hexToRgb(to)

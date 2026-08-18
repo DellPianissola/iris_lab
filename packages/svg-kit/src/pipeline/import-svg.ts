@@ -6,8 +6,6 @@ import { buildThemedSvg } from './recolor'
 import { sanitizeSvg } from './sanitize'
 
 /**
- * Sanitizar → normalizar → analisar → recolorir.
- *
  * Devolve `null` quando o arquivo não é um SVG legível. A interface nunca pergunta ao
  * usuário o que fazer com o resultado: `mode` já vem na posição certa, e o interruptor na
  * tela existe só para ele discordar.

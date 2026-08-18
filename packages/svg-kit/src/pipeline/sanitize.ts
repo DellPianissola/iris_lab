@@ -7,12 +7,13 @@ import {
   SAFE_HREF,
 } from '../security'
 
-/** Etapa 1 — arquivo enviado por usuário passa por aqui antes de encostar no documento. */
+/** Precisa rodar antes de qualquer outra etapa: nada de arquivo do usuário encosta no
+ *  documento sem passar por aqui. */
 export function sanitizeSvg(text: string, dom: SvgDom): SVGElement | null {
   const doc = dom.parse(text)
   if (doc.querySelector('parsererror')) return null
 
-  const svg = doc.querySelector('svg')
+  const svg = doc.querySelector<SVGElement>('svg')
   if (!svg) return null
 
   svg.querySelectorAll(DANGEROUS_ELEMENTS).forEach((node) => node.remove())
@@ -24,7 +25,7 @@ export function sanitizeSvg(text: string, dom: SvgDom): SVGElement | null {
   svg.removeAttribute('width')
   svg.removeAttribute('height')
 
-  return svg as unknown as SVGElement
+  return svg
 }
 
 function stripImports(style: Element): void {
