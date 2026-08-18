@@ -1,5 +1,14 @@
-export { PALETTE_KEYS } from './types'
-export type { FontChoice, Palette, PaletteKey, Preset, ThemeMode, ThemeTokens } from './types'
+export { PALETTE_KEYS, PRESET_IDS, FONT_IDS } from './types'
+export type {
+  FontChoice,
+  FontId,
+  Palette,
+  PaletteKey,
+  Preset,
+  PresetId,
+  ThemeMode,
+  ThemeTokens,
+} from './types'
 
 export {
   CONTRAST_TARGETS,

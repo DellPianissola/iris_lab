@@ -1,15 +1,6 @@
 import { PALETTE_KEYS, type Palette, type PaletteKey } from '@nomai/theme'
 import { Group } from '../../components/Field'
-
-const LABELS: Readonly<Record<PaletteKey, string>> = {
-  brand: 'Principal',
-  accent: 'Acento',
-  bg: 'Fundo',
-  surface: 'Superfície',
-  text: 'Texto',
-  muted: 'Texto suave',
-  line: 'Bordas',
-}
+import { useI18n } from '../../i18n'
 
 interface PalettePanelProps {
   readonly palette: Palette
@@ -26,20 +17,25 @@ export function PalettePanel({
   onHarmonize,
   onInvert,
 }: PalettePanelProps) {
+  const { t } = useI18n()
+
   return (
-    <Group title="Paleta">
+    <Group title={t.palette.title}>
       {PALETTE_KEYS.map((key) => (
-        <ColorRow key={key} name={LABELS[key]} value={palette[key]} onChange={(v) => onColorChange(key, v)} />
+        <ColorRow
+          key={key}
+          name={t.palette.tokens[key]}
+          value={palette[key]}
+          onChange={(value) => onColorChange(key, value)}
+        />
       ))}
 
       <div className="button-row">
-        <button type="button" onClick={onRandomize}>🎲 Aleatório</button>
-        <button type="button" onClick={onHarmonize}>✨ Derivar do brand</button>
-        <button type="button" onClick={onInvert}>↔ Inverter claro/escuro</button>
+        <button type="button" onClick={onRandomize}>{t.palette.randomize}</button>
+        <button type="button" onClick={onHarmonize}>{t.palette.harmonize}</button>
+        <button type="button" onClick={onInvert}>{t.palette.invert}</button>
       </div>
-      <p className="note">
-        “Derivar do brand” recalcula fundo, superfície, texto e acento a partir da cor principal.
-      </p>
+      <p className="note">{t.palette.note}</p>
     </Group>
   )
 }
@@ -54,13 +50,19 @@ function ColorRow({ name, value, onChange }: ColorRowProps) {
   return (
     <div className="color-row">
       <span className="swatch">
-        <input type="color" value={value} onChange={(event) => onChange(event.target.value)} />
+        <input
+          type="color"
+          aria-label={name}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
       </span>
       <label>{name}</label>
       <input
         className="hex"
         value={value.toUpperCase()}
         spellCheck={false}
+        aria-label={name}
         onChange={(event) => {
           const next = normalizeHexInput(event.target.value)
           if (next) onChange(next)

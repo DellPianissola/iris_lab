@@ -1,6 +1,8 @@
 import { fontStack, tokensToCssVars } from '@nomai/theme'
 import { useEffect, useMemo, type CSSProperties } from 'react'
 import { Segmented } from './components/Field'
+import { LocalePicker } from './components/LocalePicker'
+import { useI18n } from './i18n'
 import { ContrastPanel } from './features/contrast/ContrastPanel'
 import { PalettePanel } from './features/palette/PalettePanel'
 import { PresetGrid } from './features/palette/PresetGrid'
@@ -13,15 +15,18 @@ import { TypePanel } from './features/typography/TypePanel'
 import { lockupScale } from './state/config'
 import { useBrandLab } from './state/useBrandLab'
 
-const MODE_OPTIONS = [
-  { id: 'light' as const, label: '☀︎ Claro' },
-  { id: 'dark' as const, label: '☾ Escuro' },
-]
+const RANDOMIZE_KEY = 'r'
 
 export function App() {
   const { mode, palette, tokens, marks, mark, selectedId, controls, saved, actions } = useBrandLab()
+  const { t } = useI18n()
 
-  useKeyboardShortcut('r', actions.randomize)
+  const modeOptions = [
+    { id: 'light' as const, label: t.app.modes.light },
+    { id: 'dark' as const, label: t.app.modes.dark },
+  ]
+
+  useKeyboardShortcut(RANDOMIZE_KEY, actions.randomize)
 
   // Os tokens viram custom properties num nó só; nada abaixo recalcula cor.
   const previewStyle = useMemo(() => {
@@ -50,10 +55,7 @@ export function App() {
       <aside className="panel">
         <header className="panel-head">
           <h1>Íris</h1>
-          <p>
-            Suba seu logo, troque as cores e veja tudo aplicado num site de verdade. Nada é
-            enviado pra lugar nenhum — roda 100% no seu navegador.
-          </p>
+          <p>{t.app.tagline}</p>
         </header>
 
         <PalettePanel
@@ -91,26 +93,25 @@ export function App() {
 
       <main className="stage">
         <div className="stage-bar">
-          <Segmented value={mode} options={MODE_OPTIONS} onChange={actions.switchMode} />
+          <Segmented value={mode} options={modeOptions} onChange={actions.switchMode} />
           <span className="spacer" />
-          <span className="hint">
-            Dica: aperte <code>R</code> pra sortear uma paleta
-          </span>
+          <span className="hint">{t.app.shortcutHint(RANDOMIZE_KEY.toUpperCase())}</span>
+          <LocalePicker />
         </div>
 
         <div className="preview-scope" style={previewStyle}>
           <section className="card">
-            <h2 className="card-cap">Logo em contexto</h2>
+            <h2 className="card-cap">{t.app.cards.lockups}</h2>
             <LockupGrid tokens={tokens} mark={mark} controls={controls} glyphColor={glyphColor} />
           </section>
 
           <section className="card">
-            <h2 className="card-cap">Site</h2>
+            <h2 className="card-cap">{t.app.cards.site}</h2>
             <SiteMockup tokens={tokens} mark={mark} controls={controls} />
           </section>
 
           <section className="card">
-            <h2 className="card-cap">Favicon / ícone de app</h2>
+            <h2 className="card-cap">{t.app.cards.favicon}</h2>
             <FaviconPreview
               tokens={tokens}
               mark={mark}

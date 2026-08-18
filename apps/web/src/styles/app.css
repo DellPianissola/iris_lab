@@ -256,6 +256,28 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .stage-bar .segmented { margin-top: 0; width: 200px; }
 .hint { color: var(--ui-dim); font-size: 12px; }
 
+.locale-picker select {
+  background: var(--ui-panel);
+  border: 1px solid var(--ui-line);
+  color: var(--ui-text);
+  border-radius: 8px;
+  padding: 6px 9px;
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.locale-picker select:hover { border-color: var(--ui-hover); }
+
+/* Rótulo que só o leitor de tela precisa: o idioma atual já aparece no próprio select. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* Um nó só carrega as custom properties do tema, em vez de uma cópia por cartão. */
 .preview-scope { display: contents; }
 

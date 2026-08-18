@@ -16,15 +16,41 @@ export interface ThemeTokens extends Palette {
   readonly brandInk: string
 }
 
+/**
+ * Os ids ficam declarados em código, e não inferidos do JSON, para virarem união literal:
+ * é o que permite ao app tipar a tradução como `Record<PresetId, string>` e transformar
+ * preset sem tradução em erro de compilação. O `catalog.ts` confere que o JSON traz
+ * exatamente estes.
+ */
+export const PRESET_IDS = [
+  'iris-framboesa',
+  'iris-indigo',
+  'iris-ambar',
+  'iris-escuro',
+  'indigo-puro',
+  'floresta',
+  'carvao-neon',
+  'terracota',
+  'tinta-coral',
+  'ciano-noturno',
+  'malva-suave',
+  'vermelho-seco',
+] as const
+export type PresetId = (typeof PRESET_IDS)[number]
+
+export const FONT_IDS = ['grotesk', 'serif', 'mono', 'geometric', 'condensed'] as const
+export type FontId = (typeof FONT_IDS)[number]
+
 export interface Preset {
-  readonly id: string
+  readonly id: PresetId
+  /** Rótulo de desenvolvimento; o que o cliente lê vem do dicionário do app, pelo id. */
   readonly name: string
   readonly mode: ThemeMode
   readonly colors: Palette
 }
 
 export interface FontChoice {
-  readonly id: string
+  readonly id: FontId
   readonly name: string
   readonly stack: string
 }

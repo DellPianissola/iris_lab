@@ -5,6 +5,7 @@ import {
   deriveNeutrals,
   harmonizeAccent,
   randomPalette,
+  type FontId,
   type Palette,
   type PaletteKey,
   type ThemeMode,
@@ -26,8 +27,8 @@ export interface Controls {
   markSize: number
   markRadius: number
   wordmark: string
-  displayFont: string
-  bodyFont: string
+  displayFont: FontId
+  bodyFont: FontId
   tracking: number
   buttonRadius: number
 }

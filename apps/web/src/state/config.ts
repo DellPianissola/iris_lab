@@ -1,4 +1,4 @@
-import { fonts } from '@nomai/theme'
+import { FONT_IDS, type FontId } from '@nomai/theme'
 
 /** Padrões e limites dos controles. Nenhum literal solto nos componentes. */
 
@@ -8,8 +8,8 @@ export const controlDefaults = {
   markRadius: 26,
   tracking: -1,
   buttonRadius: 10,
-  displayFont: fonts[0]?.id ?? 'grotesk',
-  bodyFont: fonts[0]?.id ?? 'grotesk',
+  displayFont: FONT_IDS[0] satisfies FontId,
+  bodyFont: FONT_IDS[0] satisfies FontId,
   plate: false,
 } as const
 
@@ -39,7 +39,4 @@ export const STORAGE_KEY = 'iris.saved-palettes.v1'
 /** Teto do upload. Acima disso o pipeline trava a aba antes de terminar. */
 export const uploadLimits = {
   maxBytes: 4 * 1024 * 1024,
-  get label(): string {
-    return `${Math.round(uploadLimits.maxBytes / 1024 / 1024)} MB`
-  },
 } as const

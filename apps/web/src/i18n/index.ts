@@ -1,0 +1,5 @@
+export { I18nProvider, useI18n, detectLocale } from './I18nProvider'
+export { LOCALES, DEFAULT_LOCALE, isLocale, matchLocale } from './types'
+export type { Locale } from './types'
+export type { Dictionary } from './locales/pt-BR'
+export type { Formatters } from './format'

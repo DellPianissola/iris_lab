@@ -1,17 +1,13 @@
 import type { MarkMode } from '@nomai/svg-kit'
 import { useState, type DragEvent } from 'react'
 import { Group, RangeField } from '../../components/Field'
-import { readMarkFile, type ImportFailure } from '../../marks/load'
+import { useI18n } from '../../i18n'
+import { readMarkFile } from '../../marks/load'
 import type { Mark } from '../../marks/types'
 import { controlRanges, uploadLimits } from '../../state/config'
 import type { Controls } from '../../state/useBrandLab'
 import { Glyph } from '../preview/Glyph'
 import { SymbolReport } from './SymbolReport'
-
-const FAILURE_TEXT: Readonly<Record<ImportFailure, (name: string) => string>> = {
-  'too-large': (name) => `“${name}” passa de ${uploadLimits.label}. Exporte um arquivo menor.`,
-  unreadable: (name) => `Não consegui ler “${name}”. O arquivo parece corrompido.`,
-}
 
 interface SymbolPanelProps {
   readonly marks: readonly Mark[]
@@ -36,6 +32,7 @@ export function SymbolPanel({
   onModeChange,
   onControlChange,
 }: SymbolPanelProps) {
+  const { t, format } = useI18n()
   const [dragging, setDragging] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -45,8 +42,13 @@ export function SymbolPanel({
 
     for (const file of Array.from(files)) {
       const result = await readMarkFile(file)
-      if (result.ok) onAdd(result.mark)
-      else setError(FAILURE_TEXT[result.reason](file.name))
+      if (result.ok) {
+        onAdd(result.mark)
+      } else if (result.reason === 'too-large') {
+        setError(t.symbol.failures['too-large'](file.name, format.megabytes(uploadLimits.maxBytes)))
+      } else {
+        setError(t.symbol.failures.unreadable(file.name))
+      }
     }
   }
 
@@ -57,7 +59,7 @@ export function SymbolPanel({
   }
 
   return (
-    <Group title="Símbolo">
+    <Group title={t.symbol.title}>
       <label
         className={dragging ? 'dropzone dragging' : 'dropzone'}
         onDragEnter={(e) => { e.preventDefault(); setDragging(true) }}
@@ -65,9 +67,9 @@ export function SymbolPanel({
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
       >
-        Arraste seus <b>SVG / PNG</b> aqui
+        {t.symbol.dropzone.line1}
         <br />
-        ou clique pra escolher
+        {t.symbol.dropzone.line2}
         <input
           type="file"
           hidden
@@ -80,7 +82,7 @@ export function SymbolPanel({
         />
       </label>
 
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error" role="alert">{error}</p>}
 
       <div className="marks">
         {marks.map((item) => (
@@ -90,14 +92,20 @@ export function SymbolPanel({
             onClick={() => onSelect(item.id)}
             role="button"
             tabIndex={0}
-            onKeyDown={(event) => { if (event.key === 'Enter') onSelect(item.id) }}
+            aria-pressed={item.id === selectedId}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                onSelect(item.id)
+              }
+            }}
           >
             <Glyph mark={item} forceOriginal />
             {!item.builtin && (
               <button
                 type="button"
                 className="mark-remove"
-                aria-label={`remover ${item.name}`}
+                aria-label={t.symbol.remove(item.name)}
                 onClick={(event) => { event.stopPropagation(); onRemove(item.id) }}
               >
                 ×
@@ -117,29 +125,25 @@ export function SymbolPanel({
           checked={controls.plate}
           onChange={(event) => onControlChange('plate', event.target.checked)}
         />
-        Símbolo dentro de uma plaquinha (fundo brand)
+        {t.symbol.plate}
       </label>
 
       <RangeField
-        label="Tamanho"
+        label={t.symbol.size}
         value={controls.markSize}
         min={controlRanges.markSize.min}
         max={controlRanges.markSize.max}
         onChange={(value) => onControlChange('markSize', value)}
       />
       <RangeField
-        label="Cantos"
+        label={t.symbol.corners}
         value={controls.markRadius}
         min={controlRanges.markRadius.min}
         max={controlRanges.markRadius.max}
         onChange={(value) => onControlChange('markRadius', value)}
       />
 
-      <p className="note">
-        Ao subir um arquivo, ele é analisado: contamos as cores reais (inclusive as escondidas
-        em CSS interno) e já escolhemos se ele deve seguir o tema ou manter as próprias cores.
-        O botão acima só existe pra você discordar.
-      </p>
+      <p className="note">{t.symbol.note}</p>
     </Group>
   )
 }

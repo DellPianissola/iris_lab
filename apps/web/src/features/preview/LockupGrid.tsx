@@ -1,10 +1,11 @@
 import { isDark, type ThemeTokens } from '@nomai/theme'
 import type { CSSProperties } from 'react'
+import { useI18n } from '../../i18n'
 import type { Mark } from '../../marks/types'
 import { lockupScale } from '../../state/config'
 import type { Controls } from '../../state/useBrandLab'
 import { Lockup } from './Lockup'
-import { lockupBackdrops } from './content'
+import { lockupBackdropIds } from './mockup-data'
 
 interface LockupGridProps {
   readonly tokens: ThemeTokens
@@ -15,38 +16,35 @@ interface LockupGridProps {
 
 /** O logo nos quatro fundos em que ele vai aparecer de verdade. */
 export function LockupGrid({ tokens, mark, controls, glyphColor }: LockupGridProps) {
+  const { t } = useI18n()
   const darkBackground = isDark(tokens.bg)
   const monoBackground = darkBackground ? '#ffffff' : '#111111'
   const monoInk = darkBackground ? '#111111' : '#ffffff'
 
-  const backdropStyles: Record<string, { background: string; ink: string; glyph: string }> = {
+  const styles = {
     bg: { background: tokens.bg, ink: tokens.text, glyph: glyphColor },
     surface: { background: tokens.surface, ink: tokens.text, glyph: glyphColor },
     brand: { background: tokens.brand, ink: tokens.onBrand, glyph: tokens.onBrand },
     mono: { background: monoBackground, ink: monoInk, glyph: monoInk },
-  }
+  } as const
 
   return (
     <div className="lockups">
-      {lockupBackdrops.map((backdrop) => {
-        const style = backdropStyles[backdrop.id]
-        if (!style) return null
-
+      {lockupBackdropIds.map((id) => {
+        const style = styles[id]
         // Nos fundos sólidos a plaquinha atrapalha: ela vira ruído em cima da própria marca.
-        const platePerBackdrop = backdrop.id === 'brand' || backdrop.id === 'mono'
-          ? 'transparent'
-          : undefined
+        const neutralisePlate = id === 'brand' || id === 'mono'
 
         return (
           <div
-            key={backdrop.id}
+            key={id}
             className="lockup-cell"
             style={
               {
                 background: style.background,
                 color: style.ink,
                 '--glyph-color': style.glyph,
-                ...(platePerBackdrop ? { '--mark-plate': platePerBackdrop } : {}),
+                ...(neutralisePlate ? { '--mark-plate': 'transparent' } : {}),
               } as CSSProperties
             }
           >
@@ -57,7 +55,7 @@ export function LockupGrid({ tokens, mark, controls, glyphColor }: LockupGridPro
               wordSize={Math.round(controls.markSize * lockupScale.navWord)}
               textColor={style.ink}
             />
-            <small style={{ color: style.ink }}>{backdrop.label}</small>
+            <small style={{ color: style.ink }}>{t.mockup.backdrops[id]}</small>
           </div>
         )
       })}

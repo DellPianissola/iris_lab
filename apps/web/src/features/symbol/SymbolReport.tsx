@@ -1,7 +1,10 @@
 import type { MarkMode } from '@nomai/svg-kit'
 import { Segmented } from '../../components/Field'
+import { useI18n } from '../../i18n'
 import type { Mark } from '../../marks/types'
-import { kindReport, LOCKED_KIND, modeOptions, warningText } from './labels'
+
+/** Bitmap opaco não tem como seguir o tema: colorir viraria um retângulo. */
+const LOCKED_KIND = 'raster-opaque'
 
 interface SymbolReportProps {
   readonly mark: Mark
@@ -9,12 +12,18 @@ interface SymbolReportProps {
 }
 
 /**
- * O relatório que o cliente vê. Ele **nunca pergunta** o que fazer: mostra a conclusão e
- * oferece um interruptor de duas posições, já na posição certa, para discordar.
+ * A interface **nunca pergunta** o que fazer: mostra a conclusão e oferece um interruptor de
+ * duas posições, já na posição certa, para o cliente discordar.
  */
 export function SymbolReport({ mark, onModeChange }: SymbolReportProps) {
-  const report = kindReport[mark.kind]
+  const { t } = useI18n()
+  const report = t.symbol.kinds[mark.kind]
   const locked = mark.kind === LOCKED_KIND
+
+  const options: readonly { id: MarkMode; label: string; disabled: boolean }[] = [
+    { id: 'theme', label: t.symbol.modes.theme, disabled: locked },
+    { id: 'original', label: t.symbol.modes.original, disabled: false },
+  ]
 
   return (
     <div className="report">
@@ -31,17 +40,12 @@ export function SymbolReport({ mark, onModeChange }: SymbolReportProps) {
       <p className="report-body">{report.body}</p>
 
       {mark.warnings.map((warning) => (
-        <p key={warning.code} className="report-warning">⚠ {warningText[warning.code]}</p>
+        <p key={warning.code} className="report-warning">
+          ⚠ {t.symbol.warnings[warning.code]}
+        </p>
       ))}
 
-      <Segmented
-        value={mark.mode}
-        options={modeOptions.map((option) => ({
-          ...option,
-          disabled: locked && option.id === 'theme',
-        }))}
-        onChange={onModeChange}
-      />
+      <Segmented value={mark.mode} options={options} onChange={onModeChange} />
     </div>
   )
 }

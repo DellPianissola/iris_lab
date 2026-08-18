@@ -24,18 +24,23 @@ export function RangeField({ label, value, min, max, onChange }: RangeFieldProps
   )
 }
 
-interface SelectFieldProps {
+interface SelectFieldProps<T extends string> {
   readonly label: string
-  readonly value: string
-  readonly options: readonly { readonly id: string; readonly name: string }[]
-  readonly onChange: (value: string) => void
+  readonly value: T
+  readonly options: readonly { readonly id: T; readonly name: string }[]
+  readonly onChange: (value: T) => void
 }
 
-export function SelectField({ label, value, options, onChange }: SelectFieldProps) {
+export function SelectField<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+}: SelectFieldProps<T>) {
   return (
     <label className="field">
       <span className="field-label">{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)}>
+      <select value={value} onChange={(event) => onChange(event.target.value as T)}>
         {options.map((option) => (
           <option key={option.id} value={option.id}>
             {option.name}

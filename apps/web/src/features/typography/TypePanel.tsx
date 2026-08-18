@@ -1,5 +1,6 @@
 import { fonts } from '@nomai/theme'
 import { Group, RangeField, SelectField, TextField } from '../../components/Field'
+import { useI18n } from '../../i18n'
 import { controlRanges, WORDMARK_SPLIT } from '../../state/config'
 import type { Controls } from '../../state/useBrandLab'
 
@@ -9,38 +10,47 @@ interface TypePanelProps {
 }
 
 export function TypePanel({ controls, onChange }: TypePanelProps) {
+  const { t } = useI18n()
+
+  const fontOptions = fonts.map((font) => ({
+    id: font.id,
+    name: t.typography.fonts[font.id],
+  }))
+
   return (
-    <Group title="Nome / tipografia">
-      <TextField label="Nome" value={controls.wordmark} onChange={(v) => onChange('wordmark', v)} />
+    <Group title={t.typography.title}>
+      <TextField
+        label={t.typography.name}
+        value={controls.wordmark}
+        onChange={(v) => onChange('wordmark', v)}
+      />
       <SelectField
-        label="Display"
+        label={t.typography.display}
         value={controls.displayFont}
-        options={fonts}
+        options={fontOptions}
         onChange={(v) => onChange('displayFont', v)}
       />
       <SelectField
-        label="Texto"
+        label={t.typography.body}
         value={controls.bodyFont}
-        options={fonts}
+        options={fontOptions}
         onChange={(v) => onChange('bodyFont', v)}
       />
       <RangeField
-        label="Espaçamento"
+        label={t.typography.tracking}
         value={controls.tracking}
         min={controlRanges.tracking.min}
         max={controlRanges.tracking.max}
         onChange={(v) => onChange('tracking', v)}
       />
       <RangeField
-        label="Botões"
+        label={t.typography.buttons}
         value={controls.buttonRadius}
         min={controlRanges.buttonRadius.min}
         max={controlRanges.buttonRadius.max}
         onChange={(v) => onChange('buttonRadius', v)}
       />
-      <p className="note">
-        Use <code>{WORDMARK_SPLIT}</code> no nome pra destacar a segunda parte na cor da marca.
-      </p>
+      <p className="note">{t.typography.note(WORDMARK_SPLIT)}</p>
     </Group>
   )
 }

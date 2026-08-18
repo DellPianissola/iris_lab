@@ -1,7 +1,17 @@
 import brandData from '../data/brand.json' with { type: 'json' }
 import fontsData from '../data/fonts.json' with { type: 'json' }
 import presetsData from '../data/presets.json' with { type: 'json' }
-import { PALETTE_KEYS, type FontChoice, type Palette, type Preset, type ThemeMode } from './types'
+import {
+  FONT_IDS,
+  PALETTE_KEYS,
+  PRESET_IDS,
+  type FontChoice,
+  type FontId,
+  type Palette,
+  type Preset,
+  type PresetId,
+  type ThemeMode,
+} from './types'
 
 /**
  * Conteúdo do produto: as paletas de partida, as pilhas de fonte e a marca da casa. Mora em
@@ -27,17 +37,24 @@ export function brandPalette(mode: ThemeMode): Palette {
   return mode === 'dark' ? brand.dark : brand.light
 }
 
-export function fontStack(id: string): string {
-  const found = fonts.find((font) => font.id === id)
-  return found ? found.stack : (fonts[0]?.stack ?? 'sans-serif')
+/**
+ * Mapa em vez de busca com fallback: `requireExactIds` já garantiu que todo `FontId` existe,
+ * então um `?? 'sans-serif'` seria ramo inalcançável — e ramo inalcançável é onde defeito se
+ * esconde, que foi exatamente o que o `?? preset.name` fazia antes.
+ */
+const FONT_STACKS = Object.fromEntries(fonts.map((font) => [font.id, font.stack])) as Record<
+  FontId,
+  string
+>
+
+export function fontStack(id: FontId): string {
+  return FONT_STACKS[id]
 }
 
 function validatePresets(raw: unknown): readonly Preset[] {
-  if (!Array.isArray(raw) || raw.length === 0) {
-    throw new Error('presets.json: esperava uma lista não vazia')
-  }
+  const entries = asArray(raw, 'presets.json')
 
-  return raw.map((entry, index) => {
+  const parsed = entries.map((entry, index) => {
     const where = `presets.json[${index}]`
     const record = asRecord(entry, where)
     const mode = record['mode']
@@ -47,28 +64,62 @@ function validatePresets(raw: unknown): readonly Preset[] {
     }
 
     return {
-      id: requireString(record, 'id', where),
+      id: requireId(record, PRESET_IDS, where) as PresetId,
       name: requireString(record, 'name', where),
       mode: mode as ThemeMode,
       colors: validatePalette(record['colors'], `${where} → colors`),
     }
   })
+
+  requireExactIds(parsed, PRESET_IDS, 'presets.json')
+  return parsed
 }
 
 function validateFonts(raw: unknown): readonly FontChoice[] {
-  if (!Array.isArray(raw) || raw.length === 0) {
-    throw new Error('fonts.json: esperava uma lista não vazia')
-  }
+  const entries = asArray(raw, 'fonts.json')
 
-  return raw.map((entry, index) => {
+  const parsed = entries.map((entry, index) => {
     const where = `fonts.json[${index}]`
     const record = asRecord(entry, where)
     return {
-      id: requireString(record, 'id', where),
+      id: requireId(record, FONT_IDS, where) as FontId,
       name: requireString(record, 'name', where),
       stack: requireString(record, 'stack', where),
     }
   })
+
+  requireExactIds(parsed, FONT_IDS, 'fonts.json')
+  return parsed
+}
+
+/**
+ * O JSON precisa trazer exatamente os ids declarados: nem a mais nem a menos. Id novo sem
+ * entrada em `types.ts` reprova aqui, e id declarado sem tradução reprova no `tsc` do app —
+ * as duas metades da mesma garantia.
+ */
+function requireExactIds(
+  parsed: readonly { readonly id: string }[],
+  declared: readonly string[],
+  where: string,
+): void {
+  const found = parsed.map((entry) => entry.id)
+  const missing = declared.filter((id) => !found.includes(id))
+  if (missing.length > 0) throw new Error(`${where}: faltam os ids ${missing.join(', ')}`)
+
+  const duplicated = found.filter((id, index) => found.indexOf(id) !== index)
+  if (duplicated.length > 0) throw new Error(`${where}: ids repetidos ${duplicated.join(', ')}`)
+}
+
+function requireId(
+  record: Record<string, unknown>,
+  declared: readonly string[],
+  where: string,
+): string {
+  const id = requireString(record, 'id', where)
+  if (!declared.includes(id)) {
+    throw new Error(`${where}: id "${id}" não está declarado em types.ts`)
+  }
+  return id
 }
 
 function validatePalette(raw: unknown, where: string): Palette {
@@ -84,6 +135,13 @@ function validatePalette(raw: unknown, where: string): Palette {
   }
 
   return palette as Palette
+}
+
+function asArray(value: unknown, where: string): readonly unknown[] {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new Error(`${where}: esperava uma lista não vazia`)
+  }
+  return value
 }
 
 function asRecord(value: unknown, where: string): Record<string, unknown> {

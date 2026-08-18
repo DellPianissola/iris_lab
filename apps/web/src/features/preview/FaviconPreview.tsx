@@ -1,9 +1,9 @@
 import type { ThemeTokens } from '@nomai/theme'
 import type { CSSProperties } from 'react'
+import { useI18n } from '../../i18n'
 import type { Mark } from '../../marks/types'
 import { faviconSizes, WORDMARK_SPLIT } from '../../state/config'
 import { Glyph } from './Glyph'
-import { faviconTabLabel } from './content'
 
 interface FaviconPreviewProps {
   readonly tokens: ThemeTokens
@@ -13,6 +13,7 @@ interface FaviconPreviewProps {
 }
 
 export function FaviconPreview({ tokens, mark, wordmark, plate }: FaviconPreviewProps) {
+  const { t } = useI18n()
   const background = plate ? tokens.brand : tokens.surface
   const foreground = plate ? tokens.onBrand : tokens.brandInk
   const boxStyle = { background, color: foreground, '--tone-0': foreground } as CSSProperties
@@ -33,7 +34,7 @@ export function FaviconPreview({ tokens, mark, wordmark, plate }: FaviconPreview
           <Glyph mark={mark} />
         </div>
         <span>
-          {wordmark.split(WORDMARK_SPLIT).join('')} — {faviconTabLabel}
+          {wordmark.split(WORDMARK_SPLIT).join('')} — {t.mockup.tabTitle}
         </span>
       </div>
     </div>

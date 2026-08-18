@@ -1,5 +1,6 @@
 import { buildTokens, tokensToCssText, type Palette, type ThemeMode } from '@nomai/theme'
 import { Group } from '../../components/Field'
+import { useI18n } from '../../i18n'
 import type { SavedCombo } from '../../state/useBrandLab'
 
 const EXPORT_FILENAME = 'paleta.css'
@@ -13,10 +14,14 @@ interface SavedPanelProps {
 }
 
 export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedPanelProps) {
+  const { t } = useI18n()
+
   function downloadCss(): void {
     const blocks = [
       tokensToCssText(buildTokens(palette), 'paleta atual'),
-      ...saved.map((combo, index) => tokensToCssText(buildTokens(combo.palette), `salva #${index + 1}`)),
+      ...saved.map((combo, index) =>
+        tokensToCssText(buildTokens(combo.palette), `salva #${index + 1}`),
+      ),
     ]
 
     const blob = new Blob([blocks.join('\n')], { type: 'text/css' })
@@ -34,14 +39,14 @@ export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedP
   }
 
   return (
-    <Group title="Combinações salvas">
+    <Group title={t.saved.title}>
       <div className="button-row">
-        <button type="button" className="primary" onClick={onSave}>＋ Salvar atual</button>
-        <button type="button" onClick={downloadCss}>Baixar CSS</button>
+        <button type="button" className="primary" onClick={onSave}>{t.saved.save}</button>
+        <button type="button" onClick={downloadCss}>{t.saved.download}</button>
       </div>
 
       {saved.length === 0 ? (
-        <p className="note">Nenhuma salva ainda.</p>
+        <p className="note">{t.saved.empty}</p>
       ) : (
         <div className="chips">
           {saved.map((combo, index) => (
@@ -51,7 +56,12 @@ export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedP
                 <i style={{ background: combo.palette.accent }} />
                 <b>#{index + 1}</b>
               </button>
-              <button type="button" className="chip-remove" onClick={() => onRemove(combo.id)}>
+              <button
+                type="button"
+                className="chip-remove"
+                aria-label={t.saved.remove(index + 1)}
+                onClick={() => onRemove(combo.id)}
+              >
                 ×
               </button>
             </span>
@@ -59,10 +69,7 @@ export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedP
         </div>
       )}
 
-      <p className="note">
-        As salvas ficam neste navegador. O CSS baixado traz os onze tokens — inclusive os
-        derivados, então ele reproduz exatamente o que você está vendo.
-      </p>
+      <p className="note">{t.saved.note}</p>
     </Group>
   )
 }

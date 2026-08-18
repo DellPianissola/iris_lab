@@ -1,10 +1,14 @@
 import type { ThemeTokens } from '@nomai/theme'
+import { useI18n } from '../../i18n'
 import type { Mark } from '../../marks/types'
 import { lockupScale } from '../../state/config'
 import type { Controls } from '../../state/useBrandLab'
 import { Glyph } from './Glyph'
 import { Lockup } from './Lockup'
-import { siteContent } from './content'
+import { mockupStats } from './mockup-data'
+
+/** O ano não muda durante a sessão; ler o relógio a cada repintura seria desperdício. */
+const CURRENT_YEAR = String(new Date().getFullYear())
 
 interface SiteMockupProps {
   readonly tokens: ThemeTokens
@@ -13,6 +17,15 @@ interface SiteMockupProps {
 }
 
 export function SiteMockup({ tokens, mark, controls }: SiteMockupProps) {
+  const { t, format } = useI18n()
+  const copy = t.mockup
+
+  const stats = [
+    { key: 'users', value: format.integer(mockupStats.users), label: copy.stats.users },
+    { key: 'uptime', value: format.percent(mockupStats.uptime), label: copy.stats.uptime },
+    { key: 'rating', value: `${format.decimal(mockupStats.rating)}★`, label: copy.stats.rating },
+  ]
+
   return (
     <div className="site">
       <nav className="site-nav">
@@ -23,34 +36,30 @@ export function SiteMockup({ tokens, mark, controls }: SiteMockupProps) {
           wordSize={Math.round(controls.markSize * lockupScale.navWord)}
         />
         <ul className="site-links">
-          {siteContent.nav.map((item, index) => (
-            <li key={item} className={index === 0 ? 'current' : undefined}>
+          {copy.nav.map((item, index) => (
+            <li key={index} className={index === 0 ? 'current' : undefined}>
               {item}
             </li>
           ))}
         </ul>
         <span className="spacer" />
-        <button type="button" className="btn-secondary btn-compact">
-          {siteContent.navActions.secondary}
-        </button>
-        <button type="button" className="btn-primary btn-compact">
-          {siteContent.navActions.primary}
-        </button>
+        <button type="button" className="btn-secondary btn-compact">{copy.signIn}</button>
+        <button type="button" className="btn-primary btn-compact">{copy.getStarted}</button>
       </nav>
 
       <header className="site-hero">
         <div>
-          <span className="pill">{siteContent.pill}</span>
+          <span className="pill">● {copy.pill}</span>
           <h2>
-            {siteContent.headline}
-            <em>{siteContent.headlineAccent}</em>
-            {siteContent.headlineTail}
+            {copy.headline}
+            <em>{copy.headlineAccent}</em>
+            {copy.headlineTail}
           </h2>
-          <p className="lead">{siteContent.lead}</p>
+          <p className="lead">{copy.lead}</p>
           <div className="cta">
-            <button type="button" className="btn-primary">{siteContent.actions.primary}</button>
-            <button type="button" className="btn-secondary">{siteContent.actions.secondary}</button>
-            <button type="button" className="btn-accent">{siteContent.actions.accent}</button>
+            <button type="button" className="btn-primary">{copy.primary}</button>
+            <button type="button" className="btn-secondary">{copy.secondary}</button>
+            <button type="button" className="btn-accent">{copy.accent}</button>
           </div>
         </div>
 
@@ -60,8 +69,8 @@ export function SiteMockup({ tokens, mark, controls }: SiteMockupProps) {
           <span className="bar bar-accent" />
           <span className="bar bar-narrow" />
           <div className="stats">
-            {siteContent.stats.map((stat) => (
-              <div key={stat.label} className="stat">
+            {stats.map((stat) => (
+              <div key={stat.key} className="stat">
                 <b>{stat.value}</b>
                 <span>{stat.label}</span>
               </div>
@@ -71,8 +80,8 @@ export function SiteMockup({ tokens, mark, controls }: SiteMockupProps) {
       </header>
 
       <div className="features">
-        {siteContent.features.map((feature) => (
-          <article key={feature.title} className="feature">
+        {copy.features.map((feature, index) => (
+          <article key={index} className="feature">
             <span className="feature-icon" style={{ color: tokens.brandInk }}>
               <Glyph mark={mark} />
             </span>
@@ -90,7 +99,7 @@ export function SiteMockup({ tokens, mark, controls }: SiteMockupProps) {
           wordSize={Math.round(controls.markSize * lockupScale.footWord)}
         />
         <span className="spacer" />
-        <small>{siteContent.footer}</small>
+        <small>{copy.footer(CURRENT_YEAR)}</small>
       </footer>
     </div>
   )

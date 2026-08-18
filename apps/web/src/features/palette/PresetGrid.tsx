@@ -1,13 +1,16 @@
 import { presets, type Palette, type ThemeMode } from '@nomai/theme'
 import { Group } from '../../components/Field'
+import { useI18n } from '../../i18n'
 
 interface PresetGridProps {
   readonly onPick: (palette: Palette, mode: ThemeMode) => void
 }
 
 export function PresetGrid({ onPick }: PresetGridProps) {
+  const { t } = useI18n()
+
   return (
-    <Group title="Presets">
+    <Group title={t.presets.title}>
       <div className="presets">
         {presets.map((preset) => (
           <button key={preset.id} type="button" onClick={() => onPick(preset.colors, preset.mode)}>
@@ -16,7 +19,7 @@ export function PresetGrid({ onPick }: PresetGridProps) {
               <i style={{ background: preset.colors.accent }} />
               <i style={{ background: preset.colors.bg }} />
             </span>
-            <span>{preset.name}</span>
+            <span>{t.presets.names[preset.id]}</span>
           </button>
         ))}
       </div>
