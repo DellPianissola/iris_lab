@@ -4,7 +4,7 @@ import { WarningIcon } from '../../components/icons'
 import { useI18n } from '../../i18n'
 import type { Mark } from '../../marks/types'
 
-/** Bitmap opaco não tem como seguir o tema: colorir viraria um retângulo. */
+/** An opaque bitmap cannot follow the theme: colouring it would produce a rectangle. */
 const LOCKED_KIND = 'raster-opaque'
 
 interface SymbolReportProps {
@@ -13,8 +13,8 @@ interface SymbolReportProps {
 }
 
 /**
- * A interface **nunca pergunta** o que fazer: mostra a conclusão e oferece um interruptor de
- * duas posições, já na posição certa, para o cliente discordar.
+ * The interface **never asks** what to do: it shows the conclusion and offers a two-position
+ * switch, already in the right position, for the customer to disagree.
  */
 export function SymbolReport({ mark, onModeChange }: SymbolReportProps) {
   const { t } = useI18n()

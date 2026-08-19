@@ -12,8 +12,9 @@ export function classifyRaster(inspection: RasterInspection): RasterClassificati
     return { kind: 'raster-opaque', mode: 'original', warnings: [{ code: 'opaque-raster' }] }
   }
 
-  // Com recorte, a cor vem de máscara CSS: o desenho vira silhueta e assume o tema. Só faz
-  // sentido quando ele já era de uma cor só — silhueta destrói um logo colorido.
+  // With a cut-out, the colour comes from a CSS mask: the drawing becomes a silhouette and
+  // takes the theme. That only makes sense when it was single-colour already — a silhouette
+  // destroys a multicoloured logo.
   const kind: MarkKind = inspection.colors.length <= 1 ? 'mono' : 'multi'
   return { kind, mode: kind === 'mono' ? 'theme' : 'original', warnings: [] }
 }

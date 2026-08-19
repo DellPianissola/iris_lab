@@ -1,26 +1,26 @@
 export const PALETTE_KEYS = ['brand', 'accent', 'bg', 'surface', 'text', 'muted', 'line'] as const
 export type PaletteKey = (typeof PALETTE_KEYS)[number]
 
-/** Os sete tokens que o usuário edita. Todo o resto é derivado. */
+/** The seven tokens the user edits. Everything else is derived. */
 export type Palette = Record<PaletteKey, string>
 
 export type ThemeMode = 'light' | 'dark'
 
 export interface ThemeTokens extends Palette {
-  /** Cor de texto legível em cima da marca — nunca branco no verde neon. */
+  /** Text colour that is legible on the brand — never white on the neon green. */
   readonly onBrand: string
   readonly onAccent: string
-  /** Fundo suave para pílula e ícone. */
+  /** Soft background for pills and icons. */
   readonly brandSoft: string
-  /** A marca empurrada até virar texto legível sobre `brandSoft`. */
+  /** The brand pushed until it becomes legible text on `brandSoft`. */
   readonly brandInk: string
 }
 
 /**
- * Os ids ficam declarados em código, e não inferidos do JSON, para virarem união literal:
- * é o que permite ao app tipar a tradução como `Record<PresetId, string>` e transformar
- * preset sem tradução em erro de compilação. O `catalog.ts` confere que o JSON traz
- * exatamente estes.
+ * The ids are declared in code rather than inferred from the JSON so they become a literal
+ * union: that is what lets the app type its translations as `Record<PresetId, string>` and
+ * turn an untranslated preset into a compile error. `catalog.ts` checks the JSON carries
+ * exactly these.
  */
 export const PRESET_IDS = [
   'iris-framboesa',
@@ -43,7 +43,7 @@ export type FontId = (typeof FONT_IDS)[number]
 
 export interface Preset {
   readonly id: PresetId
-  /** Rótulo de desenvolvimento; o que o cliente lê vem do dicionário do app, pelo id. */
+  /** Development label; what the customer reads comes from the app's dictionary, by id. */
   readonly name: string
   readonly mode: ThemeMode
   readonly colors: Palette

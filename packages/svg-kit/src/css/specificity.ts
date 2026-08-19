@@ -1,9 +1,9 @@
 import { cascadeConfig } from '../config'
 
 /**
- * Especificidade achatada em um número. Aproximação suficiente para decidir entre `.st0`,
- * `path` e `#logo` — os seletores que ferramenta de design gera. Não cobre `:where()`/
- * `:is()`, que elas não emitem.
+ * Specificity flattened into a single number. Close enough to decide between `.st0`, `path`
+ * and `#logo` — the selectors design tools emit. Does not cover `:where()`/`:is()`, which
+ * they do not emit.
  */
 export function specificityOf(selector: string): number {
   let ids = 0

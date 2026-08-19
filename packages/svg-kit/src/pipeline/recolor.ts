@@ -5,9 +5,9 @@ import type { SvgAnalysis } from '../types'
 import { findImplicitFillShapes } from './analyze'
 
 /**
- * O `!important` da folha injetada vence atributo de apresentação, classe interna e style
- * inline sem important — que é o motivo de a troca ser feita por injeção e não reescrevendo
- * o arquivo. Regex sobre o markup quebraria nos três casos.
+ * The injected sheet's `!important` beats a presentation attribute, an internal class and
+ * inline style without important — which is why the swap is done by injection rather than
+ * by rewriting the file. A regex over the markup would break in all three cases.
  */
 export function buildThemedSvg(svg: SVGElement, analysis: SvgAnalysis): SVGElement {
   const themed = svg.cloneNode(true) as SVGElement
@@ -35,7 +35,7 @@ function tagImplicitFills(svg: SVGElement, tone: number): void {
   }
 }
 
-/** Cor fora dos tons dominantes cai no tom da marca — recolorir é tudo ou nada. */
+/** A colour outside the dominant tones falls to the brand tone — recolouring is all or nothing. */
 function toneOf(tones: readonly string[], hex: string): number {
   const index = tones.indexOf(hex)
   return index < 0 ? 0 : index
@@ -45,7 +45,7 @@ function toneClass(prop: ColorProp, tone: number): string {
   return `${recolorConfig.classPrefix}${prop[0]}${tone}`
 }
 
-/** A folha é gerada a partir da config: mudar o prefixo ou a quantidade de tons basta. */
+/** The sheet is generated from config: changing the prefix or the tone count is enough. */
 function toneStyleSheet(): string {
   const rules: string[] = []
 

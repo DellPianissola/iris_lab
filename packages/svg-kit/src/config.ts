@@ -1,32 +1,33 @@
 /**
- * Botões de ajuste do pipeline: valores escolhidos por nós, que vão ser mexidos no olho
- * conforme aparecerem arquivos reais.
+ * Tuning knobs for the pipeline: values we chose, to be adjusted by eye as real files show
+ * up.
  *
- * O que **não** entra aqui: constante ditada por especificação (`svg-spec.ts`) e política
- * de segurança (`security.ts`). Fingir que aquilo é configurável convida a mexer.
+ * What does **not** belong here: constants dictated by a specification (`svg-spec.ts`) and
+ * security policy (`security.ts`). Pretending those are configurable invites tampering.
  */
 
 export const rasterConfig = {
-  /** Abaixo deste alfa o pixel é recorte, não desenho. */
+  /** Below this alpha the pixel is cut-out, not drawing. */
   alphaFloor: 24,
-  /** Fração da área abaixo da qual uma cor — ou o recorte — não conta. */
+  // Below this share of the area a colour is compression noise or an anti-aliased edge,
+  // not part of the drawing. The same floor decides whether the cut-out is meaningful.
   significantArea: 0.02,
-  /** Agrupa canais em faixas de 2^n para que ruído de compressão não vire cor nova. */
+  /** Buckets channels into bands of 2^n so compression noise does not become a new colour. */
   channelBucketBits: 5,
-  /** Lado do quadrado amostrado: a pergunta é "que cores dominam", não o desenho exato. */
+  /** Side of the sampled square: the question is "which colours dominate", not the exact drawing. */
   sampleSize: 64,
 } as const
 
 export const recolorConfig = {
-  /** Quantos tons o tema controla. O dominante vira a marca; o segundo, o acento. */
+  /** How many tones the theme drives. The dominant becomes the brand; the second, the accent. */
   toneCount: 2,
-  /** Prefixo das classes injetadas. Improvável colidir com classe de ferramenta de design. */
+  /** Prefix for the injected classes. Unlikely to collide with a design tool's own classes. */
   classPrefix: '__',
 } as const
 
 export const cascadeConfig = {
-  // Achatar (id, classe, tipo) num número só permite comparar com `>`; as ordens de
-  // grandeza garantem que nenhuma soma de classes alcance um id.
+  // Flattening (id, class, type) into one number allows comparing with `>`; the orders of
+  // magnitude guarantee no sum of classes ever reaches an id.
   idWeight: 10_000,
   classWeight: 100,
 } as const

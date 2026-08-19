@@ -68,8 +68,8 @@ export function PalettePanel({
         <ShareButton />
       </div>
 
-      {/* Junto do botão que a produz: é o argumento de privacidade, e no rodapé do grupo
-          ele virava mais uma linha cinza que ninguém associa ao link. */}
+      {/* Next to the button that produces it: this is the privacy argument, and at the foot
+          of the group it became one more grey line nobody connects to the link. */}
       <p className="note">{t.palette.shareNote}</p>
     </Group>
   )

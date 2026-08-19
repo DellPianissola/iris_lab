@@ -1,12 +1,12 @@
 /**
- * Botões de ajuste do tema. São escolhas nossas de aparência — os valores vão ser mexidos
- * no olho. O que é ditado pelo WCAG mora em `contrast.ts`; o que é conteúdo mora em
+ * Tuning knobs for the theme. These are our own choices about appearance — the values get
+ * adjusted by eye. What WCAG dictates lives in `contrast.ts`; what is content lives in
  * `data/`.
  */
 
 /**
- * Receita dos neutros a partir do matiz da marca. Preservar o matiz e mexer só em
- * saturação/luminosidade é o que faz a paleta parecer intencional em vez de sorteada.
+ * Recipe for the neutrals from the brand's hue. Keeping the hue and moving only saturation
+ * and lightness is what makes a palette look intentional rather than drawn from a hat.
  */
 export const neutralRecipes = {
   light: {
@@ -25,18 +25,18 @@ export const neutralRecipes = {
   },
 } as const
 
-/** Quanto da marca entra no fundo para formar a pílula/ícone suave. */
+/** How much brand goes into the background to form the soft pill/icon surface. */
 export const softMix = { light: 0.13, dark: 0.22 } as const
 
-/** Ajuste inicial da marca antes da busca por contraste, para não começar do zero. */
+/** A first nudge before the contrast search, so it does not start from scratch. */
 export const inkMix = { light: 0.12, dark: 0.35 } as const
 
-// Passo pequeno acha o tom mais próximo que ainda passa, em vez de escurecer demais; o
-// teto existe porque fundo de luminância intermediária pode não ter solução nenhuma.
+// A small step finds the nearest tone that still passes instead of overshooting; the cap
+// exists because a mid-luminance background may have no solution at all.
 export const contrastSearch = { lightnessStep: 0.02, maxSteps: 60 } as const
 
 export const accentHarmony = {
-  /** Giro no círculo cromático — perto do complementar, sem cair nele. */
+  /** Rotation on the colour wheel — near the complement, without landing on it. */
   rotationDeg: 165,
   jitterDeg: 15,
   minSaturation: 0.55,

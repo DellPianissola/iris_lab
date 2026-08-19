@@ -31,7 +31,7 @@ export function App() {
   useKeyboardShortcut(RANDOMIZE_KEY, actions.randomize)
   useUndoShortcut(actions.undo, actions.redo)
 
-  // Os tokens viram custom properties num nó só; nada abaixo recalcula cor.
+  // The tokens become custom properties on a single node; nothing below recomputes colour.
   const previewStyle = useMemo(() => {
     const plated = controls.plate
     return {
@@ -132,7 +132,7 @@ export function App() {
   )
 }
 
-/** Atalho global, ignorado enquanto o foco está num campo. */
+/** Global shortcut, ignored while focus is in a field. */
 function useKeyboardShortcut(key: string, action: () => void): void {
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent): void {
@@ -149,11 +149,11 @@ function useKeyboardShortcut(key: string, action: () => void): void {
 }
 
 /**
- * Ctrl+Z / Ctrl+Shift+Z, e Cmd no Mac.
+ * Ctrl+Z / Ctrl+Shift+Z, and Cmd on Mac.
  *
- * Sai fora quando o foco está num campo: ali o desfazer nativo do navegador é o que a
- * pessoa espera, e roubá-lo faria o Ctrl+Z apagar a paleta em vez de reverter o que ela
- * acabou de digitar.
+ * Stands down when focus is in a field: there the browser own undo is what the person
+ * expects, and stealing it would make Ctrl+Z wipe the palette instead of reverting what they
+ * just typed.
  */
 function useUndoShortcut(onUndo: () => void, onRedo: () => void): void {
   useEffect(() => {

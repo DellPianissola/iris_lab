@@ -1,11 +1,11 @@
 import type { Locale } from './types'
 
 /**
- * `toFixed` sempre produz ponto decimal, então `4.58` aparecia igual em português, onde o
- * certo é `4,58`. Todo número exibido passa por `Intl`.
+ * `toFixed` always emits a dot, so `4.58` showed up the same in Portuguese, where it should
+ * be `4,58`. Every displayed number goes through `Intl`.
  *
- * Os formatadores são memoizados porque construir um `Intl.NumberFormat` é caro e estes
- * rodam a cada repintura do painel de contraste.
+ * The formatters are memoised because constructing an `Intl.NumberFormat` is expensive and
+ * these run on every repaint of the contrast panel.
  */
 
 const cache = new Map<string, Intl.NumberFormat>()
@@ -21,10 +21,10 @@ function formatter(locale: Locale, options: Intl.NumberFormatOptions): Intl.Numb
 }
 
 export interface Formatters {
-  /** Razão de contraste, sempre com duas casas: `4,58` / `4.58`. */
+  /** Contrast ratio, always two decimals: `4,58` / `4.58`. */
   ratio(value: number): string
   integer(value: number): string
-  /** Recebe a fração (0.999), não o número já multiplicado. */
+  /** Takes the fraction (0.999), not the already-multiplied number. */
   percent(value: number, fractionDigits?: number): string
   decimal(value: number, fractionDigits?: number): string
   megabytes(bytes: number): string

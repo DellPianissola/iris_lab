@@ -7,8 +7,8 @@ import {
   SAFE_HREF,
 } from '../security'
 
-/** Precisa rodar antes de qualquer outra etapa: nada de arquivo do usuário encosta no
- *  documento sem passar por aqui. */
+/** Must run before any other stage: nothing from a user's file touches the document
+ *  without passing through here. */
 export function sanitizeSvg(text: string, dom: SvgDom): SVGElement | null {
   const doc = dom.parse(text)
   if (doc.querySelector('parsererror')) return null
@@ -21,7 +21,7 @@ export function sanitizeSvg(text: string, dom: SvgDom): SVGElement | null {
   stripUnsafeAttributes(svg)
   svg.querySelectorAll('*').forEach(stripUnsafeAttributes)
 
-  // Dimensão fixa no arquivo brigaria com o tamanho que o mockup pede; o viewBox basta.
+  // A fixed size in the file would fight the size the mockup asks for; the viewBox suffices.
   svg.removeAttribute('width')
   svg.removeAttribute('height')
 

@@ -3,8 +3,8 @@ import { accentHarmony, neutralRecipes, randomRanges } from './config'
 import type { Palette, ThemeMode } from './types'
 
 /**
- * Deriva fundo, superfície, texto, suave e bordas a partir do matiz da marca. Preservar o
- * matiz é o que faz a paleta parecer intencional em vez de sorteada.
+ * Derives background, surface, text, muted and borders from the brand's hue. Keeping the hue
+ * is what makes the palette look intentional rather than drawn from a hat.
  */
 export function deriveNeutrals(brand: string, mode: ThemeMode): Omit<Palette, 'brand' | 'accent'> {
   const [hue] = hexToHsl(brand)
@@ -19,7 +19,7 @@ export function deriveNeutrals(brand: string, mode: ThemeMode): Omit<Palette, 'b
   }
 }
 
-/** Acento perto do complementar da marca, sem cair exatamente nele. */
+/** An accent near the brand's complement, without landing exactly on it. */
 export function harmonizeAccent(brand: string, mode: ThemeMode, random = Math.random): string {
   const [hue, saturation] = hexToHsl(brand)
   const jitter = (random() * 2 - 1) * accentHarmony.jitterDeg
@@ -31,7 +31,7 @@ export function harmonizeAccent(brand: string, mode: ThemeMode, random = Math.ra
   )
 }
 
-/** Paleta inteira sorteada, mas coerente: um matiz manda em tudo. */
+/** A whole palette drawn at random, but coherent: one hue drives everything. */
 export function randomPalette(mode: ThemeMode, random = Math.random): Palette {
   const hue = random() * 360
   const lightnessRange = randomRanges.lightness[mode]

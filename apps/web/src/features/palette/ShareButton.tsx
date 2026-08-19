@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { CheckIcon, LinkIcon } from '../../components/icons'
 import { useI18n } from '../../i18n'
 
-/** Tempo que a confirmação fica na tela antes de o botão voltar ao rótulo normal. */
+/** Long enough to be noticed, short enough not to look stuck. */
 const CONFIRMATION_MS = 2000
 
 export function ShareButton() {
@@ -10,7 +10,7 @@ export function ShareButton() {
   const [copied, setCopied] = useState(false)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Sem isto, copiar e desmontar em seguida deixa o timer disparando num componente morto.
+  // Without this, copying and unmounting right after leaves the timer firing on a dead component.
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current) }, [])
 
   async function copy(): Promise<void> {
@@ -20,8 +20,8 @@ export function ShareButton() {
       if (timer.current) clearTimeout(timer.current)
       timer.current = setTimeout(() => setCopied(false), CONFIRMATION_MS)
     } catch {
-      // Área de transferência negada (permissão ou contexto inseguro). A URL continua na
-      // barra do navegador, então o caminho manual existe — travar aqui não ajudaria.
+      // Clipboard denied (permission or insecure context). The URL is still in the address
+      // bar, so the manual path exists — failing loudly here would not help.
     }
   }
 
@@ -36,9 +36,9 @@ export function ShareButton() {
         {t.palette.share}
       </button>
 
-      {/* Região à parte em vez de `aria-live` no próprio botão: com o rótulo estável, o
-          leitor de tela anuncia a confirmação uma vez, e não o botão inteiro duas — na
-          troca e de novo quando ela expira. */}
+      {/* A separate region rather than `aria-live` on the button itself: with the label
+          stable, the screen reader announces the confirmation once, not the whole button
+          twice — on the change and again when it expires. */}
       <span className="sr-only" role="status">
         {copied ? t.palette.shared : ''}
       </span>

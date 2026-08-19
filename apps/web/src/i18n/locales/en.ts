@@ -1,6 +1,6 @@
 import type { Dictionary } from './pt-BR'
 
-/** Tipado como `Dictionary`: chave que falte aqui reprova no `tsc`, não em runtime. */
+/** Typed as `Dictionary`: a key missing here fails `tsc`, not runtime. */
 export const en: Dictionary = {
   locale: {
     label: 'Language',

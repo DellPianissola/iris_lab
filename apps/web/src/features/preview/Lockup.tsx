@@ -8,7 +8,7 @@ interface LockupProps {
   readonly wordmark: string
   readonly markSize: number
   readonly wordSize: number
-  /** Força a cor do texto — usado nos fundos onde o token de texto não vale. */
+  /** Forces the text colour — used on the grounds where the text token does not apply. */
   readonly textColor?: string
 }
 

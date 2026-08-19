@@ -4,12 +4,12 @@ import { uploadLimits } from '../state/config'
 import type { Mark, RasterMark, SvgMark } from './types'
 
 /**
- * Entrada de símbolos. Os embutidos passam pelo **mesmo pipeline** que os enviados — se a
- * classificação quebrar, quebra para todos, não só para o arquivo do cliente.
+ * The built-in symbols go through the **same pipeline** as uploaded ones — if classification
+ * breaks, it breaks for all of them, not only for a customer file.
  *
- * Nada aqui lança: toda falha vira um `MarkImport` com motivo, para que a interface sempre
- * tenha o que dizer. Promessa rejeitada aqui virava tela parada, porque o chamador não
- * tinha como distinguir "não deu" de "ainda processando".
+ * Nothing here throws: every failure becomes a `MarkImport` with a reason, so the interface
+ * always has something to say. A rejected promise here became a frozen screen, because the
+ * caller could not tell "it failed" from "still working".
  */
 
 const dom = createDomFromGlobals()
@@ -57,8 +57,8 @@ function toSvgMark(markup: string, name: string, builtin: boolean): SvgMark | nu
 }
 
 export async function readMarkFile(file: File): Promise<MarkImport> {
-  // Sem servidor, o único prejudicado por um arquivo gigante é quem enviou — mas a aba
-  // congela sem explicação enquanto o pipeline percorre dezenas de milhares de nós.
+  // With no server the only person a huge file hurts is the one who sent it — but the tab
+  // freezes with no explanation while the pipeline walks tens of thousands of nodes.
   if (file.size > uploadLimits.maxBytes) return { ok: false, reason: 'too-large' }
 
   const isSvg = file.type.includes('svg') || /\.svg$/i.test(file.name)

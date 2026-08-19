@@ -1,7 +1,7 @@
 /**
- * Costura entre o pipeline e o DOM. Parsear SVG exige um parser XML de verdade; o pipeline
- * recebe um por injeção em vez de importar, então o mesmo código roda no navegador hoje e
- * no servidor no dia em que arquivos passarem a ser gravados.
+ * The seam between the pipeline and the DOM. Parsing SVG needs a real XML parser; the
+ * pipeline takes one by injection rather than importing it, so the same code runs in the
+ * browser today and on a server the day files start being stored.
  */
 
 export interface SvgDom {
@@ -19,7 +19,7 @@ export function createDomFromGlobals(): SvgDom {
   const Parser = globals.DOMParser
   const Serializer = globals.XMLSerializer
   if (!Parser || !Serializer) {
-    throw new Error('DOMParser/XMLSerializer indisponíveis — passe um SvgDom explícito')
+    throw new Error('DOMParser/XMLSerializer unavailable — pass an explicit SvgDom')
   }
 
   const parser = new Parser()

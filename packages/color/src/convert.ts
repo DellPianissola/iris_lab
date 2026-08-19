@@ -1,6 +1,6 @@
 /**
- * Saturação e luminosidade circulam sempre em 0..1 — converter para 0..100 é problema de
- * quem exibe.
+ * Saturation and lightness always travel as 0..1 — converting to 0..100 is the display
+ * layer's problem.
  */
 
 export type Rgb = readonly [number, number, number]
@@ -71,8 +71,8 @@ function huePlane(hue: number, chroma: number, second: number): [number, number,
   return [chroma, 0, second]
 }
 
-/** Interpolação linear em RGB, não em espaço perceptual: barata e previsível o bastante
- *  para mistura de fundo, onde o resultado é conferido no olho logo em seguida. */
+/** Linear in RGB rather than in a perceptual space: cheap and predictable enough for
+ *  blending against a background, where the result is judged by eye moments later. */
 export function mix(from: string, to: string, amount: number): string {
   const a = hexToRgb(from)
   const b = hexToRgb(to)

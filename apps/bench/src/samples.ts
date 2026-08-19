@@ -1,6 +1,6 @@
 /**
- * Corpus de referência do `@nomai/svg-kit`. Os mesmos arquivos que a suíte usa — a bancada
- * lê deles em vez de manter cópia, senão os dois divergiriam no primeiro caso novo.
+ * The `@nomai/svg-kit` reference corpus. The same files the suite uses — the bench reads
+ * them instead of keeping a copy, or the two would diverge on the first new case.
  */
 
 const modules = import.meta.glob('../../../packages/svg-kit/fixtures/*.svg', {

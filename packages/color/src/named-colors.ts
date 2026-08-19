@@ -1,6 +1,6 @@
 /**
- * Dado de especificação, não configuração: a lista é fechada pela spec e ninguém a ajusta.
- * Fica em arquivo próprio só para não afogar o parser.
+ * Specification data, not configuration: the list is closed by the spec and nobody tunes it.
+ * It sits in its own file only so it does not drown the parser.
  */
 
 export const NAMED_COLORS: Readonly<Record<string, string>> = {

@@ -1,6 +1,6 @@
 import { FONT_IDS, type FontId } from '@nomai/theme'
 
-/** Padrões e limites dos controles. Nenhum literal solto nos componentes. */
+/** Control defaults and ranges. No loose literals in the components. */
 
 export const controlDefaults = {
   wordmark: 'Íris|Code',
@@ -20,7 +20,7 @@ export const controlRanges = {
   buttonRadius: { min: 0, max: 28 },
 } as const
 
-/** Proporções do lockup em relação ao tamanho do símbolo. */
+/** Lockup proportions relative to the symbol size. */
 export const lockupScale = {
   navWord: 0.62,
   footMark: 0.75,
@@ -28,15 +28,15 @@ export const lockupScale = {
   platePadding: 0.2,
 } as const
 
-/** Tamanhos de favicon que importam de verdade. */
+/** The favicon sizes that actually matter. */
 export const faviconSizes = [64, 32, 16] as const
 
-/** Separador que destaca a segunda parte do nome na cor da marca. */
+/** Separator that highlights the second half of the name in the brand colour. */
 export const WORDMARK_SPLIT = '|'
 
 export const STORAGE_KEY = 'iris.saved-palettes.v1'
 
-/** Teto do upload. Acima disso o pipeline trava a aba antes de terminar. */
+/** Upload ceiling. Beyond this the pipeline freezes the tab before it finishes. */
 export const uploadLimits = {
   maxBytes: 4 * 1024 * 1024,
 } as const

@@ -24,14 +24,14 @@ export function I18nProvider({ children }: { readonly children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>(detectLocale)
 
   useEffect(() => {
-    // O atributo `lang` governa hifenização, corretor ortográfico e leitor de tela; sem ele
-    // o navegador continua tratando a página como português.
+    // The `lang` attribute governs hyphenation, spellcheck and screen readers; without it
+    // the browser keeps treating the page as Portuguese.
     document.documentElement.lang = locale
 
     try {
       localStorage.setItem(LOCALE_STORAGE_KEY, locale)
     } catch {
-      // Storage indisponível: a escolha vale só nesta sessão, o que é melhor que quebrar.
+      // Storage unavailable: the choice lasts this session only, which beats breaking.
     }
   }, [locale])
 
@@ -55,8 +55,8 @@ export function useI18n(): I18nValue {
 }
 
 /**
- * Exportada porque o `main.tsx` precisa do mesmo resultado **antes** da primeira pintura,
- * para ajustar o `lang` do documento. Duas implementações da mesma regra divergiriam.
+ * Exported because `main.tsx` needs the same answer **before** the first paint, to set the
+ * document lang. Two implementations of one rule would drift apart.
  */
 export function detectLocale(): Locale {
   try {
@@ -64,7 +64,7 @@ export function detectLocale(): Locale {
     const fromStorage = stored ? matchLocale([stored]) : null
     if (fromStorage) return fromStorage
   } catch {
-    // Segue para a detecção pelo navegador.
+    // Falls through to browser detection.
   }
 
   return matchLocale(navigator.languages ?? [navigator.language]) ?? DEFAULT_LOCALE

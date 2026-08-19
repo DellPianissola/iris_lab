@@ -5,7 +5,7 @@ import { decodeShare, encodeShare, isCompletePalette } from '../src/state/share'
 const palette = brandPalette('light')
 
 describe('encodeShare', () => {
-  it('leva os sete tokens e o modo', () => {
+  it('carries the seven tokens and the mode', () => {
     const params = new URLSearchParams(encodeShare(palette, 'dark'))
 
     expect(params.get('brand')).toBe('16db65')
@@ -13,27 +13,27 @@ describe('encodeShare', () => {
     expect([...params.keys()]).toHaveLength(8)
   })
 
-  it('grava o hex sem o "#"', () => {
+  it('writes the hex without the "#"', () => {
     expect(encodeShare(palette, 'light')).not.toContain('%23')
   })
 })
 
 describe('decodeShare', () => {
-  it('faz a volta completa', () => {
+  it('round-trips completely', () => {
     const { palette: back, mode } = decodeShare(`#${encodeShare(palette, 'dark')}`)
 
     expect(back).toEqual(palette)
     expect(mode).toBe('dark')
   })
 
-  it('aceita o hash com ou sem "#"', () => {
+  it('accepts the hash with or without the "#"', () => {
     const hash = encodeShare(palette, 'light')
     expect(decodeShare(hash)).toEqual(decodeShare(`#${hash}`))
   })
 
-  // Link truncado por app de mensagem é o caso comum; descartar só o token corrompido
-  // mantém o resto utilizável, que é a razão de os parâmetros serem nomeados.
-  it('descarta valor inválido sem derrubar os outros', () => {
+  // A link truncated by a messaging app is the common case; discarding only the corrupted
+  // token keeps the rest usable, which is why the parameters are named.
+  it('discards an invalid value without taking the others down', () => {
     const { palette: back } = decodeShare('#brand=16db65&accent=xyz&bg=zzzzzz')
 
     expect(back.brand).toBe('#16db65')
@@ -41,23 +41,23 @@ describe('decodeShare', () => {
     expect(back.bg).toBeUndefined()
   })
 
-  it('ignora modo desconhecido', () => {
+  it('ignores an unknown mode', () => {
     expect(decodeShare('#mode=sepia').mode).toBeUndefined()
   })
 
-  it('devolve vazio para hash ausente ou lixo', () => {
+  it('returns empty for a missing or junk hash', () => {
     expect(decodeShare('')).toEqual({ palette: {} })
     expect(decodeShare('#').palette).toEqual({})
     expect(decodeShare('#qualquercoisa').palette).toEqual({})
   })
 
-  it('normaliza a caixa do hex', () => {
+  it('normalises the hex case', () => {
     expect(decodeShare('#brand=16DB65').palette.brand).toBe('#16db65')
   })
 })
 
 describe('isCompletePalette', () => {
-  it('exige os sete tokens', () => {
+  it('requires all seven tokens', () => {
     expect(isCompletePalette(palette)).toBe(true)
     expect(isCompletePalette({ brand: '#16db65' })).toBe(false)
 

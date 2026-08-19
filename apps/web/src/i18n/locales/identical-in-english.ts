@@ -1,10 +1,10 @@
 /**
- * Chaves cujo inglês é legitimamente igual ao português — termo da especificação, nome
- * próprio, estrangeirismo já incorporado.
+ * Keys whose English is legitimately identical to the Portuguese — a specification term, a
+ * proper noun, a loanword already absorbed.
  *
- * Mora ao lado dos dicionários de propósito: quem acrescenta uma string está nesta pasta, e
- * a lista só é útil se for lembrada no mesmo gesto. Alimenta o teste que acusa tradução
- * esquecida.
+ * It lives beside the dictionaries on purpose: whoever adds a string is already in this
+ * folder, and the list is only useful if it is remembered in the same gesture. Feeds the
+ * test that catches a forgotten translation.
  */
 export const IDENTICAL_IN_ENGLISH: ReadonlySet<string> = new Set([
   'locale.names.pt-BR',

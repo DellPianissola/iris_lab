@@ -1,6 +1,6 @@
 import type { MarkKind, MarkMode, MarkWarning } from '@nomai/svg-kit'
 
-/** Um símbolo disponível na grade — embutido ou enviado pelo usuário. */
+/** A symbol available in the grid — built in or uploaded. */
 interface MarkBase {
   readonly id: string
   readonly name: string
@@ -9,7 +9,7 @@ interface MarkBase {
   readonly kind: MarkKind
   readonly palette: readonly string[]
   readonly warnings: readonly MarkWarning[]
-  /** Decidido pelo classificador; o usuário só discorda se quiser. */
+  /** Decided by the classifier; the user only overrides if they want to. */
   mode: MarkMode
 }
 

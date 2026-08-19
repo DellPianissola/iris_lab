@@ -1,6 +1,6 @@
 import { brandPalette } from '@nomai/theme'
 
-/** Padrões da bancada. As cores vêm de `@nomai/theme` — nenhum literal aqui. */
+/** No colour literals here: the bench reads them from `@nomai/theme` like the product does. */
 const palette = brandPalette('light')
 
 export const toneDefaults = {
@@ -16,7 +16,7 @@ export const backdrops = [
 
 export type BackdropId = (typeof backdrops)[number]['id']
 
-/** Rótulos do relatório. O classificador decide; a bancada só mostra a conclusão. */
+/** Report labels. The classifier decides; the bench only shows the conclusion. */
 export const kindLabels: Readonly<Record<string, string>> = {
   mono: 'Uma cor só',
   duo: 'Duas cores',

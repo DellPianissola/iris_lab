@@ -1,12 +1,12 @@
 export type { ColorProp } from './svg-spec'
 
 /**
- * O que o classificador conclui sobre o símbolo. Decide sozinho o modo padrão — a
- * interface nunca pergunta ao usuário, só oferece um interruptor já na posição certa.
+ * What the classifier concludes about the symbol. It decides the default mode on its own —
+ * the interface never asks, it only offers a switch already in the right position.
  */
 export type MarkKind = 'mono' | 'duo' | 'multi' | 'raster' | 'raster-opaque'
 
-/** `theme` = o símbolo assume as cores do site. `original` = mantém as próprias. */
+/** `theme` = the symbol takes the site's colours. `original` = it keeps its own. */
 export type MarkMode = 'theme' | 'original'
 
 export type WarningCode =
@@ -20,21 +20,21 @@ export interface MarkWarning {
 }
 
 export interface SvgAnalysis {
-  /** Cores distintas, da mais usada para a menos usada. */
+  /** Distinct colours, most used first. */
   readonly palette: readonly string[]
   readonly counts: Readonly<Record<string, number>>
   readonly warnings: readonly MarkWarning[]
   readonly kind: MarkKind
-  /** Razão largura/altura do viewBox; 1 quando ausente. */
+  /** viewBox width/height ratio; 1 when absent. */
   readonly aspect: number
 }
 
 export interface ImportedSvg {
   readonly type: 'svg'
   readonly analysis: SvgAnalysis
-  /** Markup sanitizado e normalizado, com as cores originais. */
+  /** Sanitised and normalised markup, with the original colours. */
   readonly original: string
-  /** Mesmo desenho com as cores trocadas por `--tone-0` / `--tone-1`. */
+  /** The same drawing with its colours swapped for `--tone-0` / `--tone-1`. */
   readonly themed: string
   readonly mode: MarkMode
 }

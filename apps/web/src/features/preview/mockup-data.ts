@@ -1,6 +1,6 @@
 /**
- * Os números do site falso. Ficam como número, não como texto formatado: `12.480` e `99,9%`
- * estavam chumbados em pt-BR e apareceriam errados para quem usa a ferramenta em inglês.
+ * The fake site numbers. Kept as numbers rather than formatted text: `12.480` and `99,9%`
+ * were hardcoded in pt-BR and would have looked wrong to anyone using the tool in English.
  */
 export const mockupStats = {
   users: 12480,

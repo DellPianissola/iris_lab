@@ -1,15 +1,15 @@
 import { PALETTE_KEYS, type Palette, type ThemeMode } from '@nomai/theme'
 
 /**
- * Paleta ↔ hash da URL. É o que transforma "olha essa paleta" num link — e, sem servidor,
- * custa zero: o estado inteiro cabe no fragmento, que o navegador nunca envia a lugar nenhum.
+ * With no server this costs nothing: the whole state fits in the fragment, which the browser
+ * never sends anywhere.
  *
- * **O símbolo fica de fora de propósito.** Arquivo enviado nunca sai do navegador de quem
- * enviou, então uma referência a ele no link chegaria quebrada do outro lado — e apontar
- * para um arquivo local contradiria a promessa que sustenta o produto.
+ * **The symbol is left out on purpose.** An uploaded file never leaves the browser it was
+ * dropped into, so a reference to it would arrive broken on the other side — and pointing at
+ * a local file would contradict the promise the product rests on.
  *
- * Parâmetros nomeados em vez de posicionais: dá para ler o link, e um valor corrompido
- * descarta só aquele token em vez de deslocar todos os outros.
+ * Named parameters rather than positional ones: the link is readable, and a corrupted value
+ * discards only that token instead of shifting every other one.
  */
 
 const MODE_PARAM = 'mode'
@@ -24,7 +24,7 @@ export function encodeShare(palette: Palette, mode: ThemeMode): string {
   const params = new URLSearchParams()
 
   for (const key of PALETTE_KEYS) {
-    // Sem o `#`: dentro de um fragmento ele só confunde quem lê, e economiza sete caracteres.
+    // Without the `#`: inside a fragment it only confuses the reader, and saves seven characters.
     params.set(key, palette[key].replace('#', '').toLowerCase())
   }
   params.set(MODE_PARAM, mode)
@@ -45,7 +45,7 @@ export function decodeShare(hash: string): SharedState {
   return mode === 'light' || mode === 'dark' ? { palette, mode } : { palette }
 }
 
-/** Um link só é útil se trouxer a paleta inteira; token faltando cai no padrão da app. */
+/** A link is only useful if it carries the whole palette; a missing token falls back to the default. */
 export function isCompletePalette(palette: Partial<Palette>): palette is Palette {
   return PALETTE_KEYS.every((key) => Boolean(palette[key]))
 }

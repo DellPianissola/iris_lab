@@ -2,15 +2,15 @@ import { contrastRatio, hexToHsl, hslToHex, relativeLuminance } from '@nomai/col
 import { contrastSearch, darkBackgroundThreshold } from './config'
 
 /**
- * Alvos do WCAG 2.x. São da especificação, não escolha nossa — por isso não estão em
- * `config.ts`.
+ * WCAG 2.x targets. They come from the specification, not from us — which is why they are
+ * not in `config.ts`.
  */
 export const CONTRAST_TARGETS = {
-  /** Texto normal, AA. */
+  /** Normal text, AA. */
   text: 4.5,
-  /** Texto grande (≥18.66px negrito ou ≥24px), AA. */
+  /** Large text (≥18.66px bold or ≥24px), AA. */
   largeText: 3,
-  /** Texto normal, AAA. */
+  /** Normal text, AAA. */
   enhanced: 7,
 } as const
 
@@ -27,7 +27,7 @@ export function isDark(hex: string): boolean {
   return relativeLuminance(hex) < darkBackgroundThreshold
 }
 
-/** Preto ou branco — o que contrastar mais com o fundo. */
+/** Black or white — whichever contrasts more with the background. */
 export function readableOn(background: string): string {
   return contrastRatio(background, '#ffffff') >= contrastRatio(background, '#111111')
     ? '#ffffff'
@@ -35,12 +35,13 @@ export function readableOn(background: string): string {
 }
 
 /**
- * Empurra a cor até ela atingir o alvo de contraste contra o fundo em que vai aparecer.
+ * Pushes the colour until it meets the contrast target against the background it will appear
+ * on.
  *
- * Existe porque **a cor da marca quase nunca serve como texto**: o verde `#16db65` dá
- * 1.85:1 contra branco. Sem esta função, marca neon vira texto ilegível. Em fundo claro a
- * cor escurece; em fundo escuro, clareia. Preserva matiz e saturação, mexe só na
- * luminosidade, para o resultado continuar reconhecível como a mesma cor.
+ * It exists because **a brand colour almost never works as text**: the green `#16db65` gives
+ * 1.85:1 against white. Without this, neon brand becomes unreadable copy. On light grounds
+ * the colour darkens; on dark ones it lightens. Hue and saturation are preserved and only
+ * lightness moves, so the result still reads as the same colour.
  */
 export function ensureContrast(
   color: string,
@@ -63,7 +64,7 @@ export function ensureContrast(
     if (contrastRatio(candidate, background) >= target) return candidate
   }
 
-  // Nem preto nem branco puro atingiram o alvo: o fundo é intermediário demais. Devolve o
-  // extremo, que é o melhor possível, e deixa o painel de contraste denunciar.
+  // Neither pure black nor pure white reached the target: the background is too mid-toned.
+  // Return the extreme, which is the best available, and let the contrast panel call it out.
   return towardsLight ? '#ffffff' : '#000000'
 }

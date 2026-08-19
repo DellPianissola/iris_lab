@@ -1,9 +1,9 @@
 import type { Mark } from '../marks/types'
 
 /**
- * Qual símbolo fica selecionado depois de remover um. Função pura e isolada de propósito:
- * a versão anterior calculava isto por índice dentro do updater de `setMarks`, e updater
- * impuro é invocado duas vezes pelo StrictMode — a seleção andava duas casas em vez de uma.
+ * Pure and isolated on purpose: the earlier version computed this by index inside the
+ * `setMarks` updater, and an impure updater is invoked twice by StrictMode — the selection
+ * moved two places instead of one.
  */
 export function selectionAfterRemoval(
   marks: readonly Mark[],
@@ -19,7 +19,7 @@ export function selectionAfterRemoval(
   return neighbour?.id ?? selectedId
 }
 
-/** O selecionado, com queda para o primeiro da lista se o id não existir mais. */
+/** The selected one, falling back to the first in the list if the id is gone. */
 export function markById(marks: readonly Mark[], selectedId: string): Mark | undefined {
   return marks.find((mark) => mark.id === selectedId) ?? marks[0]
 }

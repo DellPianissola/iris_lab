@@ -6,9 +6,9 @@ import { buildThemedSvg } from './recolor'
 import { sanitizeSvg } from './sanitize'
 
 /**
- * Devolve `null` quando o arquivo não é um SVG legível. A interface nunca pergunta ao
- * usuário o que fazer com o resultado: `mode` já vem na posição certa, e o interruptor na
- * tela existe só para ele discordar.
+ * Returns `null` when the file is not a readable SVG. The interface never asks the user what
+ * to do with the result: `mode` already arrives in the right position, and the switch on
+ * screen exists only for them to disagree.
  */
 export function importSvg(text: string, dom: SvgDom): ImportedSvg | null {
   const sanitized = sanitizeSvg(text, dom)
@@ -28,8 +28,8 @@ export function importSvg(text: string, dom: SvgDom): ImportedSvg | null {
 }
 
 /**
- * Uma ou duas cores são identidade que sobrevive à troca; três ou mais, e recolorir
- * descaracteriza a marca.
+ * One or two colours are an identity that survives the swap; three or more, and recolouring
+ * breaks the brand.
  */
 export function defaultModeFor(kind: MarkKind): MarkMode {
   return kind === 'mono' || kind === 'duo' ? 'theme' : 'original'

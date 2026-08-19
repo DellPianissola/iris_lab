@@ -9,11 +9,11 @@ import { LOCALES, matchLocale } from '../src/i18n/types'
 const dictionaries = { 'pt-BR': ptBR, en, es }
 
 /**
- * Chave faltando já reprova no `tsc`. Estes testes cobrem o que o tipo não alcança: chave
- * presente mas vazia, e tradução esquecida.
+ * A missing key already fails `tsc`. These tests cover what the type cannot reach: a key that
+ * is present but empty, and a forgotten translation.
  */
 
-/** Todo caminho do dicionário, inclusive os que guardam função de interpolação. */
+/** Every path in the dictionary, including those holding an interpolation function. */
 function keyPaths(value: unknown, path = ''): string[] {
   if (typeof value !== 'object' || value === null) return path ? [path] : []
 
@@ -22,7 +22,7 @@ function keyPaths(value: unknown, path = ''): string[] {
   )
 }
 
-/** Só os caminhos que guardam texto — função não tem como ser comparada. */
+/** Only the paths holding text — a function cannot be compared. */
 function stringEntries(value: unknown, path = ''): [string, string][] {
   if (typeof value === 'string') return [[path, value]]
   if (typeof value !== 'object' || value === null) return []
@@ -32,15 +32,15 @@ function stringEntries(value: unknown, path = ''): [string, string][] {
   )
 }
 
-describe('dicionários', () => {
-  it('cobre os três idiomas declarados', () => {
+describe('dictionaries', () => {
+  it('covers the three declared languages', () => {
     expect(Object.keys(dictionaries).sort()).toEqual([...LOCALES].sort())
   })
 
-  // Sete chaves guardam função de interpolação. A primeira versão deste arquivo usava um
-  // caminhador que só coletava string, então essas sumiam dos dois lados e a comparação
-  // passava sem tê-las visto — teste prometendo cobertura que não tinha.
-  it('conta as chaves-função junto com as de texto', () => {
+  // Seven keys hold an interpolation function. The first version of this file used a walker
+  // that only collected strings, so those vanished from both sides and the comparison passed
+  // without having seen them — a test promising coverage it did not have.
+  it('counts function keys alongside text keys', () => {
     const paths = keyPaths(ptBR)
 
     expect(paths).toContain('app.shortcutHint')
@@ -49,11 +49,11 @@ describe('dicionários', () => {
     expect(paths.length).toBeGreaterThan(stringEntries(ptBR).length)
   })
 
-  it.each(LOCALES)('%s tem exatamente as chaves do português', (locale) => {
+  it.each(LOCALES)('%s has exactly the Portuguese keys', (locale) => {
     expect(keyPaths(dictionaries[locale])).toEqual(keyPaths(ptBR))
   })
 
-  it.each(LOCALES)('%s não tem string vazia', (locale) => {
+  it.each(LOCALES)('%s has no empty string', (locale) => {
     const empty = stringEntries(dictionaries[locale])
       .filter(([, value]) => value.trim() === '')
       .map(([path]) => path)
@@ -62,14 +62,14 @@ describe('dicionários', () => {
   })
 
   /**
-   * Chave copiada do português e nunca traduzida passa pelo compilador; aqui não passa.
+   * A key copied from Portuguese and never translated passes the compiler; it does not pass
+   * here.
    *
-   * Só vale para o inglês. Português e espanhol são línguas próximas e compartilham dezenas
-   * de cognatas exatas — "Paleta", "Acento", "Símbolo", "Entrar", "Contraste" —, então
-   * "igual ao português" ali não é sinal de esquecimento, e a allowlist necessária seria
-   * maior que o próprio teste.
+   * English only. Portuguese and Spanish are close languages sharing dozens of exact cognates
+   * — "Paleta", "Acento", "Símbolo", "Entrar", "Contraste" — so "identical to the Portuguese"
+   * is no evidence of forgetting there, and the allowlist would outgrow the test itself.
    */
-  it('inglês não repete o português', () => {
+  it('English does not repeat the Portuguese', () => {
     const base = new Map(stringEntries(ptBR))
     const untranslated = stringEntries(en)
       .filter(([path, value]) => base.get(path) === value && !IDENTICAL_IN_ENGLISH.has(path))
@@ -78,7 +78,7 @@ describe('dicionários', () => {
     expect(untranslated).toEqual([])
   })
 
-  it('não guarda allowlist para caminho que não existe mais', () => {
+  it('holds no allowlist entry for a path that no longer exists', () => {
     const paths = new Set(keyPaths(ptBR))
     const stale = [...IDENTICAL_IN_ENGLISH].filter((path) => !paths.has(path))
 
@@ -86,46 +86,46 @@ describe('dicionários', () => {
   })
 })
 
-describe('formatadores', () => {
-  // O bug que motivou o Intl: `toFixed` produzia 4.58 mesmo em português.
-  it('usa o separador decimal do idioma na razão de contraste', () => {
+describe('formatters', () => {
+  // The bug that motivated Intl: `toFixed` produced 4.58 even in Portuguese.
+  it('uses the language decimal separator in the contrast ratio', () => {
     expect(createFormatters('pt-BR').ratio(4.58)).toBe('4,58')
     expect(createFormatters('en').ratio(4.58)).toBe('4.58')
     expect(createFormatters('es').ratio(4.58)).toBe('4,58')
   })
 
-  it('separa milhar conforme o idioma', () => {
+  it('groups thousands according to the language', () => {
     expect(createFormatters('pt-BR').integer(12480)).toBe('12.480')
     expect(createFormatters('en').integer(12480)).toBe('12,480')
   })
 
-  it('recebe fração e devolve percentual', () => {
+  it('takes a fraction and returns a percentage', () => {
     expect(createFormatters('pt-BR').percent(0.999)).toBe('99,9%')
     expect(createFormatters('en').percent(0.999)).toBe('99.9%')
   })
 
-  it('formata o limite de upload em megabytes', () => {
+  it('formats the upload limit in megabytes', () => {
     expect(createFormatters('en').megabytes(4 * 1024 * 1024)).toMatch(/^4\s?MB$/)
   })
 })
 
 describe('matchLocale', () => {
-  it('casa a tag exata', () => {
+  it('matches the exact tag', () => {
     expect(matchLocale(['es'])).toBe('es')
   })
 
-  // O navegador manda a tag completa e só temos uma variante de cada língua.
-  it('casa pela língua quando a região não bate', () => {
+  // The browser sends the full tag and we carry only one variant of each language.
+  it('matches by language when the region does not', () => {
     expect(matchLocale(['pt-PT'])).toBe('pt-BR')
     expect(matchLocale(['en-GB'])).toBe('en')
     expect(matchLocale(['es-419'])).toBe('es')
   })
 
-  it('respeita a ordem de preferência do navegador', () => {
+  it('respects the browser preference order', () => {
     expect(matchLocale(['de', 'es', 'en'])).toBe('es')
   })
 
-  it('devolve null quando nenhuma casa', () => {
+  it('returns null when none match', () => {
     expect(matchLocale(['de', 'fr'])).toBeNull()
     expect(matchLocale([])).toBeNull()
   })

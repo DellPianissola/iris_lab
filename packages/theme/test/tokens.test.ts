@@ -13,7 +13,7 @@ import {
 } from '../src/index'
 
 describe('buildTokens', () => {
-  it('mantém os sete editáveis e acrescenta os quatro derivados', () => {
+  it('keeps the seven editable ones and adds the four derived', () => {
     const tokens = buildTokens(brandPalette('light'))
 
     expect(tokens.brand).toBe('#16db65')
@@ -22,12 +22,12 @@ describe('buildTokens', () => {
     )
   })
 
-  it('nunca põe texto branco em cima do verde da marca', () => {
+  it('never puts white text on the brand green', () => {
     expect(buildTokens(brandPalette('light')).onBrand).toBe('#111111')
   })
 
-  // O motivo de o brandInk existir: a marca crua sobre a pílula é ilegível.
-  it('garante que brandInk é legível sobre brandSoft', () => {
+  // Why brandInk exists: the raw brand on the pill is unreadable.
+  it('guarantees brandInk is legible on brandSoft', () => {
     for (const preset of presets) {
       const tokens = buildTokens(preset.colors)
 
@@ -37,7 +37,7 @@ describe('buildTokens', () => {
     }
   })
 
-  it('vale também para paleta sorteada', () => {
+  it('holds for a randomly drawn palette too', () => {
     for (let seed = 0; seed < 50; seed += 1) {
       const tokens = buildTokens(randomPalette(seed % 2 === 0 ? 'light' : 'dark'))
 
@@ -52,7 +52,7 @@ describe('buildTokens', () => {
 })
 
 describe('tokensToCssVars', () => {
-  it('exporta os onze tokens, não só os sete editáveis', () => {
+  it('exports all eleven tokens, not only the seven editable', () => {
     const vars = tokensToCssVars(buildTokens(brandPalette('light')))
 
     expect(Object.keys(vars)).toHaveLength(11)
@@ -62,26 +62,26 @@ describe('tokensToCssVars', () => {
 })
 
 describe('tokensToCssText', () => {
-  it('gera bloco :root colável, com os derivados incluídos', () => {
+  it('generates a pasteable :root block, derived tokens included', () => {
     const css = tokensToCssText(buildTokens(brandPalette('light')), 'paleta atual')
 
     expect(css).toContain('/* paleta atual */')
     expect(css).toContain(':root {')
     expect(css).toContain('--c-brand: #16db65;')
-    // O protótipo exportava só os sete: o CSS baixado não reproduzia o que o cliente viu.
+    // The prototype exported only the seven: the downloaded CSS did not reproduce what the customer saw.
     expect(css).toContain('--c-brand-soft:')
     expect(css).toContain('--c-brand-ink:')
   })
 })
 
 describe('deriveNeutrals', () => {
-  it('produz fundo claro no modo claro e escuro no modo escuro', () => {
+  it('produces a light background in light mode and a dark one in dark mode', () => {
     expect(deriveNeutrals('#16db65', 'light').bg).not.toBe(deriveNeutrals('#16db65', 'dark').bg)
     expect(contrastRatio(deriveNeutrals('#16db65', 'light').text, deriveNeutrals('#16db65', 'light').bg))
       .toBeGreaterThanOrEqual(CONTRAST_TARGETS.text)
   })
 
-  it('mantém texto legível sobre o fundo em qualquer matiz', () => {
+  it('keeps text legible on the background at any hue', () => {
     for (let hue = 0; hue < 360; hue += 30) {
       for (const mode of ['light', 'dark'] as const) {
         const neutrals = deriveNeutrals(hueToHex(hue), mode)
@@ -94,14 +94,14 @@ describe('deriveNeutrals', () => {
 })
 
 describe('harmonizeAccent', () => {
-  it('é determinístico quando o sorteio é injetado', () => {
+  it('is deterministic when the randomness is injected', () => {
     const fixed = () => 0.5
     expect(harmonizeAccent('#16db65', 'light', fixed)).toBe(
       harmonizeAccent('#16db65', 'light', fixed),
     )
   })
 
-  it('afasta o acento da marca', () => {
+  it('moves the accent away from the brand', () => {
     const accent = harmonizeAccent('#16db65', 'light', () => 0.5)
     expect(accent).not.toBe('#16db65')
   })

@@ -72,8 +72,8 @@ export function SymbolPanel({
         {t.symbol.dropzone.line1}
         <br />
         {t.symbol.dropzone.line2}
-        {/* `hidden` tira o campo da ordem de tabulação e não havia outro caminho para
-            enviar arquivo sem mouse. Escondido visualmente, ele continua focável. */}
+        {/* `hidden` takes the field out of the tab order, and there was no other way to
+            upload without a mouse. Hidden visually, it stays focusable. */}
         <input
           type="file"
           className="visually-hidden-input"
@@ -88,8 +88,8 @@ export function SymbolPanel({
 
       {error && <p className="error" role="alert">{error}</p>}
 
-      {/* O botão de remover é **irmão** do de selecionar, não filho: conteúdo interativo
-          dentro de <button> é HTML inválido, e o teclado não alcança o de dentro. */}
+      {/* The remove button is a **sibling** of the select one, not a child: interactive
+          content inside a <button> is invalid HTML, and the keyboard cannot reach the inner one. */}
       <div className="marks">
         {marks.map((item, index) => (
           <div key={item.id} className="mark">

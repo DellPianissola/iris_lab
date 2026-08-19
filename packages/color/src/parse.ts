@@ -2,25 +2,22 @@ import { hslToHex, toHex } from './convert'
 import { NAMED_COLORS } from './named-colors'
 
 /**
- * Resolve um valor de cor CSS para `#rrggbb`, ou `null` quando o valor não é uma cor
- * pintável.
- *
- * Substitui o truque de atribuir a cor a um `<span>` e ler o `getComputedStyle`: aquilo
- * forçava reflow por atributo por elemento, amarrava o código a um `document` real e, em
- * ambiente de teste, mediria o mock em vez do código.
+ * Replaces the trick of assigning the colour to a `<span>` and reading `getComputedStyle`
+ * back: that forced a reflow per attribute per element, tied the code to a live `document`,
+ * and under test would have measured the mock instead of the code.
  */
 
-/** Valores válidos em `fill`/`stroke` que não são uma cor pintável. */
+/** Values that are valid in `fill`/`stroke` but do not paint a colour. */
 const NON_COLOR_KEYWORDS: ReadonlySet<string> = new Set([
   'none', 'transparent', 'currentcolor', 'inherit', 'initial', 'unset', 'revert',
   'revert-layer', 'context-fill', 'context-stroke',
 ])
 
 export function parseCssColor(value: string | null | undefined): string | null {
-  // `getAttribute` devolve `null` para atributo ausente. Convertendo antes de validar,
-  // `String(null)` vira a string "null", que passa por qualquer teste de "tem valor" e
-  // acaba resolvendo pra preto — inflando a contagem de cores e classificando mono como
-  // duo. Por isso a guarda de tipo vem primeiro.
+  // `getAttribute` returns `null` for a missing attribute. Convert before validating and
+  // `String(null)` becomes the string "null", which passes any "has a value" check and ends
+  // up resolving to black — inflating the colour count and classifying mono as duo. Hence
+  // the type guard comes first.
   if (typeof value !== 'string') return null
 
   const raw = value.trim().toLowerCase()
@@ -65,8 +62,8 @@ function parseFunctional(raw: string, name: 'rgb' | 'hsl'): FunctionalArgs | nul
   if (head !== name && head !== `${name}a`) return null
 
   const inner = raw.slice(open + 1, -1)
-  // Função aninhada (`calc()`, `var()`) exigiria um avaliador de CSS; recusar é melhor do
-  // que adivinhar e contar uma cor que não existe.
+  // A nested function (`calc()`, `var()`) would need a CSS evaluator; refusing beats
+  // guessing and counting a colour that is not there.
   if (inner.includes('(')) return null
 
   const bySlash = inner.split('/')

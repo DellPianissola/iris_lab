@@ -2,11 +2,9 @@ import { COLOR_PROPS, type ColorProp } from '../svg-spec'
 import { specificityOf } from './specificity'
 
 /**
- * Extrator mínimo de CSS: o que interessa é `fill`/`stroke` dentro de `<style>` interno.
- *
- * O protótipo usava `/([^{}]+)\{([^{}]*)\}/g`, que quebra em qualquer bloco aninhado
- * (`@media`, `@supports`). Aqui o texto é percorrido contando chaves, então bloco aninhado
- * não desalinha o resto do arquivo.
+ * The prototype used `/([^{}]+)\{([^{}]*)\}/g`, which breaks on any nested block (`@media`,
+ * `@supports`). Here the text is walked counting braces, so a nested block does not throw
+ * off the rest of the file.
  */
 
 export interface ColorDeclaration {
@@ -18,7 +16,7 @@ export interface ColorDeclaration {
 export interface ColorRule {
   readonly selector: string
   readonly specificity: number
-  /** Posição no documento — desempata regras de mesma especificidade (vence a última). */
+  /** Document position — breaks ties between rules of equal specificity (the last one wins). */
   readonly order: number
   readonly declarations: readonly ColorDeclaration[]
 }
@@ -59,15 +57,15 @@ function* iterateStyleBlocks(css: string): Generator<StyleBlock> {
     const close = findMatchingBrace(css, open)
     if (close < 0) return
 
-    // Tudo antes do último `;` é at-rule sem bloco (`@import url(...);`) já encerrada —
-    // o seletor de verdade é só o que sobra depois dela.
+    // Everything before the last `;` is a block-less at-rule (`@import url(...);`) already
+    // closed — the real selector is only what remains after it.
     const raw = css.slice(cursor, open)
     const lastSemicolon = raw.lastIndexOf(';')
     const prelude = (lastSemicolon >= 0 ? raw.slice(lastSemicolon + 1) : raw).trim()
 
-    // At-rule com bloco (`@media`, `@supports`) é pulada inteira: aplicar as declarações
-    // dela incondicionalmente pintaria o desenho com uma regra de print ou de outro
-    // breakpoint que talvez nunca valha na tela.
+    // A block at-rule (`@media`, `@supports`) is skipped whole: applying its declarations
+    // unconditionally would paint the drawing with a print rule, or another breakpoint's,
+    // that may never apply on screen.
     if (prelude && !prelude.startsWith('@')) {
       yield { prelude, body: css.slice(open + 1, close) }
     }

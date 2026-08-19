@@ -7,7 +7,7 @@ import { Glyph } from './Glyph'
 import { Lockup } from './Lockup'
 import { mockupStats } from './mockup-data'
 
-/** O ano não muda durante a sessão; ler o relógio a cada repintura seria desperdício. */
+/** The year does not change during a session; reading the clock on every repaint is waste. */
 const CURRENT_YEAR = String(new Date().getFullYear())
 
 interface SiteMockupProps {

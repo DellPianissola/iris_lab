@@ -6,46 +6,46 @@ const dom = testDom()
 
 function themed(fixture: string): string {
   const result = importSvg(loadFixture(fixture), dom)
-  if (!result) throw new Error(`fixture ${fixture} não parseou`)
+  if (!result) throw new Error(`fixture ${fixture} did not parse`)
   return result.themed
 }
 
 describe('buildThemedSvg', () => {
-  it('injeta a folha com !important dentro do próprio SVG', () => {
+  it('injects the sheet with !important inside the SVG itself', () => {
     const markup = themed('mono-css-class.svg')
 
     expect(markup).toContain('.__f0{fill:var(--tone-0,currentColor)!important}')
     expect(markup).toContain('.__f1{fill:var(--tone-1,currentColor)!important}')
   })
 
-  it('dá tom 0 à cor dominante e tom 1 à segunda', () => {
+  it('gives tone 0 to the dominant colour and tone 1 to the second', () => {
     const svg = dom.parse(themed('duo.svg')).querySelector('svg')
 
     expect(svg?.querySelectorAll('.__f0')).toHaveLength(3)
     expect(svg?.querySelectorAll('.__f1')).toHaveLength(1)
   })
 
-  it('marca também quem só tinha o preto implícito', () => {
+  it('also tags what only had the implicit black', () => {
     const svg = dom.parse(themed('mono-implicit-black.svg')).querySelector('svg')
 
     expect(svg?.querySelectorAll('.__f0')).toHaveLength(2)
   })
 
-  it('marca o elemento que herdou a cor do <g> pai', () => {
+  it('tags the element that inherited colour from the parent <g>', () => {
     const svg = dom.parse(themed('mono-fill-on-group.svg')).querySelector('svg')
 
     expect(svg?.querySelector('g')?.classList.contains('__f0')).toBe(true)
   })
 
-  it('colapsa cor fora dos dois tons dominantes no tom da marca', () => {
+  it('collapses a colour outside the two dominant tones into the brand tone', () => {
     const svg = dom.parse(themed('multi.svg')).querySelector('svg')
 
-    // Três cores, dois tons: a terceira cai no tom 0 — recolorir é tudo ou nada.
+    // Three colours, two tones: the third falls to tone 0 — recolouring is all or nothing.
     expect(svg?.querySelectorAll('.__f0')).toHaveLength(2)
     expect(svg?.querySelectorAll('.__f1')).toHaveLength(1)
   })
 
-  it('não altera o markup original', () => {
+  it('leaves the original markup untouched', () => {
     const result = importSvg(loadFixture('duo.svg'), dom)
 
     expect(result?.original).not.toContain('__f0')

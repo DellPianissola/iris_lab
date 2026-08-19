@@ -43,7 +43,7 @@ const el = {
 
 function mustFind(id: string): HTMLElement {
   const node = document.getElementById(id)
-  if (!node) throw new Error(`elemento #${id} não existe no index.html`)
+  if (!node) throw new Error(`element #${id} is missing from index.html`)
   return node
 }
 
@@ -122,7 +122,7 @@ function renderArt(target: HTMLElement, markup: string, themed: boolean): void {
   target.innerHTML = markup
 }
 
-/** Só o que reflete a seleção — remontar isto a cada arraste de cor destruiria o foco. */
+/** Only what reflects the selection — rebuilding this on every colour drag would destroy focus. */
 function renderStructure(): void {
   renderSampleList()
   renderBackdropSwitch()
@@ -142,8 +142,9 @@ function render(): void {
 
   renderArt(el.artOriginal, result.original, false)
   renderArt(el.artThemed, result.themed, true)
-  // A bancada sempre mostra o recolorido, inclusive quando o padrão é manter as cores —
-  // o objetivo é ver o que a troca faria. Sem este aviso, o painel contradiz o relatório.
+  // The bench always shows the recoloured version, even when the default is to keep the
+  // original colours — the point is seeing what the swap would do. Without this note the
+  // pane contradicts the report.
   el.capThemed.textContent =
     result.mode === 'original' ? 'não é o padrão para este arquivo' : 'tons injetados'
   el.markup.textContent = result.themed

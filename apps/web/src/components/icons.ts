@@ -1,13 +1,14 @@
 /**
- * O conjunto de ícones do produto, num arquivo só — dá para auditar o que entra sem varrer
- * os componentes, e o import fica curto no lugar de uso.
+ * One file so the set can be audited without grepping the components, and the import stays
+ * short at the call site.
  *
- * Emoji saiu daqui de propósito: renderiza diferente em cada sistema, **não herda
- * `currentColor`** (então não acompanha o tema) e leitor de tela anuncia "dado de jogo" no
- * lugar de "aleatório". Heroicons são SVG inline, herdam a cor e recebem tamanho por CSS.
+ * Emoji left on purpose: they render differently on every system, **do not inherit
+ * `currentColor`** (so they never follow the theme), and a screen reader announces "game
+ * die" where the button means "random". Heroicons are inline SVG, inherit the colour and
+ * take their size from CSS.
  *
- * O apelido descreve o papel no produto; o nome original fica ao lado porque é por ele que
- * se procura um substituto no catálogo do Heroicons.
+ * The alias describes the role in the product; the original name sits beside it because that
+ * is what you search for in the Heroicons catalogue.
  */
 export {
   ArrowDownTrayIcon as DownloadIcon, //   heroicons: arrow-down-tray

@@ -1,23 +1,21 @@
 /**
- * Histórico de desfazer/refazer. Genérico e puro — o estado que ele guarda é problema de
- * quem o usa.
+ * Generic and pure — what it holds is the caller problem.
  *
- * A chave de coalescência existe por causa do seletor de cor: arrastar produz dezenas de
- * valores por segundo, e cada um virar um passo tornaria o desfazer inútil. Gravações
- * seguidas **com a mesma chave** ocupam um passo só; trocar de chave abre um passo novo,
- * então ajustar o acento e depois as bordas continua sendo duas coisas desfazíveis
- * separadamente. A primeira gravação de cada chave sempre empilha, para que o estado
- * anterior ao gesto continue alcançável.
+ * The coalesce key exists because of the colour picker: dragging emits dozens of values a
+ * second, and one step each would make undo useless. Consecutive records **with the same
+ * key** occupy a single step; changing key opens a new one, so adjusting the accent and then
+ * the borders stays two separately undoable things. The first record of each key always
+ * pushes, so the state before the gesture stays reachable.
  */
 
-/** Passos guardados. Acima disso o começo é descartado — memória não cresce sem fim. */
+/** Steps kept. Beyond this the oldest are dropped — memory does not grow without end. */
 const MAX_DEPTH = 50
 
 export interface History<T> {
   readonly past: readonly T[]
   readonly present: T
   readonly future: readonly T[]
-  /** Chave do último gesto; `null` quando a próxima gravação tem de empilhar. */
+  /** The last gesture key; `null` when the next record has to push. */
   readonly coalesceKey: string | null
 }
 
@@ -27,14 +25,14 @@ export function initHistory<T>(present: T): History<T> {
 
 export function record<T>(history: History<T>, next: T, coalesceKey: string | null = null): History<T> {
   if (coalesceKey !== null && coalesceKey === history.coalesceKey) {
-    // Substitui o topo: continua sendo o mesmo gesto do usuário.
+    // Replaces the top: this is still the same gesture.
     return { ...history, present: next, future: [] }
   }
 
   return {
     past: [...history.past, history.present].slice(-MAX_DEPTH),
     present: next,
-    // Refazer só faz sentido enquanto ninguém escreveu por cima do ramo abandonado.
+    // Redo only makes sense while nobody has written over the abandoned branch.
     future: [],
     coalesceKey,
   }

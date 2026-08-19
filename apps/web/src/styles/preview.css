@@ -1,5 +1,5 @@
-/* O mockup. Tudo aqui lê custom property e não sabe nada sobre estado — trocar cor é
-   reescrever uma variável num nó, não re-renderizar componente. */
+/* The mockup. Everything here reads custom properties and knows nothing about state —
+   changing a colour rewrites one variable on one node, it does not re-render a component. */
 
 /* ---------- lockup ---------- */
 
@@ -38,7 +38,7 @@
 }
 .lockup .word em { font-style: normal; color: var(--c-brand); }
 
-/* ---------- grade de fundos ---------- */
+/* ---------- backdrop grid ---------- */
 
 .lockups { display: grid; grid-template-columns: repeat(4, 1fr); }
 @media (max-width: 760px) { .lockups { grid-template-columns: repeat(2, 1fr); } }

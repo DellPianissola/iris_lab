@@ -2,25 +2,25 @@ import { extractColorRules, type ColorRule } from '../css/rules'
 import { COLOR_PROPS, type ColorProp } from '../svg-spec'
 
 /**
- * Colapsa toda cor em atributo de apresentação, venha ela de `<style>` interno ou de
- * `style` inline. Depois disto existe um lugar só para procurar cor, independente da
- * ferramenta que exportou o arquivo.
+ * Collapses every colour into a presentation attribute, whether it came from an internal
+ * `<style>` or from inline `style`. After this there is one place to look for colour,
+ * whichever tool exported the file.
  *
- * A ordem segue a cascata real, que é onde o protótipo errava duas vezes:
+ * The order follows the real cascade, which is where the prototype was wrong twice:
  *
- *   1. inline `!important`   (mais forte)
- *   2. folha `!important`
+ *   1. inline `!important`   (strongest)
+ *   2. stylesheet `!important`
  *   3. inline normal
- *   4. folha normal
- *   5. atributo de apresentação  (mais fraco — especificidade zero)
+ *   4. stylesheet normal
+ *   5. presentation attribute  (weakest — specificity zero)
  *
- * O protótipo só escrevia o atributo quando ele estava ausente, então (a) o atributo vencia
- * a folha, o inverso do navegador, e (b) entre regras de mesma especificidade vencia a
- * primeira, quando em CSS vence a última. Illustrator emite `class="st0" fill="#000"` com
- * frequência, então o caso (a) não é hipotético.
+ * The prototype only wrote the attribute when it was absent, so (a) the attribute beat the
+ * stylesheet, the reverse of what browsers do, and (b) among rules of equal specificity the
+ * first won, where CSS takes the last. Illustrator emits `class="st0" fill="#000"` often
+ * enough that (a) is not hypothetical.
  */
 
-/** Força de uma declaração; o maior vence. */
+/** A declaration's strength; the highest wins. */
 const Rank = {
   StylesheetNormal: 1,
   InlineNormal: 2,
@@ -131,7 +131,7 @@ function matchAll(svg: SVGElement, selector: string): Element[] {
     if (svg.matches(selector)) matches.unshift(svg)
     return matches
   } catch {
-    // Seletor que o navegador recusa não pinta nada no navegador tampouco.
+    // A selector the browser rejects paints nothing in the browser either.
     return []
   }
 }

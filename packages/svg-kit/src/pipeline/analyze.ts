@@ -3,8 +3,8 @@ import { COLOR_PROPS, IMPLICIT_FILL, SHAPE_SELECTOR } from '../svg-spec'
 import type { MarkKind, MarkWarning, SvgAnalysis } from '../types'
 
 /**
- * Depende de `normalizeSvg` ter rodado antes: só então toda cor mora em atributo, e ler
- * atributo basta para contar.
+ * Depends on `normalizeSvg` having run first: only then does every colour live in an
+ * attribute, and reading attributes is enough to count.
  */
 export function analyzeSvg(svg: SVGElement): SvgAnalysis {
   const counts = countDeclaredColors(svg)
@@ -67,8 +67,8 @@ function collectWarnings(svg: SVGElement): MarkWarning[] {
 }
 
 function classify(svg: SVGElement, palette: readonly string[]): MarkKind {
-  // Um `<image>` embutido é um PNG disfarçado de SVG: as cores dele não estão no markup,
-  // então nenhuma contagem descreve o desenho.
+  // An embedded `<image>` is a PNG in SVG clothing: its colours are not in the markup, so
+  // no count describes the drawing.
   if (svg.querySelector('image')) return 'raster'
   if (palette.length <= 1) return 'mono'
   if (palette.length === 2) return 'duo'

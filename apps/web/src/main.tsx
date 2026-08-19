@@ -5,12 +5,12 @@ import { detectLocale, I18nProvider } from './i18n'
 import './styles/app.css'
 import './styles/preview.css'
 
-// Antes da primeira pintura: o `lang` do documento governa hifenização, corretor e leitor
-// de tela, e o index.html não tem como saber o idioma de quem abriu.
+// Before the first paint: the document `lang` governs hyphenation, spellcheck and screen
+// readers, and index.html has no way to know the language of whoever opened it.
 document.documentElement.lang = detectLocale()
 
 const container = document.getElementById('root')
-if (!container) throw new Error('#root não existe no index.html')
+if (!container) throw new Error('#root is missing from index.html')
 
 createRoot(container).render(
   <StrictMode>

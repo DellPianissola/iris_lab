@@ -14,7 +14,7 @@ interface LockupGridProps {
   readonly glyphColor: string
 }
 
-/** O logo nos quatro fundos em que ele vai aparecer de verdade. */
+/** The logo on the four grounds it will actually appear on. */
 export function LockupGrid({ tokens, mark, controls, glyphColor }: LockupGridProps) {
   const { t } = useI18n()
   const darkBackground = isDark(tokens.bg)
@@ -32,7 +32,7 @@ export function LockupGrid({ tokens, mark, controls, glyphColor }: LockupGridPro
     <div className="lockups">
       {lockupBackdropIds.map((id) => {
         const style = styles[id]
-        // Nos fundos sólidos a plaquinha atrapalha: ela vira ruído em cima da própria marca.
+        // On solid grounds the plate gets in the way: it becomes noise on top of the brand itself.
         const neutralisePlate = id === 'brand' || id === 'mono'
 
         return (

@@ -1,18 +1,17 @@
 /**
- * Fatos ditados pela especificação do SVG. Não são configuração: ninguém "ajusta" o
- * namespace ou a cor padrão de `fill`. Ficam nomeados aqui para não aparecerem como
- * literal solto no meio do pipeline.
+ * Facts dictated by the SVG specification. Not configuration: nobody "tunes" the namespace
+ * or the default `fill`. Named here so they do not appear as loose literals mid-pipeline.
  */
 
 export const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 
-/** Sem `fill` declarado em lugar nenhum acima, a spec manda pintar de preto. */
+/** With no `fill` declared anywhere above it, the spec says paint it black. */
 export const IMPLICIT_FILL = '#000000'
 
-/** Elementos que pintam. `<g>` fica de fora: ele só repassa cor para os filhos. */
+/** Elements that paint. `<g>` is left out: it only passes colour down to its children. */
 export const SHAPE_SELECTOR = 'path,rect,circle,ellipse,polygon,polyline,line,text,tspan,textPath'
 
-/** Propriedades que carregam cor. Fill e stroke caem na mesma paleta de propósito: um
- *  contorno de outra cor é uma segunda cor da marca, não ruído. */
+/** Properties that carry colour. Fill and stroke land in the same palette on purpose: an
+ *  outline in another colour is a second brand colour, not noise. */
 export const COLOR_PROPS = ['fill', 'stroke'] as const
 export type ColorProp = (typeof COLOR_PROPS)[number]

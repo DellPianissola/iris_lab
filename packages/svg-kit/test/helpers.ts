@@ -13,7 +13,7 @@ export function testDom(): SvgDom {
   return createDomFromGlobals()
 }
 
-/** Monta um buffer RGBA a partir de blocos `[r, g, b, a, quantidade]`. */
+/** Builds an RGBA buffer from blocks of `[r, g, b, a, count]`. */
 export function pixels(...blocks: readonly [number, number, number, number, number][]): number[] {
   const data: number[] = []
   for (const [r, g, b, a, count] of blocks) {

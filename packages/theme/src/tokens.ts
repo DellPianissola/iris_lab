@@ -4,8 +4,9 @@ import { CONTRAST_TARGETS, ensureContrast, isDark, readableOn } from './contrast
 import { PALETTE_KEYS, type Palette, type ThemeTokens } from './types'
 
 /**
- * Fonte única dos tokens. O mockup **e** o CSS exportado saem daqui — no protótipo eram dois
- * caminhos separados, e o arquivo que o cliente baixava não reproduzia o que ele viu.
+ * Single source for the tokens. The mockup **and** the exported CSS both come from here — in
+ * the prototype they were separate paths, and the file the customer downloaded did not
+ * reproduce what they had seen.
  */
 export function buildTokens(palette: Palette): ThemeTokens {
   const darkBackground = isDark(palette.bg)
@@ -19,13 +20,13 @@ export function buildTokens(palette: Palette): ThemeTokens {
     onBrand: readableOn(palette.brand),
     onAccent: readableOn(palette.accent),
     brandSoft,
-    // A marca só vira texto depois de passar pela busca de contraste: `brandSoft` é fundo
-    // de pílula, e marca neon em cima dele é ilegível sem o empurrão.
+    // The brand only becomes text after the contrast search: `brandSoft` is a pill
+    // background, and neon brand on top of it is unreadable without the push.
     brandInk: ensureContrast(nudged, brandSoft, CONTRAST_TARGETS.text),
   }
 }
 
-/** Nomes das custom properties, num lugar só — o CSS e o export leem daqui. */
+/** Custom property names in one place — the CSS and the export both read from here. */
 const CSS_VAR_PREFIX = '--c-'
 
 const DERIVED_VAR_NAMES = {
@@ -48,7 +49,7 @@ export function tokensToCssVars(tokens: ThemeTokens): Record<string, string> {
   return vars
 }
 
-/** Bloco `:root` pronto para colar num projeto. */
+/** A `:root` block ready to paste into a project. */
 export function tokensToCssText(tokens: ThemeTokens, label?: string): string {
   const declarations = Object.entries(tokensToCssVars(tokens))
     .map(([name, value]) => `  ${name}: ${value};`)

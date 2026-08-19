@@ -43,18 +43,19 @@ export interface Controls {
   buttonRadius: number
 }
 
-/** O par que o desfazer e o link compartilhado governam juntos. */
+/** The pair that undo and the shared link govern together. */
 interface Look {
   readonly palette: Palette
   readonly mode: ThemeMode
 }
 
 /**
- * Todo o estado da ferramenta num lugar só. Os componentes recebem valores e ações —
- * nenhum deles guarda estado próprio nem calcula token.
+ * All of the tool state in one place. Components receive values and actions — none of them
+ * holds state of its own or computes a token.
  *
- * O símbolo selecionado é identificado por **id**, não por posição: índice e lista são dois
- * estados que podem discordar, e mantê-los em acordo exigia acoplar os dois `setState`.
+ * The selected symbol is identified by **id**, not by position: an index and a list are two
+ * states that can disagree, and keeping them in agreement meant coupling the two `setState`
+ * calls.
  */
 export function useBrandLab() {
   const [look, setLook] = useState<History<Look>>(() => initHistory(initialLook()))
@@ -66,33 +67,33 @@ export function useBrandLab() {
   const { palette, mode } = look.present
 
   useEffect(() => {
-    // `replaceState` em vez de `location.hash`: atribuir ao hash empilha uma entrada de
-    // histórico por mudança de cor, e o botão Voltar do navegador deixaria de servir.
+    // `replaceState` rather than `location.hash`: assigning to the hash pushes a history
+    // entry per colour change, and the browser Back button would stop being useful.
     const next = `${location.pathname}${location.search}#${encodeShare(palette, mode)}`
     history.replaceState(null, '', next)
   }, [palette, mode])
 
   useEffect(() => {
-    // Colar um link compartilhado na barra de endereço troca só o hash, e isso **não**
-    // recarrega a página: sem escutar `hashchange`, o link chegava e o efeito acima o
-    // sobrescrevia no instante seguinte. `replaceState` não dispara este evento, então só
-    // navegação de gente cai aqui.
+    // Pasting a shared link into the address bar changes only the hash, and that does
+    // **not** reload the page: without listening for `hashchange`, the link arrived and the
+    // effect above overwrote it a moment later. `replaceState` does not fire this event, so
+    // only human navigation lands here.
     function onHashChange(): void {
       const shared = decodeShare(location.hash)
-      // Numa constante local: o estreitamento do type guard não atravessa a closure abaixo.
+      // In a local const: the type guard narrowing does not cross the closure below.
       const sharedPalette = shared.palette
       if (!isCompletePalette(sharedPalette)) return
 
       setLook((current) => {
         const next = { palette: sharedPalette, mode: shared.mode ?? current.present.mode }
-        // Comparar pelo próprio serializador em vez de token a token: continua correto se
-        // a paleta ganhar um token novo.
+        // Comparing through the serialiser rather than token by token: stays correct if the
+        // palette gains a new token.
         const igual =
           encodeShare(next.palette, next.mode) ===
           encodeShare(current.present.palette, current.present.mode)
 
-        // Gravar como passo permite desfazer a chegada do link, em vez de perder o que
-        // estava na tela.
+        // Recording it as a step allows undoing the link arrival instead of losing whatever
+        // was on screen.
         return igual ? current : record(current, next)
       })
     }
@@ -105,8 +106,8 @@ export function useBrandLab() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
     } catch {
-      // Storage cheio ou desabilitado. Perder a persistência é aceitável; travar a
-      // ferramenta por causa dela não é.
+      // Storage full or disabled. Losing persistence is acceptable; freezing the tool over
+      // it is not.
     }
   }, [saved])
 
@@ -118,8 +119,8 @@ export function useBrandLab() {
       record(
         current,
         { ...current.present, palette: { ...current.present.palette, [key]: value } },
-        // A chave é o token: o arrasto inteiro num seletor vira um passo, mas ajustar
-        // acento e depois bordas continua sendo dois passos desfazíveis.
+        // The key is the token: a whole drag on one picker becomes a single step, but
+        // adjusting the accent and then the borders stays two undoable steps.
         key,
       ),
     )
@@ -161,9 +162,9 @@ export function useBrandLab() {
     )
   }, [])
 
-  // Updater funcional porque o upload de vários arquivos chama isto em sequência, sem
-  // re-render entre as chamadas. Selecionar por id não depende da lista, então os dois
-  // `setState` ficam independentes.
+  // Functional updater because uploading several files calls this in sequence with no
+  // re-render in between. Selecting by id does not depend on the list, so the two `setState`
+  // calls stay independent.
   const addMark = useCallback((next: Mark) => {
     setMarks((current) => [...current, next])
     setSelectedId(next.id)
@@ -223,7 +224,7 @@ export function useBrandLab() {
   }
 }
 
-/** Link compartilhado manda; sem ele, a paleta da casa. */
+/** A shared link wins; without one, the house palette. */
 function initialLook(): Look {
   const shared = decodeShare(location.hash)
   const mode = shared.mode ?? 'light'
@@ -238,8 +239,8 @@ function loadSaved(): readonly SavedCombo[] {
     const raw = localStorage.getItem(STORAGE_KEY)
     return raw ? (JSON.parse(raw) as SavedCombo[]) : []
   } catch {
-    // Storage cheio, desabilitado ou com dado de versão antiga: começar vazio é melhor do
-    // que impedir a ferramenta de abrir.
+    // Storage full, disabled, or holding data from an older version: starting empty beats
+    // preventing the tool from opening.
     return []
   }
 }

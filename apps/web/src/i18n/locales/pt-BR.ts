@@ -1,11 +1,11 @@
 import type { FontId, PresetId } from '@nomai/theme'
 
 /**
- * Fonte da verdade das traduções. Os outros idiomas são tipados como `typeof ptBR`, então
- * chave faltando em qualquer um deles é erro de compilação — não string crua na tela.
+ * Source of truth for the translations. The other languages are typed as `typeof ptBR`, so a
+ * missing key in any of them is a compile error — not a raw key on a customer screen.
  *
- * Interpolação entra como função para que a assinatura também seja verificada: um idioma
- * que esqueça um argumento não compila.
+ * Interpolation goes in as a function so the signature is checked too: a language that drops
+ * an argument does not compile.
  */
 export const ptBR = {
   locale: {
@@ -63,8 +63,8 @@ export const ptBR = {
       'ciano-noturno': 'Ciano noturno',
       'malva-suave': 'Malva suave',
       'vermelho-seco': 'Vermelho seco',
-      // `satisfies` obriga a cobrir exatamente os ids declarados em @nomai/theme: preset
-      // novo sem tradução vira erro de compilação, que é a razão de o dicionário ser tipado.
+      // `satisfies` forces covering exactly the ids declared in @nomai/theme: a new preset
+      // with no translation becomes a compile error, which is why the dictionary is typed.
     } satisfies Record<PresetId, string>,
   },
 
@@ -144,7 +144,7 @@ export const ptBR = {
       accentOnBg: 'Acento / fundo',
       inkOnSoft: 'Principal como texto (pílula)',
     },
-    // AAA e AA são termos da especificação e não se traduzem.
+    // AAA and AA are specification terms and are not translated.
     grades: { aaa: 'AAA', aa: 'AA', large: 'AA grande', fail: 'falha' },
   },
 

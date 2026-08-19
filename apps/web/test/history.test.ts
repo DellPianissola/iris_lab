@@ -4,13 +4,13 @@ import { canRedo, canUndo, initHistory, record, redo, undo } from '../src/state/
 const start = initHistory('a')
 
 describe('history', () => {
-  it('começa sem passado nem futuro', () => {
+  it('starts with no past and no future', () => {
     expect(canUndo(start)).toBe(false)
     expect(canRedo(start)).toBe(false)
     expect(start.present).toBe('a')
   })
 
-  it('grava e volta', () => {
+  it('records and steps back', () => {
     const h = record(record(start, 'b'), 'c')
 
     expect(h.present).toBe('c')
@@ -18,14 +18,14 @@ describe('history', () => {
     expect(undo(undo(h)).present).toBe('a')
   })
 
-  it('refaz o que foi desfeito', () => {
+  it('redoes what was undone', () => {
     const h = undo(record(start, 'b'))
 
     expect(canRedo(h)).toBe(true)
     expect(redo(h).present).toBe('b')
   })
 
-  it('descarta o futuro ao gravar sobre um desfazer', () => {
+  it('discards the future when recording over an undo', () => {
     const desfeito = undo(record(record(start, 'b'), 'c'))
     const novoRamo = record(desfeito, 'x')
 
@@ -34,15 +34,15 @@ describe('history', () => {
     expect(undo(novoRamo).present).toBe('b')
   })
 
-  it('não quebra ao desfazer ou refazer no limite', () => {
+  it('does not break undoing or redoing at the boundary', () => {
     expect(undo(start)).toBe(start)
     expect(redo(start)).toBe(start)
   })
 
-  describe('coalescência por chave', () => {
-    // O seletor de cor emite dezenas de valores por arrasto; cada um virando um passo
-    // tornaria o desfazer inútil.
-    it('junta uma sequência da mesma chave num passo só', () => {
+  describe('coalescing by key', () => {
+    // The colour picker emits dozens of values per drag; one step each would make undo
+    // useless.
+    it('merges a run of the same key into one step', () => {
       let h = record(start, 'b', 'brand')
       h = record(h, 'c', 'brand')
       h = record(h, 'd', 'brand')
@@ -51,17 +51,17 @@ describe('history', () => {
       expect(undo(h).present).toBe('a')
     })
 
-    // A primeira do arrasto ainda empilha, senão o estado anterior some.
-    it('preserva o estado anterior ao início do arrasto', () => {
+    // The first of the drag still pushes, or the previous state disappears.
+    it('preserves the state from before the drag started', () => {
       const antes = record(start, 'sorteada')
       const arrastando = record(record(antes, 'x', 'brand'), 'y', 'brand')
 
       expect(undo(arrastando).present).toBe('sorteada')
     })
 
-    // O bug que motivou a chave: sem ela, ajustar acento e depois bordas colapsava num
-    // passo só, e um desfazer apagava as duas edições.
-    it('trocar de chave abre um passo novo', () => {
+    // The bug that motivated the key: without it, adjusting the accent and then the borders
+    // collapsed into one step, and a single undo erased both edits.
+    it('changing key opens a new step', () => {
       let h = record(start, 'acento', 'accent')
       h = record(h, 'bordas', 'line')
 
@@ -69,7 +69,7 @@ describe('history', () => {
       expect(undo(undo(h)).present).toBe('a')
     })
 
-    it('voltar à chave anterior também abre passo novo', () => {
+    it('returning to an earlier key also opens a new step', () => {
       let h = record(start, 'b', 'brand')
       h = record(h, 'c', 'accent')
       h = record(h, 'd', 'brand')
@@ -77,7 +77,7 @@ describe('history', () => {
       expect(undo(h).present).toBe('c')
     })
 
-    it('uma gravação sem chave encerra a sequência', () => {
+    it('a record with no key ends the run', () => {
       let h = record(start, 'b', 'brand')
       h = record(h, 'c')
       h = record(h, 'd', 'brand')
@@ -86,13 +86,13 @@ describe('history', () => {
       expect(undo(undo(h)).present).toBe('b')
     })
 
-    it('desfazer encerra a coalescência', () => {
+    it('undo ends the coalescing run', () => {
       const h = undo(record(start, 'b', 'brand'))
       expect(h.coalesceKey).toBeNull()
     })
   })
 
-  it('descarta o começo em vez de crescer sem fim', () => {
+  it('drops the oldest instead of growing without end', () => {
     let h = initHistory(0)
     for (let i = 1; i <= 80; i += 1) h = record(h, i)
 

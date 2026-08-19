@@ -1,4 +1,4 @@
-/** API pública do pacote. `apps/web` importa daqui e de mais lugar nenhum. */
+/** The package's public API. `apps/web` imports from here and nowhere else. */
 
 export { importSvg, defaultModeFor } from './pipeline/import-svg'
 export { sanitizeSvg } from './pipeline/sanitize'

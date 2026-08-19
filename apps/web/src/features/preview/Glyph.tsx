@@ -2,13 +2,13 @@ import type { Mark } from '../../marks/types'
 
 interface GlyphProps {
   readonly mark: Mark | undefined
-  /** Mostra o arquivo como ele veio, ignorando o modo — usado na grade de escolha. */
+  /** Shows the file as it arrived, ignoring the mode — used in the picker grid. */
   readonly forceOriginal?: boolean
 }
 
 /**
- * Bitmap não tem como receber tom injetado, então no modo `theme` ele vira silhueta por
- * máscara CSS — o que só funciona porque o classificador já garantiu que há recorte.
+ * A bitmap cannot take an injected tone, so in `theme` mode it becomes a silhouette through
+ * a CSS mask — which only works because the classifier already guaranteed a cut-out.
  */
 export function Glyph({ mark, forceOriginal = false }: GlyphProps) {
   if (!mark) return null
@@ -19,7 +19,7 @@ export function Glyph({ mark, forceOriginal = false }: GlyphProps) {
     return (
       <span
         className="glyph-art"
-        // O markup já passou pelo sanitizador do pipeline antes de chegar aqui.
+        // The markup already went through the pipeline sanitiser before reaching here.
         dangerouslySetInnerHTML={{ __html: followsTheme ? mark.themed : mark.original }}
       />
     )

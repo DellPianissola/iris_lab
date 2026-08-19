@@ -6,13 +6,12 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 /**
- * O chrome da ferramenta tem paleta própria, fora do `@nomai/theme`, então nada verificava
- * essas cores. Uma ferramenta que audita contraste falhando no próprio contraste é problema
- * de credibilidade.
+ * The tool chrome has a palette of its own, outside `@nomai/theme`, so nothing verified those
+ * colours. A tool that audits contrast failing its own contrast is a credibility problem.
  *
- * As cores são **lidas do CSS**, não transcritas: a primeira versão deste arquivo copiava os
- * hex à mão e teria continuado verde contra o valor antigo no dia em que alguém mexesse na
- * folha — garantia falsa, que é pior do que teste nenhum.
+ * The colours are **read from the CSS**, not transcribed: the first version of this file
+ * copied the hex by hand and would have stayed green against the stale value the moment
+ * anyone touched the sheet — a false guarantee, which is worse than no test.
  */
 
 const CSS_PATH = join(dirname(fileURLToPath(import.meta.url)), '../src/styles/app.css')
@@ -30,41 +29,41 @@ function readUiPalette(): Record<string, string> {
 
 const ui = readUiPalette()
 
-/** Nome trocado no CSS não pode virar teste que some em silêncio. */
+/** A renamed variable in the CSS must not become a test that silently disappears. */
 function color(name: string): string {
   const value = ui[name]
-  if (!value) throw new Error(`--ui-${name} não existe mais em app.css`)
+  if (!value) throw new Error(`--ui-${name} no longer exists in app.css`)
   return value
 }
 
-/** WCAG 1.4.11: indicador de foco e limite de componente pedem 3:1 contra o vizinho. */
+/** WCAG 1.4.11: focus indicators and component boundaries need 3:1 against the neighbour. */
 const NON_TEXT_TARGET = CONTRAST_TARGETS.largeText
 
-describe('contraste do chrome da ferramenta', () => {
-  it('lê a paleta da folha de estilo', () => {
+describe('contrast of the tool chrome', () => {
+  it('reads the palette from the stylesheet', () => {
     expect(Object.keys(ui).length).toBeGreaterThanOrEqual(8)
     expect(color('accent')).toMatch(/^#[0-9a-f]{6}$/i)
   })
 
   it.each([
-    ['anel de foco sobre o fundo', 'accent', 'bg'],
-    ['anel de foco sobre o painel', 'accent', 'panel'],
-    ['anel de foco sobre o campo', 'accent', 'panel-2'],
-  ])('%s atinge 3:1', (_name, a, b) => {
+    ['focus ring on the background', 'accent', 'bg'],
+    ['focus ring on the panel', 'accent', 'panel'],
+    ['focus ring on the field', 'accent', 'panel-2'],
+  ])('%s reaches 3:1', (_name, a, b) => {
     expect(contrastRatio(color(a), color(b))).toBeGreaterThanOrEqual(NON_TEXT_TARGET)
   })
 
   it.each([
-    ['texto sobre o painel', 'text', 'panel'],
-    ['texto suave sobre o painel', 'dim', 'panel'],
-    ['texto suave sobre o campo', 'dim', 'panel-2'],
-    ['aviso sobre o campo', 'warn', 'panel-2'],
-    ['erro sobre o painel', 'danger', 'panel'],
-  ])('%s atinge 4.5:1', (_name, a, b) => {
+    ['text on the panel', 'text', 'panel'],
+    ['muted text on the panel', 'dim', 'panel'],
+    ['muted text on the field', 'dim', 'panel-2'],
+    ['warning on the field', 'warn', 'panel-2'],
+    ['error on the panel', 'danger', 'panel'],
+  ])('%s reaches 4.5:1', (_name, a, b) => {
     expect(contrastRatio(color(a), color(b))).toBeGreaterThanOrEqual(CONTRAST_TARGETS.text)
   })
 
-  it('texto do botão primário é legível sobre o acento', () => {
+  it('primary button text is legible on the accent', () => {
     expect(contrastRatio(color('on-accent'), color('accent'))).toBeGreaterThanOrEqual(
       CONTRAST_TARGETS.text,
     )

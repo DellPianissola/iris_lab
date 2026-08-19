@@ -10,8 +10,8 @@ export function isLocale(value: string): value is Locale {
 }
 
 /**
- * Casa `pt-BR`, `pt` e `pt-PT` no mesmo idioma: o navegador manda a tag completa e nós só
- * temos uma variante de cada língua.
+ * Matches `pt-BR`, `pt` and `pt-PT` to the same language: the browser sends the full tag and
+ * we carry only one variant of each.
  */
 export function matchLocale(tags: readonly string[]): Locale | null {
   for (const tag of tags) {

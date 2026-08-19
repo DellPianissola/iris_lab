@@ -1,8 +1,8 @@
 import { hexToRgb } from './convert'
 
 /**
- * Contraste pelo WCAG 2.x. São fórmulas da especificação, não escolha nossa — por isso os
- * números vivem aqui como constante e não em arquivo de configuração.
+ * WCAG 2.x contrast. These are formulas from the specification, not choices of ours — which
+ * is why the numbers live here as constants rather than in a config file.
  */
 
 const LUMINANCE_WEIGHTS = { r: 0.2126, g: 0.7152, b: 0.0722 } as const
@@ -25,7 +25,7 @@ function linearize(channel: number): number {
     : Math.pow((value + GAMMA_OFFSET) / (1 + GAMMA_OFFSET), GAMMA_EXPONENT)
 }
 
-/** Simétrica: a ordem dos argumentos não importa. */
+/** Symmetric: argument order does not matter. */
 export function contrastRatio(a: string, b: string): number {
   const first = relativeLuminance(a)
   const second = relativeLuminance(b)
