@@ -33,6 +33,12 @@ export const en: Dictionary = {
     randomize: 'Random',
     harmonize: 'Derive from brand',
     invert: 'Flip light/dark',
+    undo: 'Undo',
+    redo: 'Redo',
+    share: 'Copy link',
+    shared: 'Link copied',
+    shareNote:
+      'The link carries the palette and the mode — not your logo, which never leaves this browser.',
     note: '“Derive from brand” recalculates background, surface, text and accent from the brand colour.',
   },
 
@@ -58,6 +64,8 @@ export const en: Dictionary = {
     title: 'Symbol',
     dropzone: { line1: 'Drop your SVG / PNG here', line2: 'or click to choose' },
     remove: (name: string) => `Remove ${name}`,
+    select: (name: string) => `Use ${name}`,
+    selectBuiltin: (position: number) => `Use symbol ${position}`,
     plate: 'Symbol inside a plate (brand-coloured background)',
     size: 'Size',
     corners: 'Corners',

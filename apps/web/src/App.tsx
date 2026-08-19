@@ -19,7 +19,8 @@ import { useBrandLab } from './state/useBrandLab'
 const RANDOMIZE_KEY = 'r'
 
 export function App() {
-  const { mode, palette, tokens, marks, mark, selectedId, controls, saved, actions } = useBrandLab()
+  const { mode, palette, tokens, marks, mark, selectedId, controls, saved, canUndo, canRedo, actions } =
+    useBrandLab()
   const { t } = useI18n()
 
   const modeOptions = [
@@ -28,6 +29,7 @@ export function App() {
   ]
 
   useKeyboardShortcut(RANDOMIZE_KEY, actions.randomize)
+  useUndoShortcut(actions.undo, actions.redo)
 
   // Os tokens viram custom properties num nó só; nada abaixo recalcula cor.
   const previewStyle = useMemo(() => {
@@ -65,6 +67,10 @@ export function App() {
           onRandomize={actions.randomize}
           onHarmonize={actions.harmonize}
           onInvert={() => actions.switchMode(mode === 'dark' ? 'light' : 'dark')}
+          onUndo={actions.undo}
+          onRedo={actions.redo}
+          canUndo={canUndo}
+          canRedo={canRedo}
         />
 
         <PresetGrid onPick={actions.applyPalette} />
@@ -131,10 +137,8 @@ function useKeyboardShortcut(key: string, action: () => void): void {
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent): void {
       if (event.key.toLowerCase() !== key) return
-
-      const target = event.target as HTMLElement | null
-      const tag = target?.tagName
-      if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return
+      if (isTypingTarget(event.target)) return
+      if (event.ctrlKey || event.metaKey || event.altKey) return
 
       action()
     }
@@ -142,4 +146,33 @@ function useKeyboardShortcut(key: string, action: () => void): void {
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [key, action])
+}
+
+/**
+ * Ctrl+Z / Ctrl+Shift+Z, e Cmd no Mac.
+ *
+ * Sai fora quando o foco está num campo: ali o desfazer nativo do navegador é o que a
+ * pessoa espera, e roubá-lo faria o Ctrl+Z apagar a paleta em vez de reverter o que ela
+ * acabou de digitar.
+ */
+function useUndoShortcut(onUndo: () => void, onRedo: () => void): void {
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent): void {
+      if (event.key.toLowerCase() !== 'z') return
+      if (!event.ctrlKey && !event.metaKey) return
+      if (isTypingTarget(event.target)) return
+
+      event.preventDefault()
+      if (event.shiftKey) onRedo()
+      else onUndo()
+    }
+
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [onUndo, onRedo])
+}
+
+function isTypingTarget(target: EventTarget | null): boolean {
+  const tag = (target as HTMLElement | null)?.tagName
+  return tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA'
 }

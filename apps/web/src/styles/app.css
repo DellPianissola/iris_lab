@@ -209,20 +209,27 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 }
 
 .marks { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 10px; }
-.mark {
-  aspect-ratio: 1;
+
+/* Só posiciona: quem é clicável são os dois botões dentro dela. */
+.mark { position: relative; aspect-ratio: 1; }
+
+.mark-select {
+  width: 100%; height: 100%;
   display: grid; place-items: center;
   background: var(--ui-panel-2);
   border: 1px solid var(--ui-line);
   border-radius: 8px;
-  cursor: pointer;
   padding: 8px;
-  position: relative;
   color: var(--ui-text);
 }
-.mark:hover { border-color: var(--ui-hover); }
-.mark.selected { border-color: var(--ui-accent); box-shadow: inset 0 0 0 1px var(--ui-accent); }
-.mark .glyph-art, .mark svg, .mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.mark-select:hover { background: var(--ui-panel-2); border-color: var(--ui-hover); }
+.mark-select[aria-pressed="true"] {
+  border-color: var(--ui-accent);
+  box-shadow: inset 0 0 0 1px var(--ui-accent);
+}
+.mark-select .glyph-art, .mark-select svg, .mark-select img {
+  width: 100%; height: 100%; object-fit: contain; display: block;
+}
 .mark-remove {
   position: absolute; top: -7px; right: -7px;
   width: 18px; height: 18px;
@@ -236,6 +243,9 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   line-height: 1;
   display: none;
 }
+/* `:focus-within` é o que torna o remover alcançável pelo teclado: ele aparece quando o
+   foco chega ao botão de selecionar ao lado, e o Tab seguinte cai nele. Uma regra em
+   `.mark-remove:focus-visible` seria inalcançável — `display: none` não recebe foco. */
 .mark:hover .mark-remove,
 .mark:focus-within .mark-remove { display: inline-flex; }
 .mark-remove .icon { width: 12px; height: 12px; stroke-width: 2.4; }

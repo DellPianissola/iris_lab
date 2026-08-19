@@ -1,7 +1,8 @@
 import { PALETTE_KEYS, type Palette, type PaletteKey } from '@nomai/theme'
 import { Group } from '../../components/Field'
-import { DeriveIcon, InvertIcon, RandomIcon } from '../../components/icons'
+import { DeriveIcon, InvertIcon, RandomIcon, RedoIcon, UndoIcon } from '../../components/icons'
 import { useI18n } from '../../i18n'
+import { ShareButton } from './ShareButton'
 
 interface PalettePanelProps {
   readonly palette: Palette
@@ -9,6 +10,10 @@ interface PalettePanelProps {
   readonly onRandomize: () => void
   readonly onHarmonize: () => void
   readonly onInvert: () => void
+  readonly onUndo: () => void
+  readonly onRedo: () => void
+  readonly canUndo: boolean
+  readonly canRedo: boolean
 }
 
 export function PalettePanel({
@@ -17,6 +22,10 @@ export function PalettePanel({
   onRandomize,
   onHarmonize,
   onInvert,
+  onUndo,
+  onRedo,
+  canUndo,
+  canRedo,
 }: PalettePanelProps) {
   const { t } = useI18n()
 
@@ -46,6 +55,22 @@ export function PalettePanel({
         </button>
       </div>
       <p className="note">{t.palette.note}</p>
+
+      <div className="button-row">
+        <button type="button" onClick={onUndo} disabled={!canUndo}>
+          <UndoIcon className="icon" aria-hidden="true" />
+          {t.palette.undo}
+        </button>
+        <button type="button" onClick={onRedo} disabled={!canRedo}>
+          <RedoIcon className="icon" aria-hidden="true" />
+          {t.palette.redo}
+        </button>
+        <ShareButton />
+      </div>
+
+      {/* Junto do botão que a produz: é o argumento de privacidade, e no rodapé do grupo
+          ele virava mais uma linha cinza que ninguém associa ao link. */}
+      <p className="note">{t.palette.shareNote}</p>
     </Group>
   )
 }

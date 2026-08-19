@@ -39,6 +39,12 @@ export const ptBR = {
     randomize: 'Aleatório',
     harmonize: 'Derivar do principal',
     invert: 'Inverter claro/escuro',
+    undo: 'Desfazer',
+    redo: 'Refazer',
+    share: 'Copiar link',
+    shared: 'Link copiado',
+    shareNote:
+      'O link carrega a paleta e o modo — não o seu logo, que nunca sai deste navegador.',
     note: '“Derivar do principal” recalcula fundo, superfície, texto e acento a partir da cor principal.',
   },
 
@@ -66,6 +72,8 @@ export const ptBR = {
     title: 'Símbolo',
     dropzone: { line1: 'Arraste seus SVG / PNG aqui', line2: 'ou clique pra escolher' },
     remove: (name: string) => `Remover ${name}`,
+    select: (name: string) => `Usar ${name}`,
+    selectBuiltin: (position: number) => `Usar o símbolo ${position}`,
     plate: 'Símbolo dentro de uma plaquinha (fundo da cor principal)',
     size: 'Tamanho',
     corners: 'Cantos',

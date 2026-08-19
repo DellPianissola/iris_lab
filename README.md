@@ -31,18 +31,22 @@ O terceiro item é o que ninguém faz: **o Íris analisa o arquivo enviado e dec
 
 ## 🚀 Rodando localmente
 
-**Pré-requisitos:** Node `24.11.1` (fixado em `.nvmrc`) e pnpm.
+**Pré-requisitos:** Node `24.11.1` e pnpm.
 
 ```bash
-nvm use            # ou fnm use — lê o .nvmrc
+node -v            # precisa bater com o .nvmrc
 npm i -g pnpm      # corepack precisa de admin no Windows; isso não
 pnpm install
 ```
 
+O `.nvmrc` é só um arquivo de texto: ele **documenta** a versão, não instala nem troca nada.
+Se você não usa gerenciador de versão (`nvm`, `fnm`), basta ter o Node certo instalado — é o
+caso hoje. Quem usar um deles pode rodar `nvm use` / `fnm use` para que ele leia o arquivo.
+
 ```bash
 pnpm dev           # o produto        → http://localhost:5173
 pnpm dev:bench     # bancada do pipeline → http://localhost:5199
-pnpm test          # 111 testes
+pnpm test          # 149 testes
 pnpm typecheck
 ```
 
@@ -157,6 +161,7 @@ pnpm test
 | `@nomai/color` | 32 | Node puro |
 | `@nomai/theme` | 25 | Node puro |
 | `@nomai/svg-kit` | 54 | happy-dom |
+| `apps/web` | 38 | Node puro (lógica pura: seleção, i18n, contraste do chrome) |
 
 **Regra:** o pipeline não muda sem os fixtures correspondentes. Caso novo descoberto = fixture novo + teste, junto com a correção.
 

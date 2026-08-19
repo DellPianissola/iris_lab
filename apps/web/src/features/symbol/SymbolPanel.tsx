@@ -88,29 +88,28 @@ export function SymbolPanel({
 
       {error && <p className="error" role="alert">{error}</p>}
 
+      {/* O botão de remover é **irmão** do de selecionar, não filho: conteúdo interativo
+          dentro de <button> é HTML inválido, e o teclado não alcança o de dentro. */}
       <div className="marks">
-        {marks.map((item) => (
-          <div
-            key={item.id}
-            className={item.id === selectedId ? 'mark selected' : 'mark'}
-            onClick={() => onSelect(item.id)}
-            role="button"
-            tabIndex={0}
-            aria-pressed={item.id === selectedId}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault()
-                onSelect(item.id)
+        {marks.map((item, index) => (
+          <div key={item.id} className="mark">
+            <button
+              type="button"
+              className="mark-select"
+              aria-pressed={item.id === selectedId}
+              aria-label={
+                item.builtin ? t.symbol.selectBuiltin(index + 1) : t.symbol.select(item.name)
               }
-            }}
-          >
-            <Glyph mark={item} forceOriginal />
+              onClick={() => onSelect(item.id)}
+            >
+              <Glyph mark={item} forceOriginal />
+            </button>
             {!item.builtin && (
               <button
                 type="button"
                 className="mark-remove"
                 aria-label={t.symbol.remove(item.name)}
-                onClick={(event) => { event.stopPropagation(); onRemove(item.id) }}
+                onClick={() => onRemove(item.id)}
               >
                 <CloseIcon className="icon" aria-hidden="true" />
               </button>

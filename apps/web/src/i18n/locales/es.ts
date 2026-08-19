@@ -32,6 +32,12 @@ export const es: Dictionary = {
     randomize: 'Aleatorio',
     harmonize: 'Derivar del principal',
     invert: 'Invertir claro/oscuro',
+    undo: 'Deshacer',
+    redo: 'Rehacer',
+    share: 'Copiar enlace',
+    shared: 'Enlace copiado',
+    shareNote:
+      'El enlace lleva la paleta y el modo — no tu logo, que nunca sale de este navegador.',
     note: '“Derivar del principal” recalcula fondo, superficie, texto y acento a partir del color principal.',
   },
 
@@ -57,6 +63,8 @@ export const es: Dictionary = {
     title: 'Símbolo',
     dropzone: { line1: 'Arrastra tus SVG / PNG aquí', line2: 'o haz clic para elegir' },
     remove: (name: string) => `Eliminar ${name}`,
+    select: (name: string) => `Usar ${name}`,
+    selectBuiltin: (position: number) => `Usar el símbolo ${position}`,
     plate: 'Símbolo dentro de una placa (fondo del color principal)',
     size: 'Tamaño',
     corners: 'Esquinas',
