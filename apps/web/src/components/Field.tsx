@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode, SVGProps } from 'react'
+import type { ComponentType, SVGProps } from 'react'
 
 interface RangeFieldProps {
   readonly label: string
@@ -63,20 +63,6 @@ export function TextField({ label, value, onChange }: TextFieldProps) {
       <span className="field-label">{label}</span>
       <input type="text" value={value} onChange={(event) => onChange(event.target.value)} />
     </label>
-  )
-}
-
-interface GroupProps {
-  readonly title: string
-  readonly children: ReactNode
-}
-
-export function Group({ title, children }: GroupProps) {
-  return (
-    <section className="group">
-      <h2>{title}</h2>
-      {children}
-    </section>
   )
 }
 

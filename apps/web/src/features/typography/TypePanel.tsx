@@ -1,5 +1,6 @@
 import { fonts } from '@nomai/theme'
-import { Group, RangeField, SelectField, TextField } from '../../components/Field'
+import { RangeField, SelectField, TextField } from '../../components/Field'
+import { Help, Section } from '../../components/Section'
 import { useI18n } from '../../i18n'
 import { controlRanges, WORDMARK_SPLIT } from '../../state/config'
 import type { Controls } from '../../state/useBrandLab'
@@ -18,12 +19,15 @@ export function TypePanel({ controls, onChange }: TypePanelProps) {
   }))
 
   return (
-    <Group title={t.typography.title}>
-      <TextField
-        label={t.typography.name}
-        value={controls.wordmark}
-        onChange={(v) => onChange('wordmark', v)}
-      />
+    <Section title={t.typography.title}>
+      <div className="with-help">
+        <TextField
+          label={t.typography.name}
+          value={controls.wordmark}
+          onChange={(v) => onChange('wordmark', v)}
+        />
+        <Help label={t.typography.name}>{t.typography.note(WORDMARK_SPLIT)}</Help>
+      </div>
       <SelectField
         label={t.typography.display}
         value={controls.displayFont}
@@ -50,7 +54,6 @@ export function TypePanel({ controls, onChange }: TypePanelProps) {
         max={controlRanges.buttonRadius.max}
         onChange={(v) => onChange('buttonRadius', v)}
       />
-      <p className="note">{t.typography.note(WORDMARK_SPLIT)}</p>
-    </Group>
+    </Section>
   )
 }

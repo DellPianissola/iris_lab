@@ -11,6 +11,7 @@ export const es: Dictionary = {
       'Sube tu logo, cambia los colores y velo todo aplicado en un sitio real. No se envía nada a ninguna parte — todo corre en tu navegador.',
     modes: { light: 'Claro', dark: 'Oscuro' },
     shortcutHint: (key: string) => `Consejo: pulsa ${key} para una paleta al azar`,
+    help: (about: string) => `Ayuda sobre ${about}`,
     cards: {
       lockups: 'Logo en contexto',
       site: 'Sitio',

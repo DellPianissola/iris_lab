@@ -50,7 +50,7 @@ export function I18nProvider({ children }: { readonly children: ReactNode }) {
 
 export function useI18n(): I18nValue {
   const value = useContext(I18nContext)
-  if (!value) throw new Error('useI18n precisa estar dentro de <I18nProvider>')
+  if (!value) throw new Error('useI18n must be called inside <I18nProvider>')
   return value
 }
 

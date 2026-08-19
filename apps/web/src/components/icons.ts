@@ -17,6 +17,8 @@ export {
   ArrowUturnLeftIcon as UndoIcon, //      heroicons: arrow-uturn-left
   ArrowUturnRightIcon as RedoIcon, //     heroicons: arrow-uturn-right
   ArrowUpTrayIcon as UploadIcon, //       heroicons: arrow-up-tray
+  ChevronDownIcon, //                     heroicons: chevron-down
+  QuestionMarkCircleIcon as HelpIcon, //  heroicons: question-mark-circle
   LinkIcon, //                            heroicons: link
   CheckIcon, //                           heroicons: check
   ExclamationTriangleIcon as WarningIcon, // heroicons: exclamation-triangle

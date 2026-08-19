@@ -1,6 +1,7 @@
 import type { MarkMode } from '@nomai/svg-kit'
 import { Segmented } from '../../components/Field'
 import { WarningIcon } from '../../components/icons'
+import { Help } from '../../components/Section'
 import { useI18n } from '../../i18n'
 import type { Mark } from '../../marks/types'
 
@@ -47,7 +48,10 @@ export function SymbolReport({ mark, onModeChange }: SymbolReportProps) {
         </p>
       ))}
 
-      <Segmented value={mark.mode} options={options} onChange={onModeChange} />
+      <div className="with-help">
+        <Segmented value={mark.mode} options={options} onChange={onModeChange} />
+        <Help label={t.symbol.title}>{t.symbol.note}</Help>
+      </div>
     </div>
   )
 }

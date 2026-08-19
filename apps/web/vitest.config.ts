@@ -1,10 +1,13 @@
+import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
+  plugins: [react()],
   test: {
     globals: true,
-    // A lógica testada aqui é pura: seleção e derivação, sem componente.
+    // Most of what is tested here is pure — selection, derivation, encoding. The files that
+    // need a document ask for one with a `@vitest-environment` docblock.
     environment: 'node',
-    include: ['test/**/*.test.ts'],
+    include: ['test/**/*.test.ts', 'test/**/*.test.tsx'],
   },
 })

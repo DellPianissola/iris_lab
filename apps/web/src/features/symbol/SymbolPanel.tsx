@@ -1,6 +1,7 @@
 import type { MarkMode } from '@nomai/svg-kit'
 import { useState, type DragEvent } from 'react'
-import { Group, RangeField } from '../../components/Field'
+import { RangeField } from '../../components/Field'
+import { Section } from '../../components/Section'
 import { CloseIcon, UploadIcon } from '../../components/icons'
 import { useI18n } from '../../i18n'
 import { readMarkFile } from '../../marks/load'
@@ -60,7 +61,7 @@ export function SymbolPanel({
   }
 
   return (
-    <Group title={t.symbol.title}>
+    <Section title={t.symbol.title} defaultOpen>
       <label
         className={dragging ? 'dropzone dragging' : 'dropzone'}
         onDragEnter={(e) => { e.preventDefault(); setDragging(true) }}
@@ -107,7 +108,7 @@ export function SymbolPanel({
             {!item.builtin && (
               <button
                 type="button"
-                className="mark-remove"
+                className="icon-button mark-remove"
                 aria-label={t.symbol.remove(item.name)}
                 onClick={() => onRemove(item.id)}
               >
@@ -146,7 +147,6 @@ export function SymbolPanel({
         onChange={(value) => onControlChange('markRadius', value)}
       />
 
-      <p className="note">{t.symbol.note}</p>
-    </Group>
+    </Section>
   )
 }

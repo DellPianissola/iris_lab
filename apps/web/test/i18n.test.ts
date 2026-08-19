@@ -37,7 +37,7 @@ describe('dictionaries', () => {
     expect(Object.keys(dictionaries).sort()).toEqual([...LOCALES].sort())
   })
 
-  // Seven keys hold an interpolation function. The first version of this file used a walker
+  // Some keys hold an interpolation function. The first version of this file used a walker
   // that only collected strings, so those vanished from both sides and the comparison passed
   // without having seen them — a test promising coverage it did not have.
   it('counts function keys alongside text keys', () => {

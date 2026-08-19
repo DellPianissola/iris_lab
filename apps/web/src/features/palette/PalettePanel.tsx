@@ -1,6 +1,6 @@
 import { PALETTE_KEYS, type Palette, type PaletteKey } from '@nomai/theme'
-import { Group } from '../../components/Field'
 import { DeriveIcon, InvertIcon, RandomIcon, RedoIcon, UndoIcon } from '../../components/icons'
+import { Help, Section } from '../../components/Section'
 import { useI18n } from '../../i18n'
 import { ShareButton } from './ShareButton'
 
@@ -30,7 +30,7 @@ export function PalettePanel({
   const { t } = useI18n()
 
   return (
-    <Group title={t.palette.title}>
+    <Section title={t.palette.title} defaultOpen>
       {PALETTE_KEYS.map((key) => (
         <ColorRow
           key={key}
@@ -53,8 +53,8 @@ export function PalettePanel({
           <InvertIcon className="icon" aria-hidden="true" />
           {t.palette.invert}
         </button>
+        <Help label={t.palette.harmonize}>{t.palette.note}</Help>
       </div>
-      <p className="note">{t.palette.note}</p>
 
       <div className="button-row">
         <button type="button" onClick={onUndo} disabled={!canUndo}>
@@ -66,12 +66,9 @@ export function PalettePanel({
           {t.palette.redo}
         </button>
         <ShareButton />
+        <Help label={t.palette.share}>{t.palette.shareNote}</Help>
       </div>
-
-      {/* Next to the button that produces it: this is the privacy argument, and at the foot
-          of the group it became one more grey line nobody connects to the link. */}
-      <p className="note">{t.palette.shareNote}</p>
-    </Group>
+    </Section>
   )
 }
 

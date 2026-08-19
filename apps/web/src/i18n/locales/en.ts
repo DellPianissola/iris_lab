@@ -12,6 +12,7 @@ export const en: Dictionary = {
       'Upload your logo, change the colours and see everything applied to a real site. Nothing is sent anywhere — it all runs in your browser.',
     modes: { light: 'Light', dark: 'Dark' },
     shortcutHint: (key: string) => `Tip: press ${key} for a random palette`,
+    help: (about: string) => `Help about ${about}`,
     cards: {
       lockups: 'Logo in context',
       site: 'Site',

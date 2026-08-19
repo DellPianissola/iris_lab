@@ -1,6 +1,6 @@
 import { contrastRatio } from '@nomai/color'
 import { gradeOf, type ThemeTokens } from '@nomai/theme'
-import { Group } from '../../components/Field'
+import { Section } from '../../components/Section'
 import { useI18n } from '../../i18n'
 
 interface ContrastPanelProps {
@@ -25,7 +25,7 @@ export function ContrastPanel({ tokens }: ContrastPanelProps) {
   ]
 
   return (
-    <Group title={t.contrast.title}>
+    <Section title={t.contrast.title} defaultOpen>
       <div className="contrast">
         {checks.map((check) => {
           const grade = gradeOf(check.ratio)
@@ -40,6 +40,6 @@ export function ContrastPanel({ tokens }: ContrastPanelProps) {
           )
         })}
       </div>
-    </Group>
+    </Section>
   )
 }

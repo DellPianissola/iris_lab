@@ -1,5 +1,5 @@
 import { buildTokens, tokensToCssText, type Palette, type ThemeMode } from '@nomai/theme'
-import { Group } from '../../components/Field'
+import { Help, Section } from '../../components/Section'
 import { CloseIcon, DownloadIcon, PlusIcon } from '../../components/icons'
 import { useI18n } from '../../i18n'
 import type { SavedCombo } from '../../state/useBrandLab'
@@ -40,7 +40,7 @@ export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedP
   }
 
   return (
-    <Group title={t.saved.title}>
+    <Section title={t.saved.title}>
       <div className="button-row">
         <button type="button" className="primary" onClick={onSave}>
           <PlusIcon className="icon" aria-hidden="true" />
@@ -50,6 +50,7 @@ export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedP
           <DownloadIcon className="icon" aria-hidden="true" />
           {t.saved.download}
         </button>
+        <Help label={t.saved.title}>{t.saved.note}</Help>
       </div>
 
       {saved.length === 0 ? (
@@ -65,7 +66,7 @@ export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedP
               </button>
               <button
                 type="button"
-                className="chip-remove"
+                className="icon-button chip-remove"
                 aria-label={t.saved.remove(index + 1)}
                 onClick={() => onRemove(combo.id)}
               >
@@ -76,7 +77,6 @@ export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedP
         </div>
       )}
 
-      <p className="note">{t.saved.note}</p>
-    </Group>
+    </Section>
   )
 }

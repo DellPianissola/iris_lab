@@ -18,6 +18,7 @@ export const ptBR = {
       'Suba seu logo, troque as cores e veja tudo aplicado num site de verdade. Nada é enviado pra lugar nenhum — roda 100% no seu navegador.',
     modes: { light: 'Claro', dark: 'Escuro' },
     shortcutHint: (key: string) => `Dica: aperte ${key} pra sortear uma paleta`,
+    help: (about: string) => `Ajuda sobre ${about}`,
     cards: {
       lockups: 'Logo em contexto',
       site: 'Site',
