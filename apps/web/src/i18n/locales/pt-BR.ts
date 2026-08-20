@@ -1,4 +1,5 @@
 import type { FontId, PresetId } from '@nomai/theme'
+import type { CheckKey } from '../../features/contrast/checks'
 
 /**
  * Source of truth for the translations. The other languages are typed as `typeof ptBR`, so a
@@ -14,11 +15,12 @@ export const ptBR = {
   },
 
   app: {
-    tagline:
-      'Suba seu logo, troque as cores e veja tudo aplicado num site de verdade. Nada é enviado pra lugar nenhum — roda 100% no seu navegador.',
     modes: { light: 'Claro', dark: 'Escuro' },
     shortcutHint: (key: string) => `Dica: aperte ${key} pra sortear uma paleta`,
     help: (about: string) => `Ajuda sobre ${about}`,
+    company: 'Nomai Code',
+    tools: 'Ferramentas',
+    closeTool: 'Fechar painel',
     cards: {
       lockups: 'Logo em contexto',
       site: 'Site',
@@ -144,9 +146,10 @@ export const ptBR = {
       onBrand: 'Botão (texto/principal)',
       accentOnBg: 'Acento / fundo',
       inkOnSoft: 'Principal como texto (pílula)',
-    },
+    } satisfies Record<CheckKey, string>,
     // AAA and AA are specification terms and are not translated.
     grades: { aaa: 'AAA', aa: 'AA', large: 'AA grande', fail: 'falha' },
+    summary: (passing: number, total: number) => `${passing} de ${total} passam`,
   },
 
   saved: {
@@ -166,7 +169,7 @@ export const ptBR = {
     headline: 'Um título que mostra ',
     headlineAccent: 'como sua marca soa',
     headlineTail: ' na primeira dobra.',
-    lead: 'Este texto existe só pra você julgar legibilidade, contraste e o peso da cor principal contra o fundo. Troque a paleta no painel ao lado e veja tudo mudar.',
+    lead: 'Este texto existe só pra você julgar legibilidade, contraste e o peso da cor principal contra o fundo. Troque a paleta na barra abaixo e veja tudo mudar.',
     primary: 'Criar conta grátis',
     secondary: 'Ver demonstração',
     accent: 'Acento',

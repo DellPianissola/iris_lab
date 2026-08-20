@@ -1,6 +1,6 @@
 import { PALETTE_KEYS, type Palette, type PaletteKey } from '@nomai/theme'
+import { Help } from '../../components/Help'
 import { DeriveIcon, InvertIcon, RandomIcon, RedoIcon, UndoIcon } from '../../components/icons'
-import { Help, Section } from '../../components/Section'
 import { useI18n } from '../../i18n'
 import { ShareButton } from './ShareButton'
 
@@ -30,33 +30,39 @@ export function PalettePanel({
   const { t } = useI18n()
 
   return (
-    <Section title={t.palette.title} defaultOpen>
-      {PALETTE_KEYS.map((key) => (
-        <ColorRow
-          key={key}
-          name={t.palette.tokens[key]}
-          value={palette[key]}
-          onChange={(value) => onColorChange(key, value)}
-        />
-      ))}
+    <>
+      {/* Laid out as a strip rather than a stacked list: seven colours side by side can be
+          compared at a glance, which is the judgement the tool exists to support. */}
+      <div className="swatches">
+        {PALETTE_KEYS.map((key) => (
+          <ColorCard
+            key={key}
+            name={t.palette.tokens[key]}
+            value={palette[key]}
+            onChange={(value) => onColorChange(key, value)}
+          />
+        ))}
+      </div>
 
       <div className="button-row">
         <button type="button" onClick={onRandomize}>
           <RandomIcon className="icon" aria-hidden="true" />
           {t.palette.randomize}
         </button>
-        <button type="button" onClick={onHarmonize}>
-          <DeriveIcon className="icon" aria-hidden="true" />
-          {t.palette.harmonize}
-        </button>
+        <span className="with-help">
+          <button type="button" onClick={onHarmonize}>
+            <DeriveIcon className="icon" aria-hidden="true" />
+            {t.palette.harmonize}
+          </button>
+          <Help label={t.palette.harmonize}>{t.palette.note}</Help>
+        </span>
         <button type="button" onClick={onInvert}>
           <InvertIcon className="icon" aria-hidden="true" />
           {t.palette.invert}
         </button>
-        <Help label={t.palette.harmonize}>{t.palette.note}</Help>
-      </div>
 
-      <div className="button-row">
+        <span className="rule" aria-hidden="true" />
+
         <button type="button" onClick={onUndo} disabled={!canUndo}>
           <UndoIcon className="icon" aria-hidden="true" />
           {t.palette.undo}
@@ -65,22 +71,24 @@ export function PalettePanel({
           <RedoIcon className="icon" aria-hidden="true" />
           {t.palette.redo}
         </button>
-        <ShareButton />
-        <Help label={t.palette.share}>{t.palette.shareNote}</Help>
+        <span className="with-help">
+          <ShareButton />
+          <Help label={t.palette.share}>{t.palette.shareNote}</Help>
+        </span>
       </div>
-    </Section>
+    </>
   )
 }
 
-interface ColorRowProps {
+interface ColorCardProps {
   readonly name: string
   readonly value: string
   readonly onChange: (value: string) => void
 }
 
-function ColorRow({ name, value, onChange }: ColorRowProps) {
+function ColorCard({ name, value, onChange }: ColorCardProps) {
   return (
-    <div className="color-row">
+    <div className="swatch-card">
       <span className="swatch">
         <input
           type="color"
@@ -89,7 +97,7 @@ function ColorRow({ name, value, onChange }: ColorRowProps) {
           onChange={(event) => onChange(event.target.value)}
         />
       </span>
-      <label>{name}</label>
+      <span className="swatch-name">{name}</span>
       <input
         className="hex"
         value={value.toUpperCase()}

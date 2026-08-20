@@ -2,7 +2,7 @@
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { Help } from '../src/components/Section'
+import { Help } from '../src/components/Help'
 import { I18nProvider } from '../src/i18n'
 import { ptBR } from '../src/i18n/locales/pt-BR'
 import { LOCALE_STORAGE_KEY } from '../src/i18n/types'

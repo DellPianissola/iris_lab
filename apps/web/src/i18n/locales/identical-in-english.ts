@@ -13,6 +13,7 @@ export const IDENTICAL_IN_ENGLISH: ReadonlySet<string> = new Set([
   'contrast.grades.aaa',
   'contrast.grades.aa',
   'presets.title',
+  'app.company',
   'app.cards.site',
   'mockup.accent',
   'mockup.stats.uptime',

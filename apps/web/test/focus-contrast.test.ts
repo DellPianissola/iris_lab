@@ -1,5 +1,5 @@
 import { contrastRatio } from '@nomai/color'
-import { CONTRAST_TARGETS } from '@nomai/theme'
+import { brandPalette, CONTRAST_TARGETS } from '@nomai/theme'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -53,12 +53,24 @@ describe('contrast of the tool chrome', () => {
     expect(contrastRatio(color(a), color(b))).toBeGreaterThanOrEqual(NON_TEXT_TARGET)
   })
 
+  /**
+   * The stylesheet cannot import TypeScript, so the accent is written out by hand — which
+   * means nothing would notice the day the brand green changes in `brand.json` and the chrome
+   * keeps the old one. This is the thread between the two files.
+   */
+  it('uses the brand green as the chrome accent', () => {
+    expect(color('accent')).toBe(brandPalette('light').brand)
+  })
+
   it.each([
     ['text on the panel', 'text', 'panel'],
     ['muted text on the panel', 'dim', 'panel'],
     ['muted text on the field', 'dim', 'panel-2'],
     ['warning on the field', 'warn', 'panel-2'],
     ['error on the panel', 'danger', 'panel'],
+    ['pass pill', 'pass', 'pass-bg'],
+    ['large-only pill', 'warn', 'warn-bg'],
+    ['fail pill', 'danger', 'danger-bg'],
   ])('%s reaches 4.5:1', (_name, a, b) => {
     expect(contrastRatio(color(a), color(b))).toBeGreaterThanOrEqual(CONTRAST_TARGETS.text)
   })

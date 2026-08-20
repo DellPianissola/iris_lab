@@ -1,30 +1,6 @@
 import { useId, useState, type ReactNode } from 'react'
-import { ChevronDownIcon, HelpIcon } from './icons'
+import { HelpIcon } from './icons'
 import { useI18n } from '../i18n'
-
-interface SectionProps {
-  readonly title: string
-  /** Open by default only for what is the product; the rest is adjustment. */
-  readonly defaultOpen?: boolean
-  readonly children: ReactNode
-}
-
-/**
- * `<details>` rather than a hand-rolled accordion: the open/closed state, the keyboard and
- * the disclosure role come with the element, the same reason the symbol grid stopped being
- * a `<div role="button">`.
- */
-export function Section({ title, defaultOpen = false, children }: SectionProps) {
-  return (
-    <details className="section" open={defaultOpen}>
-      <summary className="section-head">
-        {title}
-        <ChevronDownIcon className="section-chevron" aria-hidden="true" />
-      </summary>
-      <div className="section-body">{children}</div>
-    </details>
-  )
-}
 
 interface HelpProps {
   readonly label: string

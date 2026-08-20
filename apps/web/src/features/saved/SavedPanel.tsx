@@ -1,5 +1,5 @@
 import { buildTokens, tokensToCssText, type Palette, type ThemeMode } from '@nomai/theme'
-import { Help, Section } from '../../components/Section'
+import { Help } from '../../components/Help'
 import { CloseIcon, DownloadIcon, PlusIcon } from '../../components/icons'
 import { useI18n } from '../../i18n'
 import type { SavedCombo } from '../../state/useBrandLab'
@@ -40,7 +40,7 @@ export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedP
   }
 
   return (
-    <Section title={t.saved.title}>
+    <>
       <div className="button-row">
         <button type="button" className="primary" onClick={onSave}>
           <PlusIcon className="icon" aria-hidden="true" />
@@ -77,6 +77,6 @@ export function SavedPanel({ palette, saved, onSave, onRemove, onApply }: SavedP
         </div>
       )}
 
-    </Section>
+    </>
   )
 }

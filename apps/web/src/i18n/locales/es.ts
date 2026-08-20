@@ -7,11 +7,12 @@ export const es: Dictionary = {
   },
 
   app: {
-    tagline:
-      'Sube tu logo, cambia los colores y velo todo aplicado en un sitio real. No se envía nada a ninguna parte — todo corre en tu navegador.',
     modes: { light: 'Claro', dark: 'Oscuro' },
     shortcutHint: (key: string) => `Consejo: pulsa ${key} para una paleta al azar`,
     help: (about: string) => `Ayuda sobre ${about}`,
+    company: 'Nomai Code',
+    tools: 'Herramientas',
+    closeTool: 'Cerrar panel',
     cards: {
       lockups: 'Logo en contexto',
       site: 'Sitio',
@@ -137,6 +138,7 @@ export const es: Dictionary = {
       inkOnSoft: 'Principal como texto (píldora)',
     },
     grades: { aaa: 'AAA', aa: 'AA', large: 'AA grande', fail: 'falla' },
+    summary: (passing: number, total: number) => `${passing} de ${total} aprueban`,
   },
 
   saved: {
@@ -156,7 +158,7 @@ export const es: Dictionary = {
     headline: 'Un titular que muestra ',
     headlineAccent: 'cómo suena tu marca',
     headlineTail: ' en la primera pantalla.',
-    lead: 'Este texto existe solo para que juzgues legibilidad, contraste y el peso del color principal contra el fondo. Cambia la paleta en el panel y mira cómo todo la sigue.',
+    lead: 'Este texto existe solo para que juzgues legibilidad, contraste y el peso del color principal contra el fondo. Cambia la paleta en la barra de abajo y mira cómo todo la sigue.',
     primary: 'Crear cuenta gratis',
     secondary: 'Ver demostración',
     accent: 'Acento',

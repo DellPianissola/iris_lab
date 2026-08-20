@@ -1,9 +1,17 @@
 import { fontStack, tokensToCssVars } from '@nomai/theme'
 import { useEffect, useMemo, type CSSProperties } from 'react'
-import { Segmented } from './components/Field'
-import { MoonIcon, SunIcon } from './components/icons'
-import { LocalePicker } from './components/LocalePicker'
+import { TopBar } from './components/TopBar'
+import { Toolbar, type Tool } from './components/Toolbar'
+import {
+  ContrastIcon,
+  PaletteIcon,
+  PresetsIcon,
+  SavedIcon,
+  SymbolIcon,
+  TypeIcon,
+} from './components/icons'
 import { useI18n } from './i18n'
+import { ContrastBadge } from './features/contrast/ContrastBadge'
 import { ContrastPanel } from './features/contrast/ContrastPanel'
 import { PalettePanel } from './features/palette/PalettePanel'
 import { PresetGrid } from './features/palette/PresetGrid'
@@ -22,11 +30,6 @@ export function App() {
   const { mode, palette, tokens, marks, mark, selectedId, controls, saved, canUndo, canRedo, actions } =
     useBrandLab()
   const { t } = useI18n()
-
-  const modeOptions = [
-    { id: 'light' as const, label: t.app.modes.light, icon: SunIcon },
-    { id: 'dark' as const, label: t.app.modes.dark, icon: MoonIcon },
-  ]
 
   useKeyboardShortcut(RANDOMIZE_KEY, actions.randomize)
   useUndoShortcut(actions.undo, actions.redo)
@@ -53,14 +56,12 @@ export function App() {
 
   const glyphColor = controls.plate ? tokens.onBrand : tokens.brandInk
 
-  return (
-    <div className="app">
-      <aside className="panel">
-        <header className="panel-head">
-          <h1>Íris</h1>
-          <p>{t.app.tagline}</p>
-        </header>
-
+  const tools: readonly Tool[] = [
+    {
+      id: 'palette',
+      label: t.palette.title,
+      icon: PaletteIcon,
+      content: (
         <PalettePanel
           palette={palette}
           onColorChange={actions.setColor}
@@ -72,9 +73,19 @@ export function App() {
           canUndo={canUndo}
           canRedo={canRedo}
         />
-
-        <PresetGrid onPick={actions.applyPalette} />
-
+      ),
+    },
+    {
+      id: 'presets',
+      label: t.presets.title,
+      icon: PresetsIcon,
+      content: <PresetGrid onPick={actions.applyPalette} />,
+    },
+    {
+      id: 'symbol',
+      label: t.symbol.title,
+      icon: SymbolIcon,
+      content: (
         <SymbolPanel
           marks={marks}
           mark={mark}
@@ -86,9 +97,26 @@ export function App() {
           onModeChange={actions.setMarkMode}
           onControlChange={actions.updateControl}
         />
-
-        <TypePanel controls={controls} onChange={actions.updateControl} />
-        <ContrastPanel tokens={tokens} />
+      ),
+    },
+    {
+      id: 'typography',
+      label: t.typography.title,
+      icon: TypeIcon,
+      content: <TypePanel controls={controls} onChange={actions.updateControl} />,
+    },
+    {
+      id: 'contrast',
+      label: t.contrast.title,
+      icon: ContrastIcon,
+      badge: <ContrastBadge tokens={tokens} />,
+      content: <ContrastPanel tokens={tokens} />,
+    },
+    {
+      id: 'saved',
+      label: t.saved.title,
+      icon: SavedIcon,
+      content: (
         <SavedPanel
           palette={palette}
           saved={saved}
@@ -96,16 +124,15 @@ export function App() {
           onRemove={actions.removeSaved}
           onApply={actions.applyPalette}
         />
-      </aside>
+      ),
+    },
+  ]
+
+  return (
+    <div className="app">
+      <TopBar mode={mode} onModeChange={actions.switchMode} shortcutKey={RANDOMIZE_KEY.toUpperCase()} />
 
       <main className="stage">
-        <div className="stage-bar">
-          <Segmented value={mode} options={modeOptions} onChange={actions.switchMode} />
-          <span className="spacer" />
-          <span className="hint">{t.app.shortcutHint(RANDOMIZE_KEY.toUpperCase())}</span>
-          <LocalePicker />
-        </div>
-
         <div className="preview-scope" style={previewStyle}>
           <section className="card">
             <h2 className="card-cap">{t.app.cards.lockups}</h2>
@@ -128,6 +155,8 @@ export function App() {
           </section>
         </div>
       </main>
+
+      <Toolbar tools={tools} />
     </div>
   )
 }

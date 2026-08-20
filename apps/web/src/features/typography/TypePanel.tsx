@@ -1,6 +1,6 @@
 import { fonts } from '@nomai/theme'
 import { RangeField, SelectField, TextField } from '../../components/Field'
-import { Help, Section } from '../../components/Section'
+import { Help } from '../../components/Help'
 import { useI18n } from '../../i18n'
 import { controlRanges, WORDMARK_SPLIT } from '../../state/config'
 import type { Controls } from '../../state/useBrandLab'
@@ -19,7 +19,7 @@ export function TypePanel({ controls, onChange }: TypePanelProps) {
   }))
 
   return (
-    <Section title={t.typography.title}>
+    <div className="form-grid">
       <div className="with-help">
         <TextField
           label={t.typography.name}
@@ -54,6 +54,6 @@ export function TypePanel({ controls, onChange }: TypePanelProps) {
         max={controlRanges.buttonRadius.max}
         onChange={(v) => onChange('buttonRadius', v)}
       />
-    </Section>
+    </div>
   )
 }

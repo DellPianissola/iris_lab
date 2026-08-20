@@ -1,5 +1,4 @@
 import { presets, type Palette, type ThemeMode } from '@nomai/theme'
-import { Section } from '../../components/Section'
 import { useI18n } from '../../i18n'
 
 interface PresetGridProps {
@@ -10,8 +9,7 @@ export function PresetGrid({ onPick }: PresetGridProps) {
   const { t } = useI18n()
 
   return (
-    <Section title={t.presets.title}>
-      <div className="presets">
+    <div className="presets">
         {presets.map((preset) => (
           <button key={preset.id} type="button" onClick={() => onPick(preset.colors, preset.mode)}>
             <span className="preset-dots">
@@ -22,7 +20,6 @@ export function PresetGrid({ onPick }: PresetGridProps) {
             <span>{t.presets.names[preset.id]}</span>
           </button>
         ))}
-      </div>
-    </Section>
+    </div>
   )
 }

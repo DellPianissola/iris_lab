@@ -18,9 +18,16 @@ export {
   ArrowUturnRightIcon as RedoIcon, //     heroicons: arrow-uturn-right
   ArrowUpTrayIcon as UploadIcon, //       heroicons: arrow-up-tray
   ChevronDownIcon, //                     heroicons: chevron-down
+  ChevronUpIcon, //                       heroicons: chevron-up
   QuestionMarkCircleIcon as HelpIcon, //  heroicons: question-mark-circle
   LinkIcon, //                            heroicons: link
   CheckIcon, //                           heroicons: check
+  SwatchIcon as PaletteIcon, //           heroicons: swatch
+  Squares2X2Icon as PresetsIcon, //       heroicons: squares-2x2
+  PhotoIcon as SymbolIcon, //             heroicons: photo
+  Bars3BottomLeftIcon as TypeIcon, //      heroicons: bars-3-bottom-left
+  ScaleIcon as ContrastIcon, //           heroicons: scale
+  BookmarkIcon as SavedIcon, //           heroicons: bookmark
   ExclamationTriangleIcon as WarningIcon, // heroicons: exclamation-triangle
   LanguageIcon, //                        heroicons: language
   MoonIcon, //                            heroicons: moon

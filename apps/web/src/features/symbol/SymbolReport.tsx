@@ -1,7 +1,7 @@
 import type { MarkMode } from '@nomai/svg-kit'
 import { Segmented } from '../../components/Field'
 import { WarningIcon } from '../../components/icons'
-import { Help } from '../../components/Section'
+import { Help } from '../../components/Help'
 import { useI18n } from '../../i18n'
 import type { Mark } from '../../marks/types'
 

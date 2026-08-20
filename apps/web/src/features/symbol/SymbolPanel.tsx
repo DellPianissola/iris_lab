@@ -1,7 +1,6 @@
 import type { MarkMode } from '@nomai/svg-kit'
 import { useState, type DragEvent } from 'react'
 import { RangeField } from '../../components/Field'
-import { Section } from '../../components/Section'
 import { CloseIcon, UploadIcon } from '../../components/icons'
 import { useI18n } from '../../i18n'
 import { readMarkFile } from '../../marks/load'
@@ -61,92 +60,98 @@ export function SymbolPanel({
   }
 
   return (
-    <Section title={t.symbol.title} defaultOpen>
-      <label
-        className={dragging ? 'dropzone dragging' : 'dropzone'}
-        onDragEnter={(e) => { e.preventDefault(); setDragging(true) }}
-        onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={onDrop}
-      >
-        <UploadIcon className="icon icon-drop" aria-hidden="true" />
-        {t.symbol.dropzone.line1}
-        <br />
-        {t.symbol.dropzone.line2}
-        {/* `hidden` takes the field out of the tab order, and there was no other way to
-            upload without a mouse. Hidden visually, it stays focusable. */}
-        <input
-          type="file"
-          className="visually-hidden-input"
-          multiple
-          accept=".svg,.png,.jpg,.jpeg,.webp,image/*"
-          onChange={(event) => {
-            void ingest(event.target.files)
-            event.target.value = ''
-          }}
-        />
-      </label>
+    <div className="symbol-grid">
+      {/* Two columns because the drawer is as wide as the screen: what you choose from on
+          the left, what you tune on the right. */}
+      <div className="symbol-source">
+        <label
+          className={dragging ? 'dropzone dragging' : 'dropzone'}
+          onDragEnter={(e) => { e.preventDefault(); setDragging(true) }}
+          onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={onDrop}
+        >
+          <UploadIcon className="icon icon-drop" aria-hidden="true" />
+          {t.symbol.dropzone.line1}
+          <br />
+          {t.symbol.dropzone.line2}
+          {/* `hidden` takes the field out of the tab order, and there was no other way to
+              upload without a mouse. Hidden visually, it stays focusable. */}
+          <input
+            type="file"
+            className="visually-hidden-input"
+            multiple
+            accept=".svg,.png,.jpg,.jpeg,.webp,image/*"
+            onChange={(event) => {
+              void ingest(event.target.files)
+              event.target.value = ''
+            }}
+          />
+        </label>
 
-      {error && <p className="error" role="alert">{error}</p>}
+        {error && <p className="error" role="alert">{error}</p>}
 
-      {/* The remove button is a **sibling** of the select one, not a child: interactive
-          content inside a <button> is invalid HTML, and the keyboard cannot reach the inner one. */}
-      <div className="marks">
-        {marks.map((item, index) => (
-          <div key={item.id} className="mark">
-            <button
-              type="button"
-              className="mark-select"
-              aria-pressed={item.id === selectedId}
-              aria-label={
-                item.builtin ? t.symbol.selectBuiltin(index + 1) : t.symbol.select(item.name)
-              }
-              onClick={() => onSelect(item.id)}
-            >
-              <Glyph mark={item} forceOriginal />
-            </button>
-            {!item.builtin && (
+        {/* The remove button is a **sibling** of the select one, not a child: interactive
+            content inside a <button> is invalid HTML, and the keyboard cannot reach the
+            inner one. */}
+        <div className="marks">
+          {marks.map((item, index) => (
+            <div key={item.id} className="mark">
               <button
                 type="button"
-                className="icon-button mark-remove"
-                aria-label={t.symbol.remove(item.name)}
-                onClick={() => onRemove(item.id)}
+                className="mark-select"
+                aria-pressed={item.id === selectedId}
+                aria-label={
+                  item.builtin ? t.symbol.selectBuiltin(index + 1) : t.symbol.select(item.name)
+                }
+                onClick={() => onSelect(item.id)}
               >
-                <CloseIcon className="icon" aria-hidden="true" />
+                <Glyph mark={item} forceOriginal />
               </button>
-            )}
-          </div>
-        ))}
+              {!item.builtin && (
+                <button
+                  type="button"
+                  className="icon-button mark-remove"
+                  aria-label={t.symbol.remove(item.name)}
+                  onClick={() => onRemove(item.id)}
+                >
+                  <CloseIcon className="icon" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
-      {mark && !mark.builtin && (
-        <SymbolReport mark={mark} onModeChange={(next) => onModeChange(mark.id, next)} />
-      )}
+      <div className="symbol-tune">
+        {mark && !mark.builtin && (
+          <SymbolReport mark={mark} onModeChange={(next) => onModeChange(mark.id, next)} />
+        )}
 
-      <label className="check">
-        <input
-          type="checkbox"
-          checked={controls.plate}
-          onChange={(event) => onControlChange('plate', event.target.checked)}
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={controls.plate}
+            onChange={(event) => onControlChange('plate', event.target.checked)}
+          />
+          {t.symbol.plate}
+        </label>
+
+        <RangeField
+          label={t.symbol.size}
+          value={controls.markSize}
+          min={controlRanges.markSize.min}
+          max={controlRanges.markSize.max}
+          onChange={(value) => onControlChange('markSize', value)}
         />
-        {t.symbol.plate}
-      </label>
-
-      <RangeField
-        label={t.symbol.size}
-        value={controls.markSize}
-        min={controlRanges.markSize.min}
-        max={controlRanges.markSize.max}
-        onChange={(value) => onControlChange('markSize', value)}
-      />
-      <RangeField
-        label={t.symbol.corners}
-        value={controls.markRadius}
-        min={controlRanges.markRadius.min}
-        max={controlRanges.markRadius.max}
-        onChange={(value) => onControlChange('markRadius', value)}
-      />
-
-    </Section>
+        <RangeField
+          label={t.symbol.corners}
+          value={controls.markRadius}
+          min={controlRanges.markRadius.min}
+          max={controlRanges.markRadius.max}
+          onChange={(value) => onControlChange('markRadius', value)}
+        />
+      </div>
+    </div>
   )
 }

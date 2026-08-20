@@ -8,11 +8,12 @@ export const en: Dictionary = {
   },
 
   app: {
-    tagline:
-      'Upload your logo, change the colours and see everything applied to a real site. Nothing is sent anywhere — it all runs in your browser.',
     modes: { light: 'Light', dark: 'Dark' },
     shortcutHint: (key: string) => `Tip: press ${key} for a random palette`,
     help: (about: string) => `Help about ${about}`,
+    company: 'Nomai Code',
+    tools: 'Tools',
+    closeTool: 'Close panel',
     cards: {
       lockups: 'Logo in context',
       site: 'Site',
@@ -138,6 +139,7 @@ export const en: Dictionary = {
       inkOnSoft: 'Brand as text (pill)',
     },
     grades: { aaa: 'AAA', aa: 'AA', large: 'AA large', fail: 'fail' },
+    summary: (passing: number, total: number) => `${passing} of ${total} pass`,
   },
 
   saved: {
@@ -157,7 +159,7 @@ export const en: Dictionary = {
     headline: 'A headline that shows ',
     headlineAccent: 'how your brand sounds',
     headlineTail: ' above the fold.',
-    lead: 'This text exists so you can judge legibility, contrast and how heavy the brand colour feels against the background. Change the palette in the panel and watch everything follow.',
+    lead: 'This text exists so you can judge legibility, contrast and how heavy the brand colour feels against the background. Change the palette in the bar below and watch everything follow.',
     primary: 'Create free account',
     secondary: 'See the demo',
     accent: 'Accent',
