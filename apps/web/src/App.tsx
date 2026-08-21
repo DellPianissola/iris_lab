@@ -1,5 +1,5 @@
-import { fontStack, tokensToCssVars } from '@nomai/theme'
-import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { buildChrome, chromeToCssVars, fontStack, tokensToCssVars } from '@nomai/theme'
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { TopBar } from './components/TopBar'
 import { Toolbar, type Tool } from './components/Toolbar'
 import {
@@ -41,6 +41,10 @@ export function App() {
   const brandButton = useRef<HTMLButtonElement | null>(null)
   const brandSheetOpen = openSurface === brandSheetId
 
+  // Memoised because `BrandSheet` hangs its Escape and outside-pointer listeners off it: an
+  // arrow rebuilt each render re-subscribes both on every repaint the palette causes.
+  const closeBrandSheet = useCallback(() => setOpenSurface(null), [])
+
   function toggleBrandSheet(): void {
     if (brandSheetOpen) {
       brandButton.current?.focus()
@@ -53,11 +57,22 @@ export function App() {
   useKeyboardShortcut(RANDOMIZE_KEY, actions.randomize)
   useUndoShortcut(actions.undo, actions.redo)
 
-  // The tokens become custom properties on a single node; nothing below recomputes colour.
+  /**
+   * The tool wears what the customer just picked. Every foreground here has been through the
+   * contrast search, so a palette that fails in the mockup still leaves the toolbar readable;
+   * the static `--ui-*` in the stylesheet are the pre-hydration paint.
+   *
+   * Memoised apart from the rest because it depends only on the palette, and thirteen contrast
+   * searches are not worth repeating every time a slider moves.
+   */
+  const chromeStyle = useMemo(() => chromeToCssVars(buildChrome(palette)), [palette])
+
+  /** One node carries every token, so changing a colour repaints instead of re-rendering. */
   const previewStyle = useMemo(() => {
     const plated = controls.plate
     return {
       ...tokensToCssVars(tokens),
+      ...chromeStyle,
       '--f-display': fontStack(controls.displayFont),
       '--f-body': fontStack(controls.bodyFont),
       '--word-track': `${controls.tracking / 100}em`,
@@ -71,7 +86,7 @@ export function App() {
       '--tone-0': plated ? tokens.onBrand : tokens.brandInk,
       '--tone-1': tokens.accent,
     } as CSSProperties
-  }, [tokens, controls, mark])
+  }, [tokens, chromeStyle, controls, mark])
 
   const glyphColor = controls.plate ? tokens.onBrand : tokens.brandInk
 
@@ -164,7 +179,7 @@ export function App() {
       <BrandSheet
         id={brandSheetId}
         open={brandSheetOpen}
-        onClose={() => setOpenSurface(null)}
+        onClose={closeBrandSheet}
         triggerRef={brandButton}
         tokens={tokens}
         mark={mark}

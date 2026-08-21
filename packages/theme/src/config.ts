@@ -25,6 +25,31 @@ export const neutralRecipes = {
   },
 } as const
 
+/**
+ * How far each of the tool's own surfaces sits from the customer's background, mixing toward
+ * white on a dark palette and toward black on a light one.
+ *
+ * `panel` is deliberately level with the background on light palettes: a lifted panel there
+ * reads as grey scum over a white page, and the island already separates itself with a shadow
+ * and a line. The ladder exists so `panel2` always has somewhere to be.
+ */
+export const chromeMix = {
+  light: { bg: 0.04, panel: 0.0, panel2: 0.05, line: 0.12, hover: 0.3 },
+  dark: { bg: 0.02, panel: 0.06, panel2: 0.11, line: 0.16, hover: 0.32 },
+} as const
+
+/**
+ * The hue is fixed because it carries the meaning — green passes, amber is conditional, red
+ * fails — and meaning must not move with the customer's brand.
+ */
+export const gradeHues = { pass: '#16a34a', large: '#d97706', fail: '#dc2626' } as const
+
+/**
+ * Everything else about a grade pill is derived from the surface it lands on: a pill drawn for
+ * a dark chrome is a dark blob on a light one. This is how much hue goes into that surface.
+ */
+export const gradeTint = { light: 0.16, dark: 0.24 } as const
+
 /** How much brand goes into the background to form the soft pill/icon surface. */
 export const softMix = { light: 0.13, dark: 0.22 } as const
 

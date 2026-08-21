@@ -121,7 +121,7 @@ export const ptBR = {
   },
 
   typography: {
-    title: 'Nome / tipografia',
+    title: 'Tipografia',
     name: 'Nome',
     display: 'Display',
     body: 'Texto',
@@ -139,7 +139,7 @@ export const ptBR = {
   },
 
   contrast: {
-    title: 'Contraste (WCAG)',
+    title: 'Contraste',
     checks: {
       textOnBg: 'Texto / fundo',
       mutedOnBg: 'Texto suave / fundo',
@@ -151,10 +151,11 @@ export const ptBR = {
     // AAA and AA are specification terms and are not translated.
     grades: { aaa: 'AAA', aa: 'AA', large: 'AA grande', fail: 'falha' },
     summary: (passing: number, total: number) => `${passing} de ${total} passam`,
+    summaryShort: (passing: number, total: number) => `${passing}/${total}`,
   },
 
   saved: {
-    title: 'Combinações salvas',
+    title: 'Salvas',
     save: 'Salvar atual',
     download: 'Baixar CSS',
     empty: 'Nenhuma salva ainda.',

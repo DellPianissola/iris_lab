@@ -129,6 +129,52 @@ describe('BrandSheet', () => {
     expect(document.activeElement).toBe(trigger())
   })
 
+  it('collapses when a pointer lands outside it', () => {
+    click(trigger())
+
+    act(() => {
+      document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    })
+
+    expect(sheet().hasAttribute('hidden')).toBe(true)
+  })
+
+  it('stays open when the pointer lands inside it', () => {
+    click(trigger())
+
+    act(() => {
+      sheet().dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    })
+
+    expect(sheet().hasAttribute('hidden')).toBe(false)
+  })
+
+  // Without the trigger in the exception list, `pointerdown` would close it and the click that
+  // follows would reopen it — the button would look dead.
+  it('lets the trigger close it in one press', () => {
+    click(trigger())
+
+    act(() => {
+      trigger().dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    })
+    click(trigger())
+
+    expect(sheet().hasAttribute('hidden')).toBe(true)
+  })
+
+  it('leaves the focus alone when the pointer dismisses it', () => {
+    click(trigger())
+    const inside = sheet().querySelector('button') as HTMLButtonElement
+    inside.focus()
+
+    act(() => {
+      document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    })
+
+    expect(sheet().hasAttribute('hidden')).toBe(true)
+    expect(document.activeElement).not.toBe(trigger())
+  })
+
   it('ignores Escape while it is already closed', () => {
     pressEscape()
 

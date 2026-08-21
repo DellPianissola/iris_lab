@@ -6,8 +6,10 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 /**
- * The tool chrome has a palette of its own, outside `@nomai/theme`, so nothing verified those
- * colours. A tool that audits contrast failing its own contrast is a credibility problem.
+ * The `--ui-*` in the stylesheet are the **pre-hydration paint**: the chrome follows the
+ * customer's palette now, and `buildChrome` overrides every one of these the moment React
+ * mounts. They still get painted first, so they still have to pass — `packages/theme` covers
+ * what the derivation produces afterwards, for any palette.
  *
  * The colours are **read from the CSS**, not transcribed: the first version of this file
  * copied the hex by hand and would have stayed green against the stale value the moment
@@ -54,9 +56,9 @@ describe('contrast of the tool chrome', () => {
   })
 
   /**
-   * The stylesheet cannot import TypeScript, so the accent is written out by hand — which
-   * means nothing would notice the day the brand green changes in `brand.json` and the chrome
-   * keeps the old one. This is the thread between the two files.
+   * The stylesheet cannot import TypeScript, so the fallback accent is written out by hand —
+   * which means nothing would notice the day the brand green changes in `brand.json` and the
+   * first paint keeps the old one. This is the thread between the two files.
    */
   it('uses the brand green as the chrome accent', () => {
     expect(color('accent')).toBe(brandPalette('light').brand)
@@ -69,8 +71,12 @@ describe('contrast of the tool chrome', () => {
     ['warning on the field', 'warn', 'panel-2'],
     ['error on the panel', 'danger', 'panel'],
     ['pass pill', 'pass', 'pass-bg'],
-    ['large-only pill', 'warn', 'warn-bg'],
-    ['fail pill', 'danger', 'danger-bg'],
+    ['conditional pill', 'large', 'large-bg'],
+    ['fail pill', 'fail', 'fail-bg'],
+    ['pass reading on the bar', 'pass-on-bar', 'on-accent'],
+    ['conditional reading on the bar', 'large-on-bar', 'on-accent'],
+    ['fail reading on the bar', 'fail-on-bar', 'on-accent'],
+    ['label on the open tab', 'text', 'bg'],
   ])('%s reaches 4.5:1', (_name, a, b) => {
     expect(contrastRatio(color(a), color(b))).toBeGreaterThanOrEqual(CONTRAST_TARGETS.text)
   })

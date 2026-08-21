@@ -111,7 +111,7 @@ export const es: Dictionary = {
   },
 
   typography: {
-    title: 'Nombre / tipografía',
+    title: 'Tipografía',
     name: 'Nombre',
     display: 'Display',
     body: 'Texto',
@@ -129,7 +129,7 @@ export const es: Dictionary = {
   },
 
   contrast: {
-    title: 'Contraste (WCAG)',
+    title: 'Contraste',
     checks: {
       textOnBg: 'Texto / fondo',
       mutedOnBg: 'Texto atenuado / fondo',
@@ -140,10 +140,11 @@ export const es: Dictionary = {
     },
     grades: { aaa: 'AAA', aa: 'AA', large: 'AA grande', fail: 'falla' },
     summary: (passing: number, total: number) => `${passing} de ${total} aprueban`,
+    summaryShort: (passing: number, total: number) => `${passing}/${total}`,
   },
 
   saved: {
-    title: 'Combinaciones guardadas',
+    title: 'Guardadas',
     save: 'Guardar actual',
     download: 'Descargar CSS',
     empty: 'Nada guardado todavía.',

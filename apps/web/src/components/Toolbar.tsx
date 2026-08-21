@@ -8,7 +8,7 @@ import {
   type SVGProps,
 } from 'react'
 import { ChevronUpIcon, CloseIcon } from './icons'
-import { useDismiss } from './useDismiss'
+import { useDismiss, type DismissReason } from './useDismiss'
 import { useI18n } from '../i18n'
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>
@@ -50,6 +50,7 @@ export function Toolbar({ tools, openId, onOpenChange }: ToolbarProps) {
    */
   const [shownId, setShownId] = useState<string | null>(null)
   const drawerId = useId()
+  const surface = useRef<HTMLDivElement | null>(null)
   const tabs = useRef(new Map<string, HTMLButtonElement>())
   const open = tools.find((tool) => tool.id === openId) ?? null
   const shown = tools.find((tool) => tool.id === shownId) ?? null
@@ -61,10 +62,13 @@ export function Toolbar({ tools, openId, onOpenChange }: ToolbarProps) {
    * (WCAG 2.4.3). The focus call stays **outside** the state updater: an updater has to be
    * pure, and StrictMode invokes it twice to prove it.
    */
-  const close = useCallback(() => {
-    if (openId) tabs.current.get(openId)?.focus()
-    onOpenChange(null)
-  }, [openId, onOpenChange])
+  const close = useCallback(
+    (reason: DismissReason = 'escape') => {
+      if (reason === 'escape' && openId) tabs.current.get(openId)?.focus()
+      onOpenChange(null)
+    },
+    [openId, onOpenChange],
+  )
 
   function toggle(id: string): void {
     if (id === openId) {
@@ -75,10 +79,10 @@ export function Toolbar({ tools, openId, onOpenChange }: ToolbarProps) {
     setShownId(id)
   }
 
-  useDismiss(isOpen, close)
+  useDismiss(isOpen, close, surface)
 
   return (
-    <div className="toolbar">
+    <div className="toolbar" ref={surface}>
       {/* Always rendered, `hidden` while closed: every tab points its `aria-controls` here. */}
       <div
         className="sheet drawer"
@@ -95,7 +99,7 @@ export function Toolbar({ tools, openId, onOpenChange }: ToolbarProps) {
                 type="button"
                 className="icon-button sheet-close"
                 aria-label={t.app.closeTool}
-                onClick={close}
+                onClick={() => close()}
               >
                 <CloseIcon className="icon" aria-hidden="true" />
               </button>

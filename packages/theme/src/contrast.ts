@@ -35,6 +35,30 @@ export function readableOn(background: string): string {
 }
 
 /**
+ * The contrast search, with a floor under it.
+ *
+ * `ensureContrast` gives up on a mid-toned background and returns the extreme, which may still
+ * miss the target. Everything the tool paints its own surfaces with goes through here instead,
+ * because the guarantee has to hold for **any** palette the customer types — including the
+ * unreadable ones the product exists to catch.
+ *
+ * The fallback is pure black or pure white, not the near-black `readableOn` prefers: the
+ * softer tone is the nicer default but it peaks at 4.49:1 on the worst background, and 4.49
+ * is a failure. Pure extremes bottom out at 4.58:1 against **any** colour, so the floor holds.
+ */
+export function legibleOn(color: string, background: string, target: number): string {
+  const pushed = ensureContrast(color, background, target)
+  if (contrastRatio(pushed, background) >= target) return pushed
+
+  const softer = readableOn(background)
+  if (contrastRatio(softer, background) >= target) return softer
+
+  return contrastRatio(background, '#000000') >= contrastRatio(background, '#ffffff')
+    ? '#000000'
+    : '#ffffff'
+}
+
+/**
  * Pushes the colour until it meets the contrast target against the background it will appear
  * on.
  *

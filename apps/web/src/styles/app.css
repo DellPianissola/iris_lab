@@ -1,11 +1,13 @@
-/* The tool's own chrome. Its palette is independent of the one the user edits — otherwise
-   the chrome would change colour along with the preview and nobody could see anything.
+/* The tool's own chrome. These values are the **first paint only**: `buildChrome` in
+   `@nomai/theme` derives the same custom properties from the customer's palette and overrides
+   every one of them on the shell as soon as React mounts.
 
-   The ground is deliberately achromatic. A colour tool whose chrome carries a hue competes
-   with the palette on screen: the person could not tell whether a green they are looking at
-   is theirs or ours. The brand green appears only as the accent — identity mark, focus ring,
-   active tab — and the toolbar sits spatially apart from the stage, which is what keeps it
-   from being mistaken for part of the mockup. */
+   The chrome following the palette is what makes the tool its own demonstration — pick a
+   palette and the product wearing it is right there. What keeps it from competing with the
+   mockup is spatial, not chromatic: the header and the toolbar island are lifted away from
+   the customer's background and float over the page rather than sitting in it. And nothing
+   uses the raw palette — every foreground goes through the contrast search first, so a
+   palette that fails in the mockup still leaves the toolbar readable. */
 
 :root {
   --ui-bg: #0a0a0c;
@@ -19,15 +21,21 @@
   --ui-accent: #16db65;
   --ui-on-accent: #05170c;
 
-  /* The grade pills. They are the legend of a contrast panel, so they carry the `--ui-`
-     prefix on purpose: that is what `focus-contrast.test.ts` collects, and colours outside it
-     are colours nothing checks. */
+  /* The grade pills, and the warning and error text. Same story as everything above: these
+     are the first paint, and `buildChrome` tints each pill from the panel it will land on. */
+  --ui-warn: #f5c451;
+  --ui-danger: #ff8a92;
   --ui-pass: #5ee9a4;
   --ui-pass-bg: #0d2b1c;
-  --ui-warn: #f5c451;
-  --ui-warn-bg: #33290f;
-  --ui-danger: #ff8a92;
-  --ui-danger-bg: #351619;
+  --ui-large: #f5c451;
+  --ui-large-bg: #33290f;
+  --ui-fail: #ff8a92;
+  --ui-fail-bg: #351619;
+  /* The bar's ground is `on-accent`, which in this fallback is near-black, so these are the
+     light ends. Derived, they follow whichever way `on-accent` goes. */
+  --ui-pass-on-bar: #5ee9a4;
+  --ui-large-on-bar: #f5c451;
+  --ui-fail-on-bar: #ff8a92;
 
   /* ---------- scales ----------
      Every measurement in the chrome comes from one of these three ladders. The controls used
@@ -67,7 +75,12 @@
   /* The shell. The stage clears the bar with padding, so the preview can always be scrolled
      out from under it. */
   --topbar-h: 56px;
-  --bar-h: 52px;
+  --bar-h: 60px;
+  /* Every tool tab is this wide, so the row reads as one row of buttons rather than six of
+     different sizes. It is a floor and not a fixed width: a label longer than this grows its
+     own tab instead of being truncated. Measured against the longest in all three languages —
+     the contrast tab, which also carries the reading and measures 169px on its own. */
+  --tab-w: 176px;
 
   color-scheme: dark;
   font-synthesis-weight: none;
@@ -251,10 +264,11 @@ body {
   padding: 0 var(--space-2);
   max-width: 100%;
   overflow-x: auto;
-  background: color-mix(in srgb, var(--ui-panel) 86%, transparent);
+  background: color-mix(in srgb, var(--ui-accent) 92%, transparent);
+  color: var(--ui-on-accent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--ui-line);
+  border: 0;
   border-radius: var(--radius-pill);
   box-shadow: 0 14px 38px rgba(0, 0, 0, .5);
   /* A scrollbar inside a pill draws a straight line across the rounded end; the tabs clipped
@@ -265,37 +279,66 @@ body {
 }
 .toolbar-bar::-webkit-scrollbar { display: none; }
 
+
+
+/* The tabs ride on the brand rather than carrying it: transparent on the island, in the one
+   colour already guaranteed legible against it. */
 .tool-tab {
+  justify-content: center;
   background: none;
+  color: var(--ui-on-accent);
   border: 0;
-  color: var(--ui-dim);
+  font-weight: var(--weight-medium);
   border-radius: var(--radius-pill);
   padding: 0 var(--space-3);
-  height: var(--control-h);
-  white-space: nowrap;
+  height: 44px;
+  min-width: var(--tab-w);
   flex: 0 0 auto;
+  white-space: nowrap;
 }
-.tool-tab:hover { background: var(--ui-panel-2); color: var(--ui-text); }
+.tool-tab .icon, .tool-tab .tool-caret { color: var(--ui-on-accent); }
+.tool-tab:hover { background: color-mix(in srgb, var(--ui-on-accent) 14%, transparent); }
+
+/* The open tab is cut out of the bar in the chrome's own background colour. A second shade of
+   the brand was the other candidate and it does not hold: an accent already near white or
+   black has nowhere to be lifted to, and a random palette reaches that — 1.11:1 between the
+   lifted fill and the bar. The background is always far from the brand, because `accent` is
+   contrast-corrected against the surfaces the background produces. */
 .tool-tab[aria-expanded="true"] {
-  background: color-mix(in srgb, var(--ui-accent) 15%, transparent);
+  background: var(--ui-bg);
   color: var(--ui-text);
+  font-weight: var(--weight-bold);
 }
-.tool-tab[aria-expanded="true"] .icon { color: var(--ui-accent); }
+.tool-tab[aria-expanded="true"] .icon,
+.tool-tab[aria-expanded="true"] .tool-caret { color: var(--ui-text); }
+
+/* Open, the tab is no longer the brand, so the reading goes back to the form derived against
+   the surface it is now standing on. */
+.tool-tab[aria-expanded="true"] .tag-aaa,
+.tool-tab[aria-expanded="true"] .tag-aa { background: var(--ui-pass-bg); color: var(--ui-pass); }
+.tool-tab[aria-expanded="true"] .tag-large { background: var(--ui-large-bg); color: var(--ui-large); }
+.tool-tab[aria-expanded="true"] .tag-fail { background: var(--ui-fail-bg); color: var(--ui-fail); }
 
 .tool-caret {
   width: 12px; height: 12px;
   flex: 0 0 auto;
-  opacity: .35;
+  opacity: .55;
   transition: transform .2s, opacity .2s;
 }
-.tool-tab:hover .tool-caret { opacity: .7; }
-.tool-tab[aria-expanded="true"] .tool-caret {
-  transform: rotate(180deg);
-  opacity: 1;
-  color: var(--ui-accent);
-}
+.tool-tab:hover .tool-caret { opacity: .8; }
+.tool-tab[aria-expanded="true"] .tool-caret { transform: rotate(180deg); opacity: 1; }
 
 .tool-tab .tag { font-variant-numeric: tabular-nums; padding: var(--space-1) var(--space-2); }
+/* On the bar the reading sits on `--ui-on-accent`, the bar's own foreground: it is the one
+   colour corrected against the brand, so the chip stands off the bar whatever the brand is.
+   The tinted form belongs to the panel and looked like a pale patch out here; a solid one
+   collided instead — measured at 1.09:1 between a red-orange brand and the fail chip. */
+.tool-tab .tag { background: var(--ui-on-accent); }
+.tool-tab .tag-aaa, .tool-tab .tag-aa { color: var(--ui-pass-on-bar); }
+.tool-tab .tag-large { color: var(--ui-large-on-bar); }
+.tool-tab .tag-fail { color: var(--ui-fail-on-bar); }
+
+
 
 /* ---------- sheets ----------
    Two of them: the toolbar drawer rising from the bottom and the brand sheet dropping from the
@@ -731,8 +774,8 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   white-space: nowrap;
 }
 .tag-aaa, .tag-aa { background: var(--ui-pass-bg); color: var(--ui-pass); }
-.tag-large { background: var(--ui-warn-bg); color: var(--ui-warn); }
-.tag-fail { background: var(--ui-danger-bg); color: var(--ui-danger); }
+.tag-large { background: var(--ui-large-bg); color: var(--ui-large); }
+.tag-fail { background: var(--ui-fail-bg); color: var(--ui-fail); }
 
 /* ---------- saved ---------- */
 

@@ -1,7 +1,7 @@
 import type { ThemeTokens } from '@nomai/theme'
-import { useCallback, type RefObject } from 'react'
+import { useCallback, useRef, type RefObject } from 'react'
 import { CloseIcon } from '../../components/icons'
-import { useDismiss } from '../../components/useDismiss'
+import { useDismiss, type DismissReason } from '../../components/useDismiss'
 import { useI18n } from '../../i18n'
 import type { Mark } from '../../marks/types'
 import type { Controls } from '../../state/useBrandLab'
@@ -45,16 +45,22 @@ export function BrandSheet({
 }: BrandSheetProps) {
   const { t } = useI18n()
 
-  const close = useCallback(() => {
-    triggerRef.current?.focus()
-    onClose()
-  }, [triggerRef, onClose])
+  const surface = useRef<HTMLDivElement | null>(null)
 
-  useDismiss(open, close)
+  const close = useCallback(
+    (reason: DismissReason = 'escape') => {
+      if (reason === 'escape') triggerRef.current?.focus()
+      onClose()
+    },
+    [triggerRef, onClose],
+  )
+
+  useDismiss(open, close, surface, triggerRef)
 
   return (
     <div
       className="sheet brand-sheet"
+      ref={surface}
       id={id}
       hidden={!open}
       role="region"
@@ -66,7 +72,7 @@ export function BrandSheet({
           type="button"
           className="icon-button sheet-close"
           aria-label={t.app.closeTool}
-          onClick={close}
+          onClick={() => close()}
         >
           <CloseIcon className="icon" aria-hidden="true" />
         </button>

@@ -118,6 +118,46 @@ describe('Toolbar', () => {
     expect(drawer().getAttribute('aria-label')).toBe('Ferramentas')
   })
 
+  /**
+   * A pointer landing on the stage collapses the drawer. It uses `pointerdown`, which reaches
+   * the document before the click reaches a tab, so pressing the open tab again still toggles
+   * once instead of closing and reopening.
+   */
+  it('collapses when a pointer lands outside the bar', () => {
+    click(tab(0))
+
+    act(() => {
+      document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    })
+
+    expect(drawer().hasAttribute('hidden')).toBe(true)
+  })
+
+  it('stays open when the pointer lands inside it', () => {
+    click(tab(0))
+
+    act(() => {
+      drawer().dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    })
+
+    expect(drawer().hasAttribute('hidden')).toBe(false)
+  })
+
+  // Escape is the keyboard leaving, so the focus goes home. A pointer is already somewhere
+  // else, and pulling the focus off what was just clicked would be the wrong answer.
+  it('leaves the focus alone when the pointer dismisses it', () => {
+    click(tab(0))
+    const inside = drawer().querySelector('input') as HTMLInputElement
+    inside.focus()
+
+    act(() => {
+      document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    })
+
+    expect(drawer().hasAttribute('hidden')).toBe(true)
+    expect(document.activeElement).not.toBe(tab(0))
+  })
+
   it('closes on Escape', () => {
     click(tab(0))
     pressEscape()
