@@ -21,11 +21,12 @@ export const ptBR = {
     company: 'Nomai Code',
     tools: 'Ferramentas',
     closeTool: 'Fechar painel',
-    cards: {
-      lockups: 'Logo em contexto',
-      site: 'Site',
-      favicon: 'Favicon / ícone de app',
-    },
+  },
+
+  brand: {
+    title: 'Marca',
+    lockups: 'Logo em contexto',
+    favicon: 'Favicon / ícone de app',
   },
 
   palette: {

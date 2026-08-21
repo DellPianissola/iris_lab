@@ -1,6 +1,5 @@
 import {
   useCallback,
-  useEffect,
   useId,
   useRef,
   useState,
@@ -9,6 +8,7 @@ import {
   type SVGProps,
 } from 'react'
 import { ChevronUpIcon, CloseIcon } from './icons'
+import { useDismiss } from './useDismiss'
 import { useI18n } from '../i18n'
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>
@@ -24,6 +24,9 @@ export interface Tool {
 
 interface ToolbarProps {
   readonly tools: readonly Tool[]
+  /** Which surface is open, owned by the caller — see `onOpenChange`. */
+  readonly openId: string | null
+  readonly onOpenChange: (id: string | null) => void
 }
 
 /**
@@ -33,11 +36,12 @@ interface ToolbarProps {
  * hidden behind the panel. Growing up costs the footer and the favicon strip instead.
  *
  * One drawer, one open tool: a bar with several panels open at once is a sidebar lying down,
- * and it would eat the preview it exists to protect.
+ * and it would eat the preview it exists to protect. Which is open lives with the caller and
+ * not here, because the brand sheet dropping from the header is the same kind of surface —
+ * with the state split in two they both opened and sandwiched the preview between them.
  */
-export function Toolbar({ tools }: ToolbarProps) {
+export function Toolbar({ tools, openId, onOpenChange }: ToolbarProps) {
   const { t } = useI18n()
-  const [openId, setOpenId] = useState<string | null>(null)
   /**
    * What the drawer holds, which outlives what is open. Clearing the content on the closing
    * click would slide an empty box down for the length of the exit transition; `shownId` keeps
@@ -59,36 +63,25 @@ export function Toolbar({ tools }: ToolbarProps) {
    */
   const close = useCallback(() => {
     if (openId) tabs.current.get(openId)?.focus()
-    setOpenId(null)
-  }, [openId])
+    onOpenChange(null)
+  }, [openId, onOpenChange])
 
   function toggle(id: string): void {
     if (id === openId) {
       close()
       return
     }
-    setOpenId(id)
+    onOpenChange(id)
     setShownId(id)
   }
 
-  // Keyed on whether anything is open, not on the tool object: `tools` is rebuilt every
-  // render, so depending on the object would re-subscribe on every colour the picker emits.
-  useEffect(() => {
-    if (!isOpen) return
-
-    function onKeyDown(event: KeyboardEvent): void {
-      if (event.key === 'Escape') close()
-    }
-
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [isOpen, close])
+  useDismiss(isOpen, close)
 
   return (
     <div className="toolbar">
       {/* Always rendered, `hidden` while closed: every tab points its `aria-controls` here. */}
       <div
-        className="drawer"
+        className="sheet drawer"
         id={drawerId}
         hidden={!isOpen}
         role="region"
@@ -96,11 +89,11 @@ export function Toolbar({ tools }: ToolbarProps) {
       >
         {shown && (
           <>
-            <div className="drawer-head">
-              <h2>{shown.label}</h2>
+            <div className="sheet-head">
+              <h2 className="sheet-cap">{shown.label}</h2>
               <button
                 type="button"
-                className="icon-button drawer-close"
+                className="icon-button sheet-close"
                 aria-label={t.app.closeTool}
                 onClick={close}
               >

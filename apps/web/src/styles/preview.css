@@ -65,6 +65,19 @@
 .site-links { display: flex; gap: 18px; font-size: 13px; color: var(--c-muted); margin: 0 0 0 14px; padding: 0; list-style: none; }
 .site-links .current { color: var(--c-text); font-weight: 600; }
 
+/* The nav row would not shrink below about 614px, so on a phone the fake site pushed a
+   horizontal scroll. It never showed before because the card around the mockup clipped it with
+   `overflow: hidden` — the row was being cut off, not fitting. A real site wraps here. */
+@media (max-width: 760px) {
+  .site-nav { flex-wrap: wrap; gap: 12px 18px; }
+  /* `flex-basis`, not `width: 100%`: a percentage width inside a shrink-to-fit container feeds
+     back into the container's own intrinsic size and inflates it — the nav was resolving to
+     528px on a 375px screen. Percentage flex-basis resolves to content during that pass. */
+  .site-links { order: 3; flex-basis: 100%; min-width: 0; margin-left: 0; }
+  .site-nav .spacer { display: none; }
+  .site-nav .btn-secondary { margin-left: auto; }
+}
+
 .btn-primary, .btn-secondary, .btn-accent {
   border-radius: var(--btn-radius);
   padding: 11px 20px;

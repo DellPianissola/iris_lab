@@ -126,6 +126,10 @@ body {
   position: relative;
   display: grid;
   grid-template-rows: var(--topbar-h) 1fr;
+  /* `minmax(0, 1fr)`, never the implicit `auto` column: an auto track grows to its content, so
+     on a phone the single column resolved to 528px inside a 375px shell and `overflow: hidden`
+     threw the rest away where nobody could scroll to it. */
+  grid-template-columns: minmax(0, 1fr);
   height: 100%;
   overflow: hidden;
 }
@@ -162,7 +166,21 @@ body {
   border-bottom: 1px solid var(--ui-line);
 }
 
-.brand { display: flex; align-items: center; gap: var(--space-2); }
+/* Same rule as the toolbar: the labels never go to `display: none`, because that also takes
+   the text out of the accessible name. Measured: the group needs about 547px of viewport, so
+   below that it scrolls sideways instead. */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.topbar-actions::-webkit-scrollbar { display: none; }
+
+.brand { display: flex; align-items: center; gap: var(--space-2); flex: 0 0 auto; }
 .brand-mark { width: 22px; height: 22px; flex: 0 0 auto; color: var(--ui-accent); }
 .brand-names { display: flex; flex-direction: column; line-height: 1.1; }
 .brand-names h1 {
@@ -181,15 +199,25 @@ body {
 @media (max-width: 860px) { .hint { display: none; } }
 
 /* ---------- stage ----------
-   The mockup gets the whole width. That is the point of moving the controls out of the side:
-   a fake website rendered in 890px does not look like a website. */
+   The mockup gets the whole width, and nothing else is on it. That is the point of moving the
+   controls out of the side: a fake website rendered in 890px, wrapped in a card and stacked
+   between two widgets, does not look like a website. */
 
 .stage {
   overflow-y: auto;
-  padding: var(--space-5) var(--space-5) calc(var(--bar-h) + var(--space-4) + var(--space-5));
-  background:
-    radial-gradient(1100px 460px at 72% -12%, color-mix(in srgb, var(--ui-accent) 5%, transparent), transparent 62%),
-    var(--ui-bg);
+  background: var(--ui-bg);
+  /* A grid item also defaults to `min-width: auto` and would refuse to shrink below the
+     mockup's min-content. The track above and this line are both needed. */
+  min-width: 0;
+}
+
+/* The customer's own background paints the whole canvas, including the strip the toolbar
+   island floats over — a band of our grey below their footer would read as the end of a
+   widget instead of the end of a page. */
+.canvas {
+  min-height: 100%;
+  background: var(--c-bg);
+  padding-bottom: calc(var(--bar-h) + var(--space-5));
 }
 
 
@@ -269,9 +297,16 @@ body {
 
 .tool-tab .tag { font-variant-numeric: tabular-nums; padding: var(--space-1) var(--space-2); }
 
-.drawer {
-  width: min(1160px, 100%);
-  max-height: min(46vh, 460px);
+/* ---------- sheets ----------
+   Two of them: the toolbar drawer rising from the bottom and the brand sheet dropping from the
+   header. Same machinery, opposite directions — `--sheet-lift` is the only thing that differs.
+
+   They move into place instead of appearing, and `allow-discrete` on `display` is what lets
+   them animate at all: both keep `hidden` while closed so `aria-controls` resolves, and
+   `hidden` means `display: none`, which without this is an instant switch. Browsers without
+   support simply cut, which is the old behaviour. */
+
+.sheet {
   overflow-y: auto;
   background: color-mix(in srgb, var(--ui-panel) 94%, transparent);
   backdrop-filter: blur(18px);
@@ -281,35 +316,63 @@ body {
   box-shadow: 0 20px 54px rgba(0, 0, 0, .55);
   padding: var(--space-4) var(--space-5) var(--space-5);
 }
-.drawer[hidden] { display: none; }
+.sheet[hidden] { display: none; }
 
-/* The drawer rises into place instead of appearing. `allow-discrete` on `display` is what lets
-   it animate at all: the panel has to keep `hidden` for `aria-controls` to resolve while
-   closed, and `hidden` means `display: none`, which without this is an instant switch. Browsers
-   that do not support it simply cut, which is the old behaviour. */
 @media (prefers-reduced-motion: no-preference) {
-  .drawer {
+  .sheet {
     opacity: 1;
-    translate: 0 0;
     transition:
       opacity .18s ease,
       translate .26s cubic-bezier(.2, .9, .25, 1),
       display .26s allow-discrete;
   }
-  .drawer[hidden] { opacity: 0; translate: 0 16px; }
+}
+
+.drawer {
+  --sheet-lift: 16px;
+  width: min(1160px, 100%);
+  max-height: min(46vh, 460px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .drawer { translate: 0 0; }
+  .drawer[hidden] { opacity: 0; translate: 0 var(--sheet-lift); }
 
   @starting-style {
-    .drawer:not([hidden]) { opacity: 0; translate: 0 16px; }
+    .drawer:not([hidden]) { opacity: 0; translate: 0 var(--sheet-lift); }
   }
 }
 
-.drawer-head {
+/* Drops from the header rather than rising from the toolbar. Covering the hero is free here —
+   nobody is dragging a colour while inspecting the mark — and the two directions are what keep
+   "what you change" and "what you inspect" from reading as the same thing.
+
+   The horizontal half of `translate` is what centres it, so every state has to restate it or
+   the sheet slides sideways while it moves. */
+.brand-sheet {
+  --sheet-lift: -16px;
+  position: absolute;
+  top: var(--topbar-h);
+  left: 50%;
+  translate: -50% 0;
+  z-index: 9;
+  width: min(1160px, calc(100% - var(--space-6)));
+  max-height: min(62vh, 560px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .brand-sheet[hidden] { opacity: 0; translate: -50% var(--sheet-lift); }
+
+  @starting-style {
+    .brand-sheet:not([hidden]) { opacity: 0; translate: -50% var(--sheet-lift); }
+  }
+}
+
+.sheet-head {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   margin-bottom: var(--space-4);
 }
-.drawer-head h2 {
+.sheet-cap {
   margin: 0;
   font-size: var(--text-xs);
   font-weight: var(--weight-bold);
@@ -317,8 +380,30 @@ body {
   letter-spacing: .09em;
   color: var(--ui-dim);
 }
-.drawer-close { margin-left: auto; color: var(--ui-dim); background: none; border: 0; }
-.drawer-close:hover { background: var(--ui-panel-2); color: var(--ui-text); }
+.sheet-cap-next { margin: var(--space-5) 0 var(--space-3); }
+.sheet-close { margin-left: auto; color: var(--ui-dim); background: none; border: 0; }
+.sheet-close:hover { background: var(--ui-panel-2); color: var(--ui-text); }
+
+.brand-toggle {
+  background: none;
+  border: 1px solid var(--ui-line);
+  color: var(--ui-dim);
+  border-radius: var(--radius-pill);
+  height: var(--control-h);
+  flex: 0 0 auto;
+}
+.brand-toggle:hover { background: var(--ui-panel-2); color: var(--ui-text); border-color: var(--ui-hover); }
+.brand-toggle[aria-expanded="true"] {
+  background: color-mix(in srgb, var(--ui-accent) 15%, transparent);
+  border-color: transparent;
+  color: var(--ui-text);
+}
+.brand-toggle[aria-expanded="true"] .icon { color: var(--ui-accent); }
+.brand-toggle[aria-expanded="true"] .tool-caret {
+  transform: rotate(180deg);
+  opacity: 1;
+  color: var(--ui-accent);
+}
 
 /* ---------- help disclosure ----------
    The controls carried six permanent grey paragraphs explaining themselves. Explanation
@@ -706,25 +791,3 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   white-space: nowrap;
 }
 
-/* ---------- preview cards ---------- */
-
-/* One node carries the theme custom properties, rather than a copy per card. */
-.preview-scope { display: contents; }
-
-.card {
-  border: 1px solid var(--ui-line);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  margin-bottom: var(--space-5);
-  background: var(--ui-panel);
-}
-.card-cap {
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: .09em;
-  color: var(--ui-dim);
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--ui-line);
-  margin: 0;
-  font-weight: var(--weight-bold);
-}

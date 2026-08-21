@@ -1,5 +1,5 @@
 import { fontStack, tokensToCssVars } from '@nomai/theme'
-import { useEffect, useMemo, type CSSProperties } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { TopBar } from './components/TopBar'
 import { Toolbar, type Tool } from './components/Toolbar'
 import {
@@ -15,8 +15,7 @@ import { ContrastBadge } from './features/contrast/ContrastBadge'
 import { ContrastPanel } from './features/contrast/ContrastPanel'
 import { PalettePanel } from './features/palette/PalettePanel'
 import { PresetGrid } from './features/palette/PresetGrid'
-import { FaviconPreview } from './features/preview/FaviconPreview'
-import { LockupGrid } from './features/preview/LockupGrid'
+import { BrandSheet } from './features/preview/BrandSheet'
 import { SiteMockup } from './features/preview/SiteMockup'
 import { SavedPanel } from './features/saved/SavedPanel'
 import { SymbolPanel } from './features/symbol/SymbolPanel'
@@ -30,6 +29,26 @@ export function App() {
   const { mode, palette, tokens, marks, mark, selectedId, controls, saved, canUndo, canRedo, actions } =
     useBrandLab()
   const { t } = useI18n()
+
+  /**
+   * One surface at a time, across both of them: the toolbar drawer rising from the bottom and
+   * the brand sheet dropping from the header. Held here rather than inside each, because with
+   * the state split the two opened together and squeezed the preview between them — the thing
+   * "one drawer at a time" existed to prevent, just on the other axis.
+   */
+  const brandSheetId = useId()
+  const [openSurface, setOpenSurface] = useState<string | null>(null)
+  const brandButton = useRef<HTMLButtonElement | null>(null)
+  const brandSheetOpen = openSurface === brandSheetId
+
+  function toggleBrandSheet(): void {
+    if (brandSheetOpen) {
+      brandButton.current?.focus()
+      setOpenSurface(null)
+    } else {
+      setOpenSurface(brandSheetId)
+    }
+  }
 
   useKeyboardShortcut(RANDOMIZE_KEY, actions.randomize)
   useUndoShortcut(actions.undo, actions.redo)
@@ -129,34 +148,40 @@ export function App() {
   ]
 
   return (
-    <div className="app">
-      <TopBar mode={mode} onModeChange={actions.switchMode} shortcutKey={RANDOMIZE_KEY.toUpperCase()} />
+    // The theme custom properties ride on the shell so both the stage and the brand sheet read
+    // them from one node; nothing below recomputes colour.
+    <div className="app" style={previewStyle}>
+      <TopBar
+        mode={mode}
+        onModeChange={actions.switchMode}
+        shortcutKey={RANDOMIZE_KEY.toUpperCase()}
+        brandSheetId={brandSheetId}
+        brandSheetOpen={brandSheetOpen}
+        onBrandSheetToggle={toggleBrandSheet}
+        brandButtonRef={brandButton}
+      />
 
+      <BrandSheet
+        id={brandSheetId}
+        open={brandSheetOpen}
+        onClose={() => setOpenSurface(null)}
+        triggerRef={brandButton}
+        tokens={tokens}
+        mark={mark}
+        controls={controls}
+        glyphColor={glyphColor}
+      />
+
+      {/* No card, no caption, no siblings: the stage **is** the fake landing page. Wrapping it
+          in chrome was what gave it away as a widget in a gallery, and the customer is here to
+          judge whether it reads as a site. */}
       <main className="stage">
-        <div className="preview-scope" style={previewStyle}>
-          <section className="card">
-            <h2 className="card-cap">{t.app.cards.lockups}</h2>
-            <LockupGrid tokens={tokens} mark={mark} controls={controls} glyphColor={glyphColor} />
-          </section>
-
-          <section className="card">
-            <h2 className="card-cap">{t.app.cards.site}</h2>
-            <SiteMockup tokens={tokens} mark={mark} controls={controls} />
-          </section>
-
-          <section className="card">
-            <h2 className="card-cap">{t.app.cards.favicon}</h2>
-            <FaviconPreview
-              tokens={tokens}
-              mark={mark}
-              wordmark={controls.wordmark}
-              plate={controls.plate}
-            />
-          </section>
+        <div className="canvas">
+          <SiteMockup tokens={tokens} mark={mark} controls={controls} />
         </div>
       </main>
 
-      <Toolbar tools={tools} />
+      <Toolbar tools={tools} openId={openSurface} onOpenChange={setOpenSurface} />
     </div>
   )
 }

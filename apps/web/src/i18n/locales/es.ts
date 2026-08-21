@@ -13,11 +13,12 @@ export const es: Dictionary = {
     company: 'Nomai Code',
     tools: 'Herramientas',
     closeTool: 'Cerrar panel',
-    cards: {
-      lockups: 'Logo en contexto',
-      site: 'Sitio',
-      favicon: 'Favicon / icono de app',
-    },
+  },
+
+  brand: {
+    title: 'Marca',
+    lockups: 'Logo en contexto',
+    favicon: 'Favicon / icono de app',
   },
 
   palette: {

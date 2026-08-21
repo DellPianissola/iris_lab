@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { act } from 'react'
+import { act, useState } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { Toolbar, type Tool } from '../src/components/Toolbar'
@@ -15,6 +15,12 @@ const tools: readonly Tool[] = [
   { id: 'symbol', label: 'Símbolo', icon: PlusIcon, content: <p>conteúdo do símbolo</p> },
 ]
 
+/** The caller owns which surface is open, so the test owns it the same way the app does. */
+function Host() {
+  const [openId, setOpenId] = useState<string | null>(null)
+  return <Toolbar tools={tools} openId={openId} onOpenChange={setOpenId} />
+}
+
 beforeEach(() => {
   localStorage.setItem(LOCALE_STORAGE_KEY, 'pt-BR')
   host = document.createElement('div')
@@ -23,7 +29,7 @@ beforeEach(() => {
   act(() => {
     root.render(
       <I18nProvider>
-        <Toolbar tools={tools} />
+        <Host />
       </I18nProvider>,
     )
   })
@@ -137,7 +143,7 @@ describe('Toolbar', () => {
 
   it('returns focus to the tab when the close button is used', () => {
     click(tab(1))
-    click(host.querySelector('.drawer-close') as Element)
+    click(host.querySelector('.sheet-close') as Element)
 
     expect(document.activeElement).toBe(tab(1))
   })
