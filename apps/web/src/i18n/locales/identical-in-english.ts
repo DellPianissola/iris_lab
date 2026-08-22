@@ -14,6 +14,7 @@ export const IDENTICAL_IN_ENGLISH: ReadonlySet<string> = new Set([
   'contrast.grades.aa',
   'presets.title',
   'app.company',
+  'app.fullName',
   'mockup.accent',
   'mockup.stats.uptime',
   'mockup.nav.2',

@@ -1,7 +1,8 @@
 import { buildChrome, chromeToCssVars, fontStack, tokensToCssVars } from '@nomai/theme'
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react'
-import { TopBar } from './components/TopBar'
+import { useCallback, useId, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { StageControls } from './components/StageControls'
 import { Toolbar, type Tool } from './components/Toolbar'
+import { Watermark } from './components/Watermark'
 import {
   ContrastIcon,
   PaletteIcon,
@@ -22,6 +23,7 @@ import { SymbolPanel } from './features/symbol/SymbolPanel'
 import { TypePanel } from './features/typography/TypePanel'
 import { lockupScale } from './state/config'
 import { useBrandLab } from './state/useBrandLab'
+import { useKeyboardShortcut, useUndoShortcut } from './state/useShortcuts'
 
 const RANDOMIZE_KEY = 'r'
 
@@ -37,6 +39,7 @@ export function App() {
    * "one drawer at a time" existed to prevent, just on the other axis.
    */
   const brandSheetId = useId()
+  const aboutId = useId()
   const [openSurface, setOpenSurface] = useState<string | null>(null)
   const brandButton = useRef<HTMLButtonElement | null>(null)
   const brandSheetOpen = openSurface === brandSheetId
@@ -44,6 +47,8 @@ export function App() {
   // Memoised because `BrandSheet` hangs its Escape and outside-pointer listeners off it: an
   // arrow rebuilt each render re-subscribes both on every repaint the palette causes.
   const closeBrandSheet = useCallback(() => setOpenSurface(null), [])
+
+  const closeAbout = useCallback(() => setOpenSurface(null), [])
 
   function toggleBrandSheet(): void {
     if (brandSheetOpen) {
@@ -165,11 +170,10 @@ export function App() {
   return (
     // The theme custom properties ride on the shell so both the stage and the brand sheet read
     // them from one node; nothing below recomputes colour.
-    <div className="app" style={previewStyle}>
-      <TopBar
+    <div className="app" data-outlines={controls.outlines ? 'on' : 'off'} style={previewStyle}>
+      <StageControls
         mode={mode}
         onModeChange={actions.switchMode}
-        shortcutKey={RANDOMIZE_KEY.toUpperCase()}
         brandSheetId={brandSheetId}
         brandSheetOpen={brandSheetOpen}
         onBrandSheetToggle={toggleBrandSheet}
@@ -196,52 +200,14 @@ export function App() {
         </div>
       </main>
 
-      <Toolbar tools={tools} openId={openSurface} onOpenChange={setOpenSurface} />
+      <Toolbar tools={tools} openId={openSurface} onOpenChange={setOpenSurface}>
+        <Watermark
+          id={aboutId}
+          open={openSurface === aboutId}
+          onToggle={() => setOpenSurface((current) => (current === aboutId ? null : aboutId))}
+          onClose={closeAbout}
+        />
+      </Toolbar>
     </div>
   )
-}
-
-/** Global shortcut, ignored while focus is in a field. */
-function useKeyboardShortcut(key: string, action: () => void): void {
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent): void {
-      if (event.key.toLowerCase() !== key) return
-      if (isTypingTarget(event.target)) return
-      if (event.ctrlKey || event.metaKey || event.altKey) return
-
-      action()
-    }
-
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [key, action])
-}
-
-/**
- * Ctrl+Z / Ctrl+Shift+Z, and Cmd on Mac.
- *
- * Stands down when focus is in a field: there the browser own undo is what the person
- * expects, and stealing it would make Ctrl+Z wipe the palette instead of reverting what they
- * just typed.
- */
-function useUndoShortcut(onUndo: () => void, onRedo: () => void): void {
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent): void {
-      if (event.key.toLowerCase() !== 'z') return
-      if (!event.ctrlKey && !event.metaKey) return
-      if (isTypingTarget(event.target)) return
-
-      event.preventDefault()
-      if (event.shiftKey) onRedo()
-      else onUndo()
-    }
-
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [onUndo, onRedo])
-}
-
-function isTypingTarget(target: EventTarget | null): boolean {
-  const tag = (target as HTMLElement | null)?.tagName
-  return tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA'
 }

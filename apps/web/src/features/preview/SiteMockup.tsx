@@ -42,9 +42,6 @@ export function SiteMockup({ tokens, mark, controls }: SiteMockupProps) {
             </li>
           ))}
         </ul>
-        <span className="spacer" />
-        <button type="button" className="btn-secondary btn-compact">{copy.signIn}</button>
-        <button type="button" className="btn-primary btn-compact">{copy.getStarted}</button>
       </nav>
 
       <header className="site-hero">

@@ -18,6 +18,17 @@ import { describe, expect, it } from 'vitest'
 
 const CSS_PATH = join(dirname(fileURLToPath(import.meta.url)), '../src/styles/app.css')
 
+/**
+ * The shell has to restate the text colour. `body` sits above the node the derived tokens land
+ * on, so anything inheriting its colour keeps the pre-hydration paint — which is near-white,
+ * and invisible on any light palette.
+ */
+function shellRestatesTextColour(): boolean {
+  const css = readFileSync(CSS_PATH, 'utf8')
+  const shell = css.slice(css.indexOf('.app {'), css.indexOf('}', css.indexOf('.app {')))
+  return /color:\s*var\(--ui-text\)/.test(shell)
+}
+
 function readUiPalette(): Record<string, string> {
   const css = readFileSync(CSS_PATH, 'utf8')
   const palette: Record<string, string> = {}
@@ -42,6 +53,10 @@ function color(name: string): string {
 const NON_TEXT_TARGET = CONTRAST_TARGETS.largeText
 
 describe('contrast of the tool chrome', () => {
+  it('restates the text colour on the shell, below body', () => {
+    expect(shellRestatesTextColour()).toBe(true)
+  })
+
   it('reads the palette from the stylesheet', () => {
     expect(Object.keys(ui).length).toBeGreaterThanOrEqual(8)
     expect(color('accent')).toMatch(/^#[0-9a-f]{6}$/i)

@@ -1,6 +1,6 @@
-import { mix } from '@nomai/color'
+import { contrastRatio, mix } from '@nomai/color'
 import { chromeMix, gradeHues, gradeTint } from './config'
-import { CONTRAST_TARGETS, isDark, legibleOn, readableOn } from './contrast'
+import { CONTRAST_TARGETS, ensureContrast, isDark, legibleOn, readableOn } from './contrast'
 import type { Palette } from './types'
 
 /**
@@ -29,8 +29,17 @@ export interface ChromeTokens {
   readonly text: string
   readonly dim: string
   readonly faint: string
+  /**
+   * The brand as the chrome wears it: the toolbar's fill, the primary button, a pressed
+   * segment, an open disclosure. Corrected against the **customer's background** — the same
+   * ground the mockup's own primary button stands on, and the same rule. Corrected against a
+   * chrome surface instead it lightened until `onAccent` flipped to near-black, and the bar
+   * and the button in the preview wore one brand with opposite text.
+   */
   readonly accent: string
   readonly onAccent: string
+  /** The focus ring, which lands on chrome surfaces rather than on the page. */
+  readonly focus: string
   readonly warn: string
   readonly danger: string
   /**
@@ -70,7 +79,22 @@ export function buildChrome(palette: Palette): ChromeTokens {
   const bg = lift(recipe.bg)
   const panel = lift(recipe.panel)
   const panel2 = lift(recipe.panel2)
-  const accent = legibleOn(palette.brand, panel2, CONTRAST_TARGETS.largeText)
+  /**
+   * The fill moves so the label does not have to. `readableOn` picks white or near-black the
+   * same way the mockup picks the colour for its own primary button; when that choice lands
+   * just short of 4.5:1 the alternative is to invert the label, and then the bar and the
+   * button wear the same brand with opposite text — measured on a violet brand at 4.37:1,
+   * where the bar went black while the button beside it stayed white. Nudging the fill is
+   * available to us and not to the mockup, which has to stay exactly as the customer set it.
+   *
+   * The nudge is dropped if it costs the bar its separation from the page, because being
+   * visible outranks matching.
+   */
+  const onPage = legibleOn(palette.brand, palette.bg, CONTRAST_TARGETS.largeText)
+  const nudged = ensureContrast(onPage, readableOn(onPage), CONTRAST_TARGETS.text)
+  const accent =
+    contrastRatio(nudged, palette.bg) >= CONTRAST_TARGETS.largeText ? nudged : onPage
+  const focus = legibleOn(palette.brand, panel2, CONTRAST_TARGETS.largeText)
 
   const pill = (hue: string): readonly [string, string] => {
     const background = mix(panel, hue, gradeTint[tone])
@@ -96,6 +120,7 @@ export function buildChrome(palette: Palette): ChromeTokens {
     faint: legibleOn(palette.muted, panel2, CONTRAST_TARGETS.largeText),
     accent,
     onAccent,
+    focus,
     warn: legibleOn(gradeHues.large, panel2, CONTRAST_TARGETS.text),
     danger: legibleOn(gradeHues.fail, panel2, CONTRAST_TARGETS.text),
     pass,
@@ -124,6 +149,7 @@ const VAR_NAMES: Record<keyof ChromeTokens, string> = {
   faint: 'faint',
   accent: 'accent',
   onAccent: 'on-accent',
+  focus: 'focus',
   warn: 'warn',
   danger: 'danger',
   pass: 'pass',

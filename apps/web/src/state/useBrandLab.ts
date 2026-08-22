@@ -34,6 +34,7 @@ export interface SavedCombo {
 
 export interface Controls {
   plate: boolean
+  outlines: boolean
   markSize: number
   markRadius: number
   wordmark: string

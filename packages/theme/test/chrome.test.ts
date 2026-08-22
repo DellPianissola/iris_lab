@@ -1,7 +1,7 @@
 import { contrastRatio } from '@nomai/color'
 import { describe, expect, it } from 'vitest'
 import { buildChrome, chromeToCssVars } from '../src/chrome'
-import { CONTRAST_TARGETS } from '../src/contrast'
+import { CONTRAST_TARGETS, readableOn } from '../src/contrast'
 import { brandPalette, presets } from '../src/catalog'
 import { randomPalette } from '../src/derive'
 import type { Palette } from '../src/types'
@@ -29,7 +29,7 @@ const TEXT_PAIRS = [
 ] as const
 
 const NON_TEXT_PAIRS = [
-  ['focus ring on the field', 'accent', 'panel-2'],
+  ['focus ring on the field', 'focus', 'panel-2'],
   ['faint icon on the panel', 'faint', 'panel'],
 ] as const
 
@@ -71,11 +71,22 @@ describe('buildChrome', () => {
   it('covers every custom property the stylesheet reads', () => {
     expect(Object.keys(vars(brandPalette('light'))).sort()).toEqual(
       [
-        'accent', 'bg', 'danger', 'dim', 'fail', 'fail-bg', 'fail-on-bar', 'faint', 'hover',
-        'large', 'large-bg', 'large-on-bar', 'line', 'on-accent', 'panel', 'panel-2', 'pass',
-        'pass-bg', 'pass-on-bar', 'text', 'warn',
+        'accent', 'bg', 'danger', 'dim', 'fail', 'fail-bg', 'fail-on-bar', 'faint', 'focus',
+        'hover', 'large', 'large-bg', 'large-on-bar', 'line', 'on-accent', 'panel', 'panel-2',
+        'pass', 'pass-bg', 'pass-on-bar', 'text', 'warn',
       ],
     )
+  })
+
+  // The hover surface is `line` and the resting one is `panel2`; the ladder is what makes that
+  // a visible step instead of a magic fraction, so the rungs have to stay apart.
+  it('keeps every rung of the surface ladder distinct', () => {
+    for (const palette of [...sweep, ...HOSTILE]) {
+      const chrome = buildChrome(palette)
+      const ladder = [chrome.bg, chrome.panel, chrome.panel2, chrome.line, chrome.hover]
+
+      expect(new Set(ladder).size).toBe(ladder.length)
+    }
   })
 
   it('follows the palette instead of a fixed set', () => {
@@ -126,6 +137,32 @@ describe('buildChrome', () => {
       expect(
         contrastRatio(chrome['on-accent'] as string, chrome['accent'] as string),
       ).toBeGreaterThanOrEqual(CONTRAST_TARGETS.text)
+    }
+  })
+
+  /**
+   * The bar floats over `.canvas`, which is painted in the customer's own background — the
+   * chrome `bg` sits behind that and never shows. Correcting and checking against the same
+   * ground the mockup's primary button stands on is what makes the two wear the brand alike.
+   */
+  it('keeps the toolbar clear of the page it floats over', () => {
+    for (const palette of [...sweep, ...HOSTILE]) {
+      expect(contrastRatio(buildChrome(palette).accent, palette.bg)).toBeGreaterThanOrEqual(
+        CONTRAST_TARGETS.largeText,
+      )
+    }
+  })
+
+  /**
+   * The bar and the mockup's primary button wear the same brand, so a reader should not see
+   * one in white and the other in black. They cannot always agree — the mockup is free to be
+   * a bad choice, which is the product — but where the fill can be nudged into agreement it is.
+   */
+  it('lands on the same label colour as the mockup for the house palettes', () => {
+    for (const mode of ['light', 'dark'] as const) {
+      const palette = brandPalette(mode)
+
+      expect(buildChrome(palette).onAccent).toBe(readableOn(palette.brand))
     }
   })
 

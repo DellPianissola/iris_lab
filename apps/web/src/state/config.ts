@@ -11,6 +11,16 @@ export const controlDefaults = {
   displayFont: FONT_IDS[0] satisfies FontId,
   bodyFont: FONT_IDS[0] satisfies FontId,
   plate: false,
+  /**
+   * Outlined components, in the mockup and in the tool alike.
+   *
+   * It is a test dimension and not a preference: in the mockup the line is drawn in the
+   * customer's own `line` token, one of the seven they edit, so switching it is another way of
+   * asking whether the palette holds — a pale brand often needs the line where a dark one does
+   * not. Off by default, because a palette that only works with a line around every control is
+   * worth discovering rather than being handed.
+   */
+  outlines: false,
 } as const
 
 export const controlRanges = {

@@ -43,7 +43,7 @@ describe('dictionaries', () => {
   it('counts function keys alongside text keys', () => {
     const paths = keyPaths(ptBR)
 
-    expect(paths).toContain('app.shortcutHint')
+    expect(paths).toContain('app.help')
     expect(paths).toContain('mockup.footer')
     expect(paths).toContain('symbol.failures.too-large')
     expect(paths.length).toBeGreaterThan(stringEntries(ptBR).length)

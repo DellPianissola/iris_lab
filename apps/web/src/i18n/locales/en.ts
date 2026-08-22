@@ -9,15 +9,18 @@ export const en: Dictionary = {
 
   app: {
     modes: { light: 'Light', dark: 'Dark' },
-    shortcutHint: (key: string) => `Tip: press ${key} for a random palette`,
     help: (about: string) => `Help about ${about}`,
     company: 'Nomai Code',
+    fullName: 'Nomai Code — Íris',
+    about:
+      'Upload your logo, change the colours and see everything applied to a real site. Your file never leaves this browser.',
     tools: 'Tools',
     closeTool: 'Close panel',
   },
 
   brand: {
     title: 'Brand',
+    hint: 'your logo in context and as a favicon',
     lockups: 'Logo in context',
     favicon: 'Favicon / app icon',
   },
@@ -118,6 +121,7 @@ export const en: Dictionary = {
     body: 'Body',
     tracking: 'Tracking',
     buttons: 'Buttons',
+    outlines: 'Outlined components (here and on the site)',
     note: (separator: string) =>
       `Use ${separator} in the name to highlight the second part in the brand colour.`,
     fonts: {
@@ -155,8 +159,6 @@ export const en: Dictionary = {
 
   mockup: {
     nav: ['Product', 'Pricing', 'Docs', 'Blog'],
-    signIn: 'Sign in',
-    getStarted: 'Get started',
     pill: 'New — version 2.0',
     headline: 'A headline that shows ',
     headlineAccent: 'how your brand sounds',

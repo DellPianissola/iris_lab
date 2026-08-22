@@ -54,6 +54,14 @@ export function TypePanel({ controls, onChange }: TypePanelProps) {
         max={controlRanges.buttonRadius.max}
         onChange={(v) => onChange('buttonRadius', v)}
       />
+      <label className="check">
+        <input
+          type="checkbox"
+          checked={controls.outlines}
+          onChange={(event) => onChange('outlines', event.target.checked)}
+        />
+        {t.typography.outlines}
+      </label>
     </div>
   )
 }

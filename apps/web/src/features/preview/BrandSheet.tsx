@@ -1,7 +1,7 @@
 import type { ThemeTokens } from '@nomai/theme'
-import { useCallback, useRef, type RefObject } from 'react'
+import type { RefObject } from 'react'
 import { CloseIcon } from '../../components/icons'
-import { useDismiss, type DismissReason } from '../../components/useDismiss'
+import { useDisclosure } from '../../components/useDisclosure'
 import { useI18n } from '../../i18n'
 import type { Mark } from '../../marks/types'
 import type { Controls } from '../../state/useBrandLab'
@@ -45,17 +45,7 @@ export function BrandSheet({
 }: BrandSheetProps) {
   const { t } = useI18n()
 
-  const surface = useRef<HTMLDivElement | null>(null)
-
-  const close = useCallback(
-    (reason: DismissReason = 'escape') => {
-      if (reason === 'escape') triggerRef.current?.focus()
-      onClose()
-    },
-    [triggerRef, onClose],
-  )
-
-  useDismiss(open, close, surface, triggerRef)
+  const { surface, close } = useDisclosure(open, onClose, triggerRef)
 
   return (
     <div

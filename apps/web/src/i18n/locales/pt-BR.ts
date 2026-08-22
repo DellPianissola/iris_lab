@@ -16,15 +16,18 @@ export const ptBR = {
 
   app: {
     modes: { light: 'Claro', dark: 'Escuro' },
-    shortcutHint: (key: string) => `Dica: aperte ${key} pra sortear uma paleta`,
     help: (about: string) => `Ajuda sobre ${about}`,
     company: 'Nomai Code',
+    fullName: 'Nomai Code — Íris',
+    about:
+      'Suba seu logo, troque as cores e veja tudo aplicado num site de verdade. O seu arquivo não sai deste navegador.',
     tools: 'Ferramentas',
     closeTool: 'Fechar painel',
   },
 
   brand: {
     title: 'Marca',
+    hint: 'seu logo em contexto e como favicon',
     lockups: 'Logo em contexto',
     favicon: 'Favicon / ícone de app',
   },
@@ -127,6 +130,7 @@ export const ptBR = {
     body: 'Texto',
     tracking: 'Espaçamento',
     buttons: 'Botões',
+    outlines: 'Contornos nos componentes (aqui e no site)',
     note: (separator: string) =>
       `Use ${separator} no nome pra destacar a segunda parte na cor da marca.`,
     fonts: {
@@ -165,8 +169,6 @@ export const ptBR = {
 
   mockup: {
     nav: ['Produto', 'Preços', 'Docs', 'Blog'],
-    signIn: 'Entrar',
-    getStarted: 'Começar',
     pill: 'Novo — versão 2.0',
     headline: 'Um título que mostra ',
     headlineAccent: 'como sua marca soa',

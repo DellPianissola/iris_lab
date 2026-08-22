@@ -20,6 +20,7 @@
   --ui-faint: #7c828d;
   --ui-accent: #16db65;
   --ui-on-accent: #05170c;
+  --ui-focus: #16db65;
 
   /* The grade pills, and the warning and error text. Same story as everything above: these
      are the first paint, and `buildChrome` tints each pill from the panel it will land on. */
@@ -74,7 +75,6 @@
 
   /* The shell. The stage clears the bar with padding, so the preview can always be scrolled
      out from under it. */
-  --topbar-h: 56px;
   --bar-h: 60px;
   /* Every tool tab is this wide, so the row reads as one row of buttons rather than six of
      different sizes. It is a floor and not a fixed width: a label longer than this grows its
@@ -99,13 +99,13 @@ input, select, textarea { font: inherit; margin: 0; }
    it fails 2.4.7. */
 
 :focus-visible {
-  outline: 2px solid var(--ui-accent);
+  outline: 2px solid var(--ui-focus);
   outline-offset: 2px;
   border-radius: var(--radius-control);
 }
 /* The browser draws no outline around the colour input hidden inside the swatch. */
 .swatch:has(:focus-visible) {
-  outline: 2px solid var(--ui-accent);
+  outline: 2px solid var(--ui-focus);
   outline-offset: 2px;
 }
 
@@ -138,13 +138,17 @@ body {
 .app {
   position: relative;
   display: grid;
-  grid-template-rows: var(--topbar-h) 1fr;
+  grid-template-rows: 1fr;
   /* `minmax(0, 1fr)`, never the implicit `auto` column: an auto track grows to its content, so
      on a phone the single column resolved to 528px inside a 375px shell and `overflow: hidden`
      threw the rest away where nobody could scroll to it. */
   grid-template-columns: minmax(0, 1fr);
   height: 100%;
   overflow: hidden;
+  /* The derived tokens land on this node, and `body` is above it: anything inheriting its
+     colour from the document would keep the pre-hydration paint — near-white text, invisible
+     the moment the customer picks a light palette. */
+  color: var(--ui-text);
 }
 
 .spacer { flex: 1; }
@@ -166,50 +170,28 @@ body {
 }
 .icon-button .icon { width: 14px; height: 14px; }
 
-/* ---------- top bar ----------
-   Identity and what applies to the whole screen. It never grows: everything that edits the
-   palette lives in the toolbar, so this bar has no reason to open. */
+/* ---------- stage controls ----------
+   No bar of ours at the top. What is left floats in the corner of the stage, where the fake
+   site's own call-to-action pair used to sit — a bar with a logo left and actions right is the
+   same shape the mockup's header uses, and two of that shape stacked read as two headers.
 
-.topbar {
+   Everything here is chrome, so it wears `--ui-*` and the pill shape the bottom furniture uses:
+   it has to be unmistakably the tool sitting over the page, not a control belonging to it. */
+
+.stage-controls {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-5);
+  z-index: 11;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: 0 var(--space-4);
-  background: var(--ui-panel);
-  border-bottom: 1px solid var(--ui-line);
-}
-
-/* Same rule as the toolbar: the labels never go to `display: none`, because that also takes
-   the text out of the accessible name. Measured: the group needs about 547px of viewport, so
-   below that it scrolls sideways instead. */
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-left: auto;
-  min-width: 0;
+  gap: var(--space-2);
+  max-width: calc(100% - var(--space-6));
   overflow-x: auto;
   scrollbar-width: none;
 }
-.topbar-actions::-webkit-scrollbar { display: none; }
-
-.brand { display: flex; align-items: center; gap: var(--space-2); flex: 0 0 auto; }
-.brand-mark { width: 22px; height: 22px; flex: 0 0 auto; color: var(--ui-accent); }
-.brand-names { display: flex; flex-direction: column; line-height: 1.1; }
-.brand-names h1 {
-  font-size: var(--text-lg);
-  font-weight: var(--weight-bold);
-  letter-spacing: -.01em;
-  margin: 0;
-}
-.brand-names small {
-  font-size: var(--text-xs);
-  color: var(--ui-faint);
-  letter-spacing: .04em;
-}
-
-.hint { color: var(--ui-faint); font-size: var(--text-sm); }
-@media (max-width: 860px) { .hint { display: none; } }
+.stage-controls::-webkit-scrollbar { display: none; }
+.stage-controls > * { flex: 0 0 auto; }
 
 /* ---------- stage ----------
    The mockup gets the whole width, and nothing else is on it. That is the point of moving the
@@ -251,10 +233,18 @@ body {
   gap: var(--space-2);
   padding: 0 var(--space-4) var(--space-4);
   /* The island floats over the stage, so the strip of stage either side of it has to stay
-     clickable; only the island itself takes the pointer. */
+     clickable; only the furniture itself takes the pointer. */
   pointer-events: none;
 }
 .toolbar-bar, .drawer { pointer-events: auto; }
+
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  max-width: 100%;
+}
 
 .toolbar-bar {
   display: flex;
@@ -394,7 +384,8 @@ body {
 .brand-sheet {
   --sheet-lift: -16px;
   position: absolute;
-  top: var(--topbar-h);
+  /* Clear of the floating controls it drops from, rather than of a bar that no longer exists. */
+  top: calc(var(--space-3) + var(--control-h) + var(--space-3));
   left: 50%;
   translate: -50% 0;
   z-index: 9;
@@ -428,14 +419,14 @@ body {
 .sheet-close:hover { background: var(--ui-panel-2); color: var(--ui-text); }
 
 .brand-toggle {
-  background: none;
-  border: 1px solid var(--ui-line);
+  background: var(--ui-panel-2);
+  border: 0;
   color: var(--ui-dim);
   border-radius: var(--radius-pill);
   height: var(--control-h);
   flex: 0 0 auto;
 }
-.brand-toggle:hover { background: var(--ui-panel-2); color: var(--ui-text); border-color: var(--ui-hover); }
+.brand-toggle:hover { background: var(--ui-line); color: var(--ui-text); }
 .brand-toggle[aria-expanded="true"] {
   background: color-mix(in srgb, var(--ui-accent) 15%, transparent);
   border-color: transparent;
@@ -453,11 +444,10 @@ body {
    that always shows is design debt paid in pixels; on demand it costs nothing until asked. */
 
 .help-toggle {
-  background: none;
-  border: 1px solid var(--ui-line);
+  background: var(--ui-panel-2);
   color: var(--ui-dim);
 }
-.help-toggle:hover { background: var(--ui-panel-2); border-color: var(--ui-hover); color: var(--ui-text); }
+.help-toggle:hover { background: var(--ui-line); color: var(--ui-text); }
 
 /* A control and its `?` on one line: the affordance only pays for itself sitting beside what
    it explains — loose at the foot of the drawer it is the old grey note with fewer words.
@@ -500,7 +490,7 @@ button {
   gap: var(--space-2);
   min-height: var(--control-h);
   background: var(--ui-panel-2);
-  border: 1px solid var(--ui-line);
+  border: 0;
   color: var(--ui-text);
   border-radius: var(--radius-control);
   padding: 0 var(--space-3);
@@ -508,7 +498,11 @@ button {
   font-size: var(--text-base);
   transition: .15s;
 }
-button:hover { background: #24272d; border-color: var(--ui-hover); }
+/* No outline anywhere in the chrome: a control is a filled shape, and the fill is the only
+   thing that has to move on hover. It steps to the next rung of the ladder the resting surface
+   comes from, so the change exists on both chromes without a magic fraction — as a fixed hex
+   it went black the moment the chrome turned light. */
+button:hover { background: var(--ui-line); }
 button.primary {
   background: var(--ui-accent);
   border-color: var(--ui-accent);
@@ -536,9 +530,10 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   height: 52px;
   border-radius: var(--radius-control);
   overflow: hidden;
-  /* An inset ring rather than a border: near-black tokens — background, surface, borders —
-     are otherwise invisible against the drawer and the card reads as empty. */
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
+  /* An inset ring rather than a border: a token that lands near the drawer's own colour is
+     otherwise invisible and the card reads as empty. Drawn from the foreground so it darkens a
+     pale swatch and lightens a dark one — as white it only ever worked on a dark chrome. */
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ui-text) 22%, transparent);
 }
 .swatch input { position: absolute; inset: -8px; width: 150%; height: 150%; border: 0; padding: 0; background: none; cursor: pointer; }
 .swatch-name {
@@ -552,7 +547,7 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   width: 100%;
   height: var(--control-h);
   background: var(--ui-panel-2);
-  border: 1px solid var(--ui-line);
+  border: 0;
   color: var(--ui-text);
   border-radius: var(--radius-control);
   padding: 0 var(--space-2);
@@ -592,7 +587,7 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   flex: 1; min-width: 0;
   height: var(--control-h);
   background: var(--ui-panel-2);
-  border: 1px solid var(--ui-line);
+  border: 0;
   color: var(--ui-text);
   border-radius: var(--radius-control);
   padding: 0 var(--space-2);
@@ -616,8 +611,7 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 
 .segmented {
   display: flex; gap: var(--space-1);
-  background: var(--ui-bg);
-  border: 1px solid var(--ui-line);
+  background: var(--ui-panel-2);
   border-radius: var(--radius-control);
   padding: var(--space-1);
 }
@@ -632,13 +626,13 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   padding: 0 var(--space-2);
   white-space: nowrap;
 }
-.segmented button:hover:not(:disabled) { background: var(--ui-panel-2); }
+.segmented button:hover:not(:disabled) { background: var(--ui-line); }
 .segmented button[aria-pressed="true"] {
   background: var(--ui-accent);
   color: var(--ui-on-accent);
   font-weight: var(--weight-bold);
 }
-.topbar .segmented { flex: 0 0 auto; }
+.stage-controls .segmented { flex: 0 0 auto; }
 
 /* ---------- symbol ---------- */
 
@@ -663,7 +657,7 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   line-height: var(--line-body);
 }
 .dropzone:has(:focus-visible) {
-  outline: 2px solid var(--ui-accent);
+  outline: 2px solid var(--ui-focus);
   outline-offset: 2px;
 }
 .dropzone:hover, .dropzone.dragging {
@@ -682,24 +676,22 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   min-height: 0;
   display: grid; place-items: center;
   background: var(--ui-panel-2);
-  border: 1px solid var(--ui-line);
+  border: 0;
   border-radius: var(--radius-control);
   padding: var(--space-2);
   color: var(--ui-text);
 }
-.mark-select:hover { background: var(--ui-panel-2); border-color: var(--ui-hover); }
-.mark-select[aria-pressed="true"] {
-  border-color: var(--ui-accent);
-  box-shadow: inset 0 0 0 1px var(--ui-accent);
-}
+.mark-select:hover { background: var(--ui-line); }
+.mark-select[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--ui-accent); }
 .mark-select .glyph-art, .mark-select svg, .mark-select img {
   width: 100%; height: 100%; object-fit: contain; display: block;
 }
 .mark-remove {
   position: absolute; top: -6px; right: -6px;
-  background: var(--ui-hover);
-  border-color: var(--ui-hover);
-  color: #fff;
+  /* `--ui-hover` is a mid tone on a light chrome and white on it reads at about 1.6:1. This
+     pair is the one the derivation already guarantees. */
+  background: var(--ui-line);
+  color: var(--ui-text);
   display: none;
 }
 /* `:focus-within` is what makes remove reachable by keyboard: it appears when focus lands
@@ -783,11 +775,10 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .chip {
   display: flex; align-items: center;
   background: var(--ui-panel-2);
-  border: 1px solid var(--ui-line);
   border-radius: var(--radius-pill);
   padding-right: var(--space-1);
 }
-.chip:hover { border-color: var(--ui-hover); }
+.chip:hover { background: var(--ui-line); }
 .chip > button {
   background: none;
   border: 0;
@@ -810,7 +801,7 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .locale-picker select {
   height: var(--control-h);
   background: var(--ui-panel-2);
-  border: 1px solid var(--ui-line);
+  border: 0;
   color: var(--ui-text);
   border-radius: var(--radius-control);
   padding: 0 var(--space-2);
@@ -818,7 +809,7 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   font-size: var(--text-base);
   cursor: pointer;
 }
-.locale-picker select:hover { border-color: var(--ui-hover); }
+.locale-picker select:hover { background: var(--ui-line); }
 
 /* `sr-only`: text only the screen reader needs.
    `visually-hidden-input`: a field that stays **operable** — focus and click — but invisible.
@@ -834,3 +825,99 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   white-space: nowrap;
 }
 
+
+/* ---------- outlines ----------
+   One switch, both surfaces. Off is the default look — a control is a filled shape — and on
+   restores a hairline around every component, here and in the mockup alike. It is a real test
+   dimension and not only taste: a pale brand often needs the line where a dark one does not,
+   and that is the kind of thing the customer came here to find out.
+
+   The rules live together rather than beside each component so the switch has one home. */
+
+[data-outlines='on'] button,
+[data-outlines='on'] .help-toggle,
+[data-outlines='on'] .brand-toggle,
+[data-outlines='on'] .mark-select,
+[data-outlines='on'] .chip,
+[data-outlines='on'] .segmented,
+[data-outlines='on'] .locale-picker select,
+[data-outlines='on'] .field input[type='text'],
+[data-outlines='on'] .field select,
+[data-outlines='on'] .hex {
+  border: 1px solid var(--ui-line);
+}
+/* The tabs ride on the brand, where `--ui-line` belongs to the panel and would be a smudge. */
+[data-outlines='on'] .tool-tab { border-color: transparent; }
+[data-outlines='on'] .tool-tab[aria-expanded='true'] { border-color: var(--ui-line); }
+
+/* ---------- watermark ----------
+   Our own mark, riding the same row as the bar and wearing the same fill: the two are the same
+   kind of object, the tool's own furniture floating over someone else's page. It sits to the
+   right so the only logo on the left of the screen is the customer's. */
+
+.watermark { position: relative; pointer-events: auto; flex: 0 0 auto; }
+
+.watermark-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--bar-h);
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--ui-accent) 92%, transparent);
+  color: var(--ui-on-accent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 14px 38px rgba(0, 0, 0, .5);
+  cursor: pointer;
+}
+.watermark-toggle:hover { background: var(--ui-accent); }
+.watermark-mark { display: block; width: 28px; height: 28px; flex: 0 0 auto; }
+.watermark-mark svg { width: 100%; height: 100%; display: block; }
+.nomai-lockup {
+  display: flex; flex-direction: column;
+  line-height: 1.15;
+  text-align: left;
+}
+.nomai-lockup strong { font-size: var(--text-base); font-weight: var(--weight-bold); letter-spacing: -.01em; }
+.nomai-lockup em { font-style: normal; opacity: .72; }
+.nomai-lockup small { font-size: var(--text-xs); opacity: .72; letter-spacing: .06em; }
+
+/* The name collapses on a phone, where it was taking 137 of 375px from the bar beside it. Safe
+   here and not on the tabs: this button carries its own `aria-label`, so the visible text is
+   decoration, where a tab's label **is** its accessible name. */
+@media (max-width: 700px) {
+  .watermark-toggle .nomai-lockup { display: none; }
+  .watermark-toggle { padding: 0 var(--space-3); }
+}
+
+.about {
+  --sheet-lift: 16px;
+  position: absolute;
+  bottom: calc(var(--bar-h) + var(--space-2));
+  right: 0;
+  width: max-content;
+  max-width: min(340px, calc(100vw - var(--space-6)));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .about { translate: 0 0; }
+  .about[hidden] { opacity: 0; translate: 0 var(--sheet-lift); }
+
+  @starting-style {
+    .about:not([hidden]) { opacity: 0; translate: 0 var(--sheet-lift); }
+  }
+}
+
+.about-name {
+  display: flex; align-items: center; gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  letter-spacing: -.01em;
+}
+.about-name .nomai-lockup { flex-direction: row; }
+.about-name em { font-style: normal; color: var(--ui-accent); opacity: 1; }
+.about-mark { display: block; width: 28px; height: 28px; color: var(--ui-text); }
+.about-mark svg { width: 100%; height: 100%; display: block; }
+.about-body { margin: 0; font-size: var(--text-sm); color: var(--ui-dim); line-height: var(--line-body); }

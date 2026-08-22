@@ -74,7 +74,6 @@
      back into the container's own intrinsic size and inflates it — the nav was resolving to
      528px on a 375px screen. Percentage flex-basis resolves to content during that pass. */
   .site-links { order: 3; flex-basis: 100%; min-width: 0; margin-left: 0; }
-  .site-nav .spacer { display: none; }
   .site-nav .btn-secondary { margin-left: auto; }
 }
 
@@ -91,7 +90,7 @@
 .btn-primary:hover { filter: brightness(1.07); background: var(--c-brand); }
 .btn-accent { background: var(--c-accent); color: var(--c-on-accent); }
 .btn-accent:hover { filter: brightness(1.07); background: var(--c-accent); }
-.btn-secondary { background: transparent; color: var(--c-text); border: 1px solid var(--c-line); font-weight: 400; }
+.btn-secondary { background: transparent; color: var(--c-text); border: 0; font-weight: 400; }
 .btn-secondary:hover { background: transparent; border-color: var(--c-line); }
 .btn-compact { padding: 8px 15px; font-size: 13px; }
 
@@ -125,7 +124,7 @@
 .lead { color: var(--c-muted); font-size: 15px; line-height: 1.6; margin: 0 0 22px; max-width: 46ch; }
 .cta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
-.hero-art { border-radius: 16px; border: 1px solid var(--c-line); background: var(--c-surface); padding: 18px; }
+.hero-art { border-radius: 16px; border: 0; background: var(--c-surface); padding: 18px; }
 .bar { display: block; height: 9px; border-radius: 5px; background: var(--c-line); margin-bottom: 10px; }
 .bar-brand { background: var(--c-brand); width: 62%; }
 .bar-accent { background: var(--c-accent); width: 38%; }
@@ -133,13 +132,13 @@
 .bar-narrow { width: 46%; }
 
 .stats { display: flex; gap: 10px; margin-top: 16px; }
-.stat { flex: 1; background: var(--c-bg); border: 1px solid var(--c-line); border-radius: 10px; padding: 11px 12px; }
+.stat { flex: 1; background: var(--c-bg); border: 0; border-radius: 10px; padding: 11px 12px; }
 .stat b { font-family: var(--f-display); font-size: 19px; color: var(--c-brand); display: block; }
 .stat span { font-size: 11px; color: var(--c-muted); }
 
 .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0 26px 44px; }
 @media (max-width: 760px) { .features { grid-template-columns: 1fr; } }
-.feature { background: var(--c-surface); border: 1px solid var(--c-line); border-radius: 14px; padding: 18px; }
+.feature { background: var(--c-surface); border: 0; border-radius: 14px; padding: 18px; }
 .feature-icon {
   width: 36px; height: 36px;
   border-radius: 10px;
@@ -182,3 +181,15 @@
 }
 .tab-icon { width: 16px; height: 16px; border-radius: 4px; flex: 0 0 auto; padding: 1px; }
 .tab-sim span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- outlines ----------
+   The mockup half of the switch in app.css. These components are filled by default and take
+   the customer's own line colour when it is on, which is what makes the toggle a test of the
+   palette rather than a preference: `--c-line` is one of the seven they edit. */
+
+[data-outlines='on'] .btn-secondary,
+[data-outlines='on'] .hero-art,
+[data-outlines='on'] .feature,
+[data-outlines='on'] .stat {
+  border: 1px solid var(--c-line);
+}

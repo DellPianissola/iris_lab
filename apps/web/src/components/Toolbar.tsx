@@ -24,6 +24,8 @@ export interface Tool {
 
 interface ToolbarProps {
   readonly tools: readonly Tool[]
+  /** Rides the same row as the bar, to its right — today the company mark. */
+  readonly children?: ReactNode
   /** Which surface is open, owned by the caller — see `onOpenChange`. */
   readonly openId: string | null
   readonly onOpenChange: (id: string | null) => void
@@ -40,7 +42,7 @@ interface ToolbarProps {
  * not here, because the brand sheet dropping from the header is the same kind of surface —
  * with the state split in two they both opened and sandwiched the preview between them.
  */
-export function Toolbar({ tools, openId, onOpenChange }: ToolbarProps) {
+export function Toolbar({ tools, openId, onOpenChange, children }: ToolbarProps) {
   const { t } = useI18n()
   /**
    * What the drawer holds, which outlives what is open. Clearing the content on the closing
@@ -109,7 +111,10 @@ export function Toolbar({ tools, openId, onOpenChange }: ToolbarProps) {
         )}
       </div>
 
-      <nav className="toolbar-bar" aria-label={t.app.tools}>
+      {/* Bar and mark share one row, so the pair is centred together and the bar lands left of
+          centre rather than the mark being parked over the stage. */}
+      <div className="toolbar-row">
+        <nav className="toolbar-bar" aria-label={t.app.tools}>
         {tools.map((tool) => (
           <button
             key={tool.id}
@@ -126,10 +131,13 @@ export function Toolbar({ tools, openId, onOpenChange }: ToolbarProps) {
             <tool.icon className="icon" aria-hidden="true" />
             <span className="tool-label">{tool.label}</span>
             {tool.badge}
-            <ChevronUpIcon className="tool-caret" aria-hidden="true" />
-          </button>
-        ))}
-      </nav>
+              <ChevronUpIcon className="tool-caret" aria-hidden="true" />
+            </button>
+          ))}
+        </nav>
+
+        {children}
+      </div>
     </div>
   )
 }
